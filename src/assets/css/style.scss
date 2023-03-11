@@ -1,0 +1,18 @@
+@import "variables";
+@import "mixin";
+@import "global";
+
+
+#login{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    .card{
+        width: 40%;
+        @include center;
+        box-shadow: 0 0 25px white;
+        label, h4 {
+            color: $white;
+        }
+    }
+}
