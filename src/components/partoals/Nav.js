@@ -1,8 +1,39 @@
-import React from 'react'
-import $ from 'jquery'
-import Logo from './../../assets/img/hometex-logo.png'
+import React from 'react';
+import $ from 'jquery';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import Logo from './../../assets/img/hometex-logo.png';
 
 export default function Nav() {
+
+    const handleLogout = () => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You will be logout from admin panel!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Logout!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire(
+                axios.post('http://localhost:8000/api/logout').then(res=>{
+            localStorage.removeItem('email')
+            localStorage.removeItem('phone')
+            localStorage.removeItem('name')
+            localStorage.removeItem('photo')
+            localStorage.removeItem('token')
+            window.location.reload()
+        }).catch(errors =>
+            {
+                
+            })
+              )
+            }
+          })
+    }
+
     const handleSidebar = () => {
        $('body').toggleClass('sb-sidenav-toggled') 
     }
@@ -25,7 +56,7 @@ export default function Nav() {
                         <li><a className="dropdown-item" href="#!">Settings</a></li>
                         <li><a className="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr className="dropdown-divider" /></li>
-                        <li><a className="dropdown-item" href="#!">Logout</a></li>
+                        <li><button onClick={handleLogout} className="dropdown-item">Logout</button></li>
                     </ul>
                 </li>
             </ul>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-    const navigate  = useNavigate()
     const[input, setInput] = useState({})
+    const[errors, setErrors] = useState([])
+    const[isLoading, setIsLoading] = useState(true)
+
 
     const handleInput = (e) => setInput(prevState => ({...prevState, [e.target.name] : e.target.value}))
        
@@ -16,14 +17,15 @@ export default function Login() {
             localStorage.photo = res.data.photo
             localStorage.token = res.data.token
             window.location.reload()
-        })
+        }).catch(errors =>
+            {
+                if(errors.response.status == 422 ){
+                    setErrors(errors.response.data.errors)
+                }
+            })
     }
 
-    // useEffect( ()=>{
-    //     if (localStorage.token != undefined){
-    //         navigate('/')
-    //     }
-    // })
+   
 
   return (
     <div className="container-flude bg-theme" id={'login'}>
@@ -43,6 +45,7 @@ export default function Login() {
                 value={input.email} 
                 onChange={handleInput} 
                 />
+            <p className={'login-error-msg'}><small>{errors.email != undefined ? errors.email[0]: null}</small></p>
             </label>
             <label className={'w-100 mt-4'}>
                 <p>Password</p>
@@ -53,6 +56,7 @@ export default function Login() {
                 value={input.password} 
                 onChange={handleInput} 
                 />
+            <p className={'login-error-msg'}><small>{errors.password != undefined ? errors.password[0]: null}</small></p>
             </label>
             <div className="d-grid mt-4">
                 <button onClick={handleLogin} className={'brn btn-outline-warning'}>Login</button>
