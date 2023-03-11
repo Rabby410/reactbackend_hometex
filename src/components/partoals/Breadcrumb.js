@@ -6,9 +6,9 @@ import {Helmet} from "react-helmet";
         <Helmet>
                 <title>{props.title} | Hometex Bangladesh</title>
             </Helmet>
-      <ol class="breadcrumb my-4">
-        <li class="breadcrumb-item text-theme-light">Dashboard</li>
-        <li class="breadcrumb-item active">{props.title}</li>
+      <ol className="breadcrumb my-4">
+        <li className="breadcrumb-item text-theme-light">Dashboard</li>
+        <li className="breadcrumb-item active">{props.title}</li>
       </ol>
     </>
   );

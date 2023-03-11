@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-
+    const navigate  = useNavigate()
     const[input, setInput] = useState({})
 
     const handleInput = (e) => setInput(prevState => ({...prevState, [e.target.name] : e.target.value}))
        
     const handleLogin = () => {
-        axios.post('http://localhost:8000//api/login', input).then(res=>{
-            console.log(res.data)
+        axios.post('http://localhost:8000/api/login', input).then(res=>{
+            localStorage.email = res.data.email
+            localStorage.phone = res.data.phone
+            localStorage.name = res.data.name
+            localStorage.photo = res.data.photo
+            localStorage.token = res.data.token
+            window.location.reload()
         })
     }
+
+    // useEffect( ()=>{
+    //     if (localStorage.token != undefined){
+    //         navigate('/')
+    //     }
+    // })
 
   return (
     <div className="container-flude bg-theme" id={'login'}>
