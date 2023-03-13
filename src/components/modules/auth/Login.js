@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Constants from '../../../Constants';
 
 export default function Login() {
     const[input, setInput] = useState({})
     const[errors, setErrors] = useState([])
-    const[isLoading, setIsLoading] = useState(true)
+    const[isLoading, setIsLoading] = useState(false)
 
 
     const handleInput = (e) => setInput(prevState => ({...prevState, [e.target.name] : e.target.value}))
        
     const handleLogin = () => {
-        axios.post('http://localhost:8000/api/login', input).then(res=>{
+        setIsLoading(true)
+        axios.post(`${Constants.BASE_URL}/login`, input).then(res=>{
             localStorage.email = res.data.email
             localStorage.phone = res.data.phone
             localStorage.name = res.data.name
             localStorage.photo = res.data.photo
             localStorage.token = res.data.token
+            setIsLoading(false)
             window.location.reload()
         }).catch(errors =>
             {
+                setIsLoading(false)
                 if(errors.response.status == 422 ){
                     setErrors(errors.response.data.errors)
                 }
@@ -59,7 +63,7 @@ export default function Login() {
             <p className={'login-error-msg'}><small>{errors.password != undefined ? errors.password[0]: null}</small></p>
             </label>
             <div className="d-grid mt-4">
-                <button onClick={handleLogin} className={'brn btn-outline-warning'}>Login</button>
+                <button onClick={handleLogin} className={'brn btn-outline-warning'} dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Login...':'Login' }} />
             </div>
         </div>
 

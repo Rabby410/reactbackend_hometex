@@ -3,6 +3,7 @@ import $ from 'jquery';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import Logo from './../../assets/img/hometex-logo.png';
+import Constants from '../../Constants';
 
 export default function Nav() {
 
@@ -18,7 +19,7 @@ export default function Nav() {
           }).then((result) => {
             if (result.isConfirmed) {
               Swal.fire(
-                axios.post('http://localhost:8000/api/logout').then(res=>{
+                axios.post(`${Constants.BASE_URL}/logout`).then(res=>{
             localStorage.removeItem('email')
             localStorage.removeItem('phone')
             localStorage.removeItem('name')
