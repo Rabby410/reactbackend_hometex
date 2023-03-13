@@ -1,11 +1,10 @@
 import axios from "axios";
-import { redirect } from "react-router-dom";
 import GlobalFunction from './assets/GlobalFunction'
 
 
 axios.interceptors.request.use(function (config) {
     if(localStorage.token != undefined){
-         axios.headers['Authorization'] = `Bearer ${localStorage.token}`
+         config.headers['Authorization'] = `Bearer ${localStorage.token}`
     }
     return config;
   }, function (error) {
@@ -24,7 +23,7 @@ axios.interceptors.request.use(function (config) {
       GlobalFunction.logOut()
     }
     else if(error.response.status == 500){
-      window.location.href = window.location.origin+'error-500'
+      window.location.href = window.location.origin +'error-500'
     }
     return Promise.reject(error);
   });

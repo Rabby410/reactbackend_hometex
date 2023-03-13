@@ -19,15 +19,12 @@ export default function Nav() {
             confirmButtonText: 'Yes, Logout!'
           }).then((result) => {
             if (result.isConfirmed) {
-              Swal.fire(
                 axios.post(`${Constants.BASE_URL}/logout`).then(res=>{
                   GlobalFunction.logOut()
                 window.location.reload()
-        }).catch(errors =>
-            {
+        }).catch(errors =>{
               GlobalFunction.logOut()
             })
-              )
             }
           })
     }
@@ -47,7 +44,7 @@ export default function Nav() {
             
             {/* <!-- Navbar--> */}
             <ul className="navbar-nav align-items-center ms-auto me-3 me-lg-4">
-            <p className='text-white'>Admin</p>
+            <p className='text-white'>{localStorage.name != undefined ? localStorage.name: null}</p>
                 <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i className="fas fa-user fa-fw"></i></a>
                     <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

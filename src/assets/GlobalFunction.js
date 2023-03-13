@@ -1,4 +1,4 @@
-const GlobalFunction ={
+const GlobalFunction = {
     logOut(){
         localStorage.removeItem('email')
             localStorage.removeItem('phone')

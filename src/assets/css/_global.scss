@@ -59,3 +59,26 @@ a {
 .aspect-two{
     aspect-ratio: 1/1.25 !important;
 }
+.aspect-one{
+    aspect-ratio: 1/1 !important;
+    object-fit: cover;
+}
+.text-theme{
+    color: $theme-color;
+}
+.theme-button{
+    background: $theme-color;
+    border: 1px solid $theme-color;
+    color: $white;
+    @include transition;
+    a{
+        color: $white;
+    }
+    &:hover{
+        background: $white;
+        border: 1px solid $theme-color;
+        a{
+            color: $theme-color;
+        }
+    }
+}

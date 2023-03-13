@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import Constants from '../../../Constants';
 
@@ -63,7 +63,8 @@ export default function Login() {
             <p className={'login-error-msg'}><small>{errors.password != undefined ? errors.password[0]: null}</small></p>
             </label>
             <div className="d-grid mt-4">
-                <button onClick={handleLogin} className={'brn btn-outline-warning'} dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Login...':'Login' }} />
+                <button onClick={handleLogin} className={'brn btn-outline-warning'} 
+                dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Login...':'Login' }} />
             </div>
         </div>
 
