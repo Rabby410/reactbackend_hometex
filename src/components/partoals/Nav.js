@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import Logo from './../../assets/img/hometex-logo.png';
 import Constants from '../../Constants';
+import GlobalFunction from './../../assets/GlobalFunction';
 
 export default function Nav() {
 
@@ -20,15 +21,11 @@ export default function Nav() {
             if (result.isConfirmed) {
               Swal.fire(
                 axios.post(`${Constants.BASE_URL}/logout`).then(res=>{
-            localStorage.removeItem('email')
-            localStorage.removeItem('phone')
-            localStorage.removeItem('name')
-            localStorage.removeItem('photo')
-            localStorage.removeItem('token')
-            window.location.reload()
+                  GlobalFunction.logOut()
+                window.location.reload()
         }).catch(errors =>
             {
-                
+              GlobalFunction.logOut()
             })
               )
             }
