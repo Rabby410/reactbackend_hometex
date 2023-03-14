@@ -8,4 +8,4 @@ const GlobalFunction = {
     }
 }
 
-export default GlobalFunction;
+export default GlobalFunction
