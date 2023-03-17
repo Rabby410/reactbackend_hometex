@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, redirect, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Breadcrumb from "../../partoals/Breadcrumb";
@@ -6,12 +6,18 @@ import Constants from "../../../Constants";
 import Swal from 'sweetalert2'
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 
-const AddCategory = () => {
-
-  const navigate = useNavigate();
+const SubCategoryAdd = () => {
+    const navigate = useNavigate();
   const [input, setInput] = useState({ status: 1 })
   const [errors, setErrors] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [categories, setCategories] = useState([])
+
+  const getCategories = () =>{
+    axios.get(`${Constants.BASE_URL}/get-category-list`).then(res=>{
+        setCategories(res.data)
+    })
+  }
 
   const handleInput = (e) => {
     if (e.target.name === 'name') {
@@ -34,7 +40,7 @@ const AddCategory = () => {
 
   const handleCategoryCreate = () => {
     setIsLoading(true)
-    axios.post(`${Constants.BASE_URL}/category`, input)
+    axios.post(`${Constants.BASE_URL}/sub-category`, input)
       .then(res => {
         setIsLoading(false)
         Swal.fire({
@@ -45,7 +51,7 @@ const AddCategory = () => {
             toast:true,
             timer: 1500
           })
-          navigate('/category')
+          navigate('/sub-category')
       })
       .catch(errors => {
         setIsLoading(false)
@@ -55,22 +61,44 @@ const AddCategory = () => {
       })
   }
 
+  useEffect(()=>{
+    getCategories()
+  }, []);
+
   return (
     <>
-      <Breadcrumb title={"Add Category"} />
+      <Breadcrumb title={"Add Sub-Category"} />
       <div className="row">
         <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <CardHeader
-              title={'Add Category'}
-              link={'/category'}
+              title={'Add Sub-Category'}
+              link={'/sub-category'}
               icon={'fa-list'}
               button_text={'List'}
               />
             </div>
             <div className="card-body">
               <div className="row">
+                <div className="col-md-6">
+                  <label className="w-100 mt-4">
+                    <p>Select Category</p>
+                    <select
+                      className={errors.category_id != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
+                      name={'category_id'}
+                      value={input.category_id}
+                      onChange={handleInput}
+                      placeholder={'Select category'}
+                    >
+                        <option value={''}>Select Category</option>
+                        {categories.map((category, index) =>(
+                        <option key={index} value={category.id}>{category.name}</option>
+                        ))}
+                    </select>
+                    <p className={'login-error-msg'}><small>{errors.category_id != undefined ? errors.category_id[0] : null}</small></p>
+                  </label>
+                </div>
                 <div className="col-md-6">
                   <label className="w-100 mt-4">
                     <p>Name</p>
@@ -94,7 +122,7 @@ const AddCategory = () => {
                       name={'slug'}
                       value={input.slug}
                       onChange={handleInput}
-                      placeholder={'Enter category slug'}
+                      placeholder={'Enter sub category slug'}
                     />
                     <p className={'login-error-msg'}><small>{errors.slug != undefined ? errors.slug[0] : null}</small></p>
                   </label>
@@ -108,7 +136,7 @@ const AddCategory = () => {
                       name={'serial'}
                       value={input.serial}
                       onChange={handleInput}
-                      placeholder={'Enter category serial'}
+                      placeholder={'Enter sub category serial'}
                     />
                     <p className={'login-error-msg'}><small>{errors.serial != undefined ? errors.serial[0] : null}</small></p>
                   </label>
@@ -136,7 +164,7 @@ const AddCategory = () => {
                       name={'description'}
                       value={input.description}
                       onChange={handleInput}
-                      placeholder={'Enter category description'}
+                      placeholder={'Enter sub category description'}
                     ></textarea>
                     <p className={'login-error-msg'}><small>{errors.description != undefined ? errors.description[0] : null}</small></p>
                   </label>
@@ -149,7 +177,7 @@ const AddCategory = () => {
                       type={'file'}
                       name={'photo'}
                       onChange={handlePhoto}
-                      placeholder={'Enter category photo'}
+                      placeholder={'Enter sub category photo'}
                     />
                     <p className={'login-error-msg'}><small>{errors.photo != undefined ? errors.photo[0] : null}</small></p>
                   </label>
@@ -158,7 +186,7 @@ const AddCategory = () => {
                       <div className="row">
                         <div className="col-6">
                           <div className="photo-preview mt-3">
-                            <img alt={"Hometex Category"} src={input.photo} className={'img-thumbnail aspect-one'} />
+                            <img alt={"Hometex sub category"} src={input.photo} className={'img-thumbnail aspect-one'} />
                           </div>
                         </div>
                       </div> : null
@@ -169,7 +197,7 @@ const AddCategory = () => {
                     <div className="col-md-4">
                       <div className="d-grid mt-4">
                         <button onClick={handleCategoryCreate} className={"btn theme-button"}
-                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Category...' : 'Add Category' }}
+                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Sub Category...' : 'Add sub Category' }}
                         />
                       </div>
                     </div>
@@ -182,6 +210,6 @@ const AddCategory = () => {
       </div>
     </>
   );
-}
+};
 
-export default AddCategory
+export default SubCategoryAdd;;

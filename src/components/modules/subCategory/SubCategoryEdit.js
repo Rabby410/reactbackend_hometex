@@ -1,17 +1,34 @@
-import React, { useState } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from 'sweetalert2'
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 
-const AddCategory = () => {
+const SubCategoryEdit = () => {
 
+
+  const params = useParams()
   const navigate = useNavigate();
   const [input, setInput] = useState({ status: 1 })
   const [errors, setErrors] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [category, setCategory] = useState([])
+  const [categories, setCategories] = useState([])
+
+
+  const getCategories = () =>{
+    axios.get(`${Constants.BASE_URL}/get-category-list`).then(res=>{
+        setCategories(res.data)
+    })
+  }
+
+const getCategory = () =>{
+    axios.get(`${Constants.BASE_URL}/sub-category/${params.id}`).then(res=>{
+        setCategory(res.data.data)
+    })
+}
 
   const handleInput = (e) => {
     if (e.target.name === 'name') {
@@ -32,9 +49,9 @@ const AddCategory = () => {
     reader.readAsDataURL(file)
   }
 
-  const handleCategoryCreate = () => {
+  const handleCategoryUpdate = () => {
     setIsLoading(true)
-    axios.post(`${Constants.BASE_URL}/category`, input)
+    axios.put(`${Constants.BASE_URL}/sub-category/${params.id}`, input)
       .then(res => {
         setIsLoading(false)
         Swal.fire({
@@ -45,7 +62,7 @@ const AddCategory = () => {
             toast:true,
             timer: 1500
           })
-          navigate('/category')
+          navigate('/sub-category')
       })
       .catch(errors => {
         setIsLoading(false)
@@ -55,22 +72,44 @@ const AddCategory = () => {
       })
   }
 
+  useEffect(()=>{
+    getCategories()
+    getCategory()
+  }, [])
   return (
     <>
-      <Breadcrumb title={"Add Category"} />
+      <Breadcrumb title={"Edit Sub Category"} />
       <div className="row">
         <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <CardHeader
-              title={'Add Category'}
-              link={'/category'}
+              title={'Edit Sub Category'}
+              link={'/sub-category'}
               icon={'fa-list'}
               button_text={'List'}
               />
             </div>
             <div className="card-body">
               <div className="row">
+              <div className="col-md-6">
+                  <label className="w-100 mt-4">
+                    <p>Select Category</p>
+                    <select
+                      className={errors.category_id != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
+                      name={'category_id'}
+                      value={input.category_id}
+                      onChange={handleInput}
+                      placeholder={'Select category'}
+                    >
+                        <option value={''}>Select Category</option>
+                        {categories.map((category, index) =>(
+                        <option key={index} value={category.id}>{category.name}</option>
+                        ))}
+                    </select>
+                    <p className={'login-error-msg'}><small>{errors.category_id != undefined ? errors.category_id[0] : null}</small></p>
+                  </label>
+                </div>
                 <div className="col-md-6">
                   <label className="w-100 mt-4">
                     <p>Name</p>
@@ -80,7 +119,7 @@ const AddCategory = () => {
                       name={'name'}
                       value={input.name}
                       onChange={handleInput}
-                      placeholder={'Enter category Name'}
+                      placeholder={'Enter Sub category Name'}
                     />
                     <p className={'login-error-msg'}><small>{errors.name != undefined ? errors.name[0] : null}</small></p>
                   </label>
@@ -94,7 +133,7 @@ const AddCategory = () => {
                       name={'slug'}
                       value={input.slug}
                       onChange={handleInput}
-                      placeholder={'Enter category slug'}
+                      placeholder={'Enter Sub category slug'}
                     />
                     <p className={'login-error-msg'}><small>{errors.slug != undefined ? errors.slug[0] : null}</small></p>
                   </label>
@@ -108,7 +147,7 @@ const AddCategory = () => {
                       name={'serial'}
                       value={input.serial}
                       onChange={handleInput}
-                      placeholder={'Enter category serial'}
+                      placeholder={'Enter Sub category serial'}
                     />
                     <p className={'login-error-msg'}><small>{errors.serial != undefined ? errors.serial[0] : null}</small></p>
                   </label>
@@ -136,7 +175,7 @@ const AddCategory = () => {
                       name={'description'}
                       value={input.description}
                       onChange={handleInput}
-                      placeholder={'Enter category description'}
+                      placeholder={'Enter Sub category description'}
                     ></textarea>
                     <p className={'login-error-msg'}><small>{errors.description != undefined ? errors.description[0] : null}</small></p>
                   </label>
@@ -149,16 +188,16 @@ const AddCategory = () => {
                       type={'file'}
                       name={'photo'}
                       onChange={handlePhoto}
-                      placeholder={'Enter category photo'}
+                      placeholder={'Enter Sub category photo'}
                     />
                     <p className={'login-error-msg'}><small>{errors.photo != undefined ? errors.photo[0] : null}</small></p>
                   </label>
                   {
-                    input.photo != undefined ?
+                    input.photo != undefined || input.photo_preview != undefined ?
                       <div className="row">
                         <div className="col-6">
                           <div className="photo-preview mt-3">
-                            <img alt={"Hometex Category"} src={input.photo} className={'img-thumbnail aspect-one'} />
+                            <img alt={"Hometex Category"} src={input.photo == undefined ? input.photo_preview: input.photo} className={'img-thumbnail aspect-one'} />
                           </div>
                         </div>
                       </div> : null
@@ -168,8 +207,8 @@ const AddCategory = () => {
                   <div className="row justify-content-center">
                     <div className="col-md-4">
                       <div className="d-grid mt-4">
-                        <button onClick={handleCategoryCreate} className={"btn theme-button"}
-                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Category...' : 'Add Category' }}
+                        <button onClick={handleCategoryUpdate} className={"btn theme-button"}
+                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update Sub Category...' : 'Update Sub Category' }}
                         />
                       </div>
                     </div>
@@ -182,6 +221,6 @@ const AddCategory = () => {
       </div>
     </>
   );
-}
+};
 
-export default AddCategory
+export default SubCategoryEdit

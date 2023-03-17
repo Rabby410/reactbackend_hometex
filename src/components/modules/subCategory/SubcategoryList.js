@@ -11,7 +11,7 @@ import CategoryDetailsModal from "../../partoals/modals/CategoryDetailsModal";
 import Loader from "../../partoals/miniComponents/Loader";
 import NoDataFound from "../../partoals/miniComponents/NoDataFound";
 
-function CategoryList() {
+const SubcategoryList = () => {
     const [input, setInput] = useState({
         order_by: 'serial',
         per_page: 10,
@@ -42,7 +42,7 @@ function CategoryList() {
     const getCategories = (pageNumber = 1) => {
         setIsLoading(true)
         axios
-            .get(`${Constants.BASE_URL}/category?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
+            .get(`${Constants.BASE_URL}/sub-category?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
             .then((res) => {
                 setCategories(res.data.data);
                 setItemsCountPerPage(res.data.meta.per_page);
@@ -72,7 +72,7 @@ function CategoryList() {
             confirmButtonText: 'Yes, DELETE IT!'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${Constants.BASE_URL}/category/${id}`).then(res => {
+                axios.delete(`${Constants.BASE_URL}/sub-category/${id}`).then(res => {
                     getCategories()
                     Swal.fire({
                         position: 'top-end',
@@ -90,17 +90,16 @@ function CategoryList() {
     useEffect(() => {
         getCategories();
     }, []);
-
-    return (
-        <>
-            <Breadcrumb title={"Category List"} />
+  return (
+    <>
+            <Breadcrumb title={"Sub Category List"} />
             <div className="row">
                 <div className="col-md-12">
                     <div className="card">
                         <div className="card-header">
                             <CardHeader
-                                title={"Category list"}
-                                link={"/category/create"}
+                                title={" Sub Category list"}
+                                link={"/sub-category/create"}
                                 icon={"fa-add"}
                                 button_text={"Add"}
                             />
@@ -188,7 +187,7 @@ function CategoryList() {
                                     <thead>
                                         <tr>
                                             <th>SL</th>
-                                            <th>Name /Slug</th>
+                                            <th>Name / Slug / Category</th>
                                             <th>Serial / Status</th>
                                             <th>Photo</th>
                                             <th>Created By</th>
@@ -203,9 +202,8 @@ function CategoryList() {
                                                 <td>{startFrom + number}</td>
                                                 <td>
                                                     <p className={"text-theme"}>Name: {category.name}</p>
-                                                    <p className={"text-success"}>
-                                                        Slug: {category.slug}
-                                                    </p>
+                                                    <p className={"text-success"}>Slug: {category.slug}</p>
+                                                    <p className={"text-theme"}>Category: {category.category_name}</p>
                                                 </td>
                                                 <td>
                                                     <p className={"text-theme"}>{category.serial}</p>
@@ -234,7 +232,7 @@ function CategoryList() {
                                                             handleDetailsModal(category)
                                                         }
                                                         className={"btn btn-sm my-1 btn-info"}><i class="fa-solid fa-eye"></i></button>
-                                                    <Link to={`/category/edit/${category.id}`}><button className={"btn btn-sm my-1 mx-1 btn-warning"}><i class="fa-solid fa-pen-to-square"></i></button></Link>
+                                                    <Link to={`/sub-category/edit/${category.id}`}><button className={"btn btn-sm my-1 mx-1 btn-warning"}><i class="fa-solid fa-pen-to-square"></i></button></Link>
                                                     <button onClick={() => handleCategoryDelete(category.id)} className={"btn btn-sm my-1 btn-danger"}><i class="fa-solid fa-trash"></i></button>
                                                 </td>
                                             </tr>
@@ -244,14 +242,14 @@ function CategoryList() {
                                 <CategoryPhotoModal
                                     show={modalPhotoShow}
                                     onHide={() => setModalPhotoShow(false)}
-                                    title={"Category Picture"}
+                                    title={"Sub Category Picture"}
                                     size={""}
                                     photo={modalPhoto}
                                 />
                                 <CategoryDetailsModal
                                     show={modalShow}
                                     onHide={() => setModalShow(false)}
-                                    title={"Category Details"}
+                                    title={"Sub Category Details"}
                                     size={""}
                                     category={category}
                                 />
@@ -280,7 +278,7 @@ function CategoryList() {
                 </div>
             </div>
         </>
-    );
-}
+  );
+};
 
-export default CategoryList;
+export default SubcategoryList

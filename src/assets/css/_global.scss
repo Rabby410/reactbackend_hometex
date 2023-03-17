@@ -82,3 +82,50 @@ a {
         }
     }
 }
+label{
+    position: relative;
+    .login-error-msg{
+        position: absolute;
+        color: red;
+        text-shadow: 0 0 10px $white;
+    }
+}
+.my-table{
+    font-size: 14px;
+    th, td{
+        vertical-align: middle;
+    }
+}
+.table-image{
+    width: 75px;
+    cursor: pointer;
+}
+.search-area{
+    label{
+        font-size: 14px;
+        color: $theme-color;
+        p{
+        margin-bottom: 5px;
+        }
+    }
+}
+.loader{
+    width: 100%;
+    height: 250px;
+    position: relative;
+    img{
+        position: absolute;
+        @include center;
+    }
+}
+
+.soft-landing{
+    @include transition;
+}
+.no-data-found-container{
+    min-height: 40px;
+    width: 100%;
+    .no-data-found{
+        position: absolute;
+    }
+}

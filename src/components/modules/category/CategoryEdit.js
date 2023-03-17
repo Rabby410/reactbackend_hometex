@@ -1,17 +1,25 @@
-import React, { useState } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from 'sweetalert2'
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 
-const AddCategory = () => {
+const CategoryEdit = () => {
 
+  const params = useParams()
   const navigate = useNavigate();
   const [input, setInput] = useState({ status: 1 })
   const [errors, setErrors] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [category, setCategory] = useState([])
+
+const getCategory = () =>{
+    axios.get(`${Constants.BASE_URL}/category/${params.id}`).then(res=>{
+        setInput(res.data.data)
+    })
+}
 
   const handleInput = (e) => {
     if (e.target.name === 'name') {
@@ -32,9 +40,9 @@ const AddCategory = () => {
     reader.readAsDataURL(file)
   }
 
-  const handleCategoryCreate = () => {
+  const handleCategoryUpdate = () => {
     setIsLoading(true)
-    axios.post(`${Constants.BASE_URL}/category`, input)
+    axios.put(`${Constants.BASE_URL}/category/${params.id}`, input)
       .then(res => {
         setIsLoading(false)
         Swal.fire({
@@ -55,15 +63,19 @@ const AddCategory = () => {
       })
   }
 
+  useEffect(()=>{
+    getCategory()
+  }, [])
+
   return (
     <>
-      <Breadcrumb title={"Add Category"} />
+      <Breadcrumb title={"Edit Category"} />
       <div className="row">
         <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <CardHeader
-              title={'Add Category'}
+              title={'Edit Category'}
               link={'/category'}
               icon={'fa-list'}
               button_text={'List'}
@@ -154,11 +166,11 @@ const AddCategory = () => {
                     <p className={'login-error-msg'}><small>{errors.photo != undefined ? errors.photo[0] : null}</small></p>
                   </label>
                   {
-                    input.photo != undefined ?
+                    input.photo != undefined || input.photo_preview != undefined ?
                       <div className="row">
                         <div className="col-6">
                           <div className="photo-preview mt-3">
-                            <img alt={"Hometex Category"} src={input.photo} className={'img-thumbnail aspect-one'} />
+                            <img alt={"Hometex Category"} src={input.photo == undefined ? input.photo_preview: input.photo} className={'img-thumbnail aspect-one'} />
                           </div>
                         </div>
                       </div> : null
@@ -168,8 +180,8 @@ const AddCategory = () => {
                   <div className="row justify-content-center">
                     <div className="col-md-4">
                       <div className="d-grid mt-4">
-                        <button onClick={handleCategoryCreate} className={"btn theme-button"}
-                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Category...' : 'Add Category' }}
+                        <button onClick={handleCategoryUpdate} className={"btn theme-button"}
+                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update Category...' : 'Update Category' }}
                         />
                       </div>
                     </div>
@@ -182,6 +194,6 @@ const AddCategory = () => {
       </div>
     </>
   );
-}
+};
 
-export default AddCategory
+export default CategoryEdit
