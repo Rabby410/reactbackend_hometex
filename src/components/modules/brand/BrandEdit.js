@@ -6,17 +6,17 @@ import Constants from "../../../Constants";
 import Swal from 'sweetalert2'
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 
-const CategoryEdit = () => {
+const BrandEdit = () => {
 
     const params = useParams()
     const navigate = useNavigate();
     const [input, setInput] = useState({ status: 1 })
     const [errors, setErrors] = useState([])
     const [isLoading, setIsLoading] = useState(false)
-    const [category, setCategory] = useState([])
+    const [brand, setBrand] = useState([])
 
-    const getCategory = () => {
-        axios.get(`${Constants.BASE_URL}/category/${params.id}`).then(res => {
+    const getBrand = () => {
+        axios.get(`${Constants.BASE_URL}/brand/${params.id}`).then(res => {
             setInput(res.data.data)
         })
     }
@@ -31,18 +31,18 @@ const CategoryEdit = () => {
         setInput(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
     }
 
-    const handlePhoto = (e) => {
+    const handleLogo = (e) => {
         let file = e.target.files[0]
         let reader = new FileReader()
         reader.onloadend = () => {
-            setInput(prevState => ({ ...prevState, photo: reader.result }))
+            setInput(prevState => ({ ...prevState, logo: reader.result }))
         }
         reader.readAsDataURL(file)
     }
 
-    const handleCategoryUpdate = () => {
+    const handleBrandUpdate = () => {
         setIsLoading(true)
-        axios.put(`${Constants.BASE_URL}/category/${params.id}`, input)
+        axios.put(`${Constants.BASE_URL}/brand/${params.id}`, input)
             .then(res => {
                 setIsLoading(false)
                 Swal.fire({
@@ -53,7 +53,7 @@ const CategoryEdit = () => {
                     toast: true,
                     timer: 1500
                 })
-                navigate('/category')
+                navigate('/brand')
             })
             .catch(errors => {
                 setIsLoading(false)
@@ -64,19 +64,19 @@ const CategoryEdit = () => {
     }
 
     useEffect(() => {
-        getCategory()
+        getBrand()
     }, [])
 
     return (
         <>
-            <Breadcrumb title={"Edit Category"} />
+            <Breadcrumb title={"Edit Brand"} />
             <div className="row">
                 <div className="col-md-12">
                     <div className="card">
                         <div className="card-header">
                             <CardHeader
-                                title={'Edit Category'}
-                                link={'/category'}
+                                title={'Edit Brand'}
+                                link={'/brand'}
                                 icon={'fa-list'}
                                 button_text={'List'}
                             />
@@ -92,7 +92,7 @@ const CategoryEdit = () => {
                                             name={'name'}
                                             value={input.name}
                                             onChange={handleInput}
-                                            placeholder={'Enter category Name'}
+                                            placeholder={'Enter brand name'}
                                         />
                                         <p className={'login-error-msg'}><small>{errors.name != undefined ? errors.name[0] : null}</small></p>
                                     </label>
@@ -106,7 +106,7 @@ const CategoryEdit = () => {
                                             name={'slug'}
                                             value={input.slug}
                                             onChange={handleInput}
-                                            placeholder={'Enter category slug'}
+                                            placeholder={'Enter brand slug'}
                                         />
                                         <p className={'login-error-msg'}><small>{errors.slug != undefined ? errors.slug[0] : null}</small></p>
                                     </label>
@@ -120,7 +120,7 @@ const CategoryEdit = () => {
                                             name={'serial'}
                                             value={input.serial}
                                             onChange={handleInput}
-                                            placeholder={'Enter category serial'}
+                                            placeholder={'Enter brand serial'}
                                         />
                                         <p className={'login-error-msg'}><small>{errors.serial != undefined ? errors.serial[0] : null}</small></p>
                                     </label>
@@ -148,29 +148,29 @@ const CategoryEdit = () => {
                                             name={'description'}
                                             value={input.description}
                                             onChange={handleInput}
-                                            placeholder={'Enter category description'}
+                                            placeholder={'Enter brand description'}
                                         ></textarea>
                                         <p className={'login-error-msg'}><small>{errors.description != undefined ? errors.description[0] : null}</small></p>
                                     </label>
                                 </div>
                                 <div className="col-md-6">
                                     <label className="w-100 mt-4">
-                                        <p>Photo</p>
+                                        <p>Logo</p>
                                         <input
-                                            className={errors.photo != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
+                                            className={errors.logo != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
                                             type={'file'}
-                                            name={'photo'}
-                                            onChange={handlePhoto}
-                                            placeholder={'Enter category photo'}
+                                            name={'logo'}
+                                            onChange={handleLogo}
+                                            placeholder={'Enter barnd logo'}
                                         />
-                                        <p className={'login-error-msg'}><small>{errors.photo != undefined ? errors.photo[0] : null}</small></p>
+                                        <p className={'login-error-msg'}><small>{errors.logo != undefined ? errors.logo[0] : null}</small></p>
                                     </label>
                                     {
-                                        input.photo != undefined || input.photo_preview != undefined ?
+                                        input.logo != undefined || input.logo_preview != undefined ?
                                             <div className="row">
                                                 <div className="col-6">
                                                     <div className="photo-preview mt-3">
-                                                        <img alt={"Hometex Category"} src={input.photo == undefined ? input.photo_preview : input.photo} className={'img-thumbnail aspect-one'} />
+                                                        <img alt={"Hometex Category"} src={input.logo == undefined ? input.logo_preview : input.logo} className={'img-thumbnail aspect-one'} />
                                                     </div>
                                                 </div>
                                             </div> : null
@@ -180,8 +180,8 @@ const CategoryEdit = () => {
                                     <div className="row justify-content-center">
                                         <div className="col-md-4">
                                             <div className="d-grid mt-4">
-                                                <button onClick={handleCategoryUpdate} className={"btn theme-button"}
-                                                    dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update Category...' : 'Update Category' }}
+                                                <button onClick={handleBrandUpdate} className={"btn theme-button"}
+                                                    dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update brand...' : 'Update brand' }}
                                                 />
                                             </div>
                                         </div>
@@ -196,4 +196,4 @@ const CategoryEdit = () => {
     );
 };
 
-export default CategoryEdit
+export default BrandEdit

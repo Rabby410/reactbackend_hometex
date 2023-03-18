@@ -2,6 +2,9 @@ import React, { Children } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Master from "../layout/Master";
 import Error500 from "../modules/auth/Error500";
+import BrandAdd from "../modules/brand/BrandAdd";
+import BrandList from "../modules/brand/BrandList";
+import BrandEdit from "../modules/brand/BrandEdit";
 import AddCategory from "../modules/category/AddCategory";
 import CategoryEdit from "../modules/category/CategoryEdit";
 import CategoryList from "../modules/category/CategoryList";
@@ -42,6 +45,18 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/sub-category/edit/:id",
         element: <SubCategoryEdit/>,
+      },
+      {
+        path: "/brand/create",
+        element: <BrandAdd/>,
+      },
+      {
+        path: "/brand",
+        element: <BrandList/>,
+      },
+      {
+        path: "/brand/edit/:id",
+        element: <BrandEdit/>,
       },
       {
         path: "/error-500",
