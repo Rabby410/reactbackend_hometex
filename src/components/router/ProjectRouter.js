@@ -12,6 +12,9 @@ import Dashboard from "../modules/Dashboard";
 import SubCategoryAdd from "../modules/subCategory/SubCategoryAdd";
 import SubCategoryEdit from "../modules/subCategory/SubCategoryEdit";
 import SubcategoryList from "../modules/subCategory/SubcategoryList";
+import AddSupplier from "../modules/suppliers/AddSupplier";
+import SuppliersList from "../modules/suppliers/SuppliersList";
+import SupplierEdit from "../modules/suppliers/SupplierEdit";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -57,6 +60,18 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/brand/edit/:id",
         element: <BrandEdit/>,
+      },
+      {
+        path: "/supplier/create",
+        element: <AddSupplier/>,
+      },
+      {
+        path: "/suppliers",
+        element: <SuppliersList/>,
+      },
+      {
+        path: "/supplier/edit/:id",
+        element: <SupplierEdit/>,
       },
       {
         path: "/error-500",

@@ -46,6 +46,17 @@ export default function SideBar() {
                                 <Link className="nav-link" to="/brand/create">Add Brand</Link>
                             </nav>
                         </div>
+                        <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#supplier" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
+                            Suppliers
+                            <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
+                        </Link>
+                        <div className="collapse" id="supplier" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav className="sb-sidenav-menu-nested nav">
+                                <Link className="nav-link" to="/suppliers">Suppliers List</Link>
+                                <Link className="nav-link" to="/supplier/create">Add Supplier</Link>
+                            </nav>
+                        </div>
                         <Link className="nav-link" to="tables.html">
                             <div className="sb-nav-link-icon"><i className="fas fa-table"></i></div>
                             Tables
