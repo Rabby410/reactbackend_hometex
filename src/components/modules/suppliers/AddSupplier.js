@@ -25,10 +25,17 @@ const AddSupplier = () => {
                 setDistricts(res.data)
             })
     }
+    const getAreas = (district_id) => {
+        axios.get(`${Constants.BASE_URL}/area/${district_id}`).then(res => {
+                setAreas(res.data)
+            })
+    }
 
     const handleInput = (e) => {
         if (e.target.name == 'division_id') {
             getDistrict(e.target.value)
+        }else if(e.target.name == 'district_id'){
+            getAreas(e.target.value)
         }
         setInput((prevState) => ({...prevState,[e.target.name]: e.target.value,}));
     };
@@ -295,7 +302,7 @@ const AddSupplier = () => {
                                                     >
                                                         <option>Select division</option>
                                                         {divisions.map((division, index) => (
-                                                            <option key={index} value={'division.id'}>{division.name}</option>
+                                                            <option key={index} value={division.id}>{division.name}</option>
                                                         ))}
                                                     </select>
                                                     <p className={"login-error-msg"}>
@@ -322,7 +329,7 @@ const AddSupplier = () => {
                                                     >
                                                         <option>Select city</option>
                                                         {districts.map((district, index) => (
-                                                            <option key={index} value={'district.id'}>{district.name}</option>
+                                                            <option key={index} value={district.id}>{district.name}</option>
                                                         ))}
                                                     </select>
                                                     <p className={"login-error-msg"}>
@@ -339,7 +346,7 @@ const AddSupplier = () => {
                                                     <p>Select Area</p>
                                                     <select
                                                         className={
-                                                            errors.area_id != undefined
+                                                            errors.district_id != undefined
                                                                 ? "form-select mt-2 is-invalid"
                                                                 : "form-select mt-2"
                                                         }
@@ -347,7 +354,10 @@ const AddSupplier = () => {
                                                         value={input.area_id}
                                                         onChange={handleInput}
                                                     >
-                                                        <option value={1}>Active</option>
+                                                        <option>Select Area</option>
+                                                        {districts.map((area, index) => (
+                                                            <option key={index} value={area.id}>{area.name}</option>
+                                                        ))}
                                                     </select>
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -358,6 +368,7 @@ const AddSupplier = () => {
                                                     </p>
                                                 </label>
                                             </div>
+                                            
                                             <div className="col-md-12">
                                                 <label className="w-100 mt-4">
                                                     <p>
