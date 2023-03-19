@@ -19,12 +19,26 @@ export default function Nav() {
             confirmButtonText: 'Yes, Logout!'
           }).then((result) => {
             if (result.isConfirmed) {
-                axios.post(`${Constants.BASE_URL}/logout`).then(res=>{
-                  GlobalFunction.logOut()
-                window.location.reload()
-        }).catch(errors =>{
-              GlobalFunction.logOut()
-            })
+              let token=localStorage.getItem('token');
+              if(token){
+                var config = {
+                  method: 'post',
+                  maxBodyLength: Infinity,
+                  url: `${Constants.BASE_URL}/logout`,
+                  headers: { 
+                    'Authorization': 'Bearer '+token+''
+                  }
+                };
+                
+                axios(config)
+                .then(function (response) {
+                    GlobalFunction.logOut();
+                    window.location.reload();
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
+              }
             }
           })
     }

@@ -5,6 +5,7 @@ import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
+import Select from 'react-select';
 
 const AddSupplier = () => {
     const navigate = useNavigate();
@@ -33,12 +34,20 @@ const AddSupplier = () => {
 
     const handleInput = (e) => {
         if (e.target.name == 'division_id') {
-            getDistrict(e.target.value)
+            setDistricts([])
+            setAreas([])
+            let division_id = parseInt(e.target.value)
+            if(!isNaN(division_id))getDistrict(division_id)
         }else if(e.target.name == 'district_id'){
-            getAreas(e.target.value)
+            setAreas([])
+            let district_id = e.target.value
+            if(!isNaN(district_id))getAreas(e.target.value)
         }
-        setInput((prevState) => ({...prevState,[e.target.name]: e.target.value,}));
-    };
+        setInput((prevState) => ({...prevState,[e.target.name]: e.target.value}))
+    }
+    const handleAreaInput = (selected_option, name) =>{
+        setInput((prevState) => ({...prevState,[name]: selected_option.value}))
+    }
 
     const handleLogo = (e) => {
         let file = e.target.files[0];
@@ -326,6 +335,7 @@ const AddSupplier = () => {
                                                         name={"district_id"}
                                                         value={input.district_id}
                                                         onChange={handleInput}
+                                                        disabled={Object.keys(districts).length < 1}
                                                     >
                                                         <option>Select city</option>
                                                         {districts.map((district, index) => (
@@ -344,21 +354,17 @@ const AddSupplier = () => {
                                             <div className="col-md-12">
                                                 <label className="w-100 mt-4">
                                                     <p>Select Area</p>
-                                                    <select
+                                                    <Select
                                                         className={
                                                             errors.district_id != undefined
-                                                                ? "form-select mt-2 is-invalid"
-                                                                : "form-select mt-2"
+                                                                ? "mt-2 is-invalid"
+                                                                : "mt-2"
                                                         }
-                                                        name={"area_id"}
-                                                        value={input.area_id}
-                                                        onChange={handleInput}
-                                                    >
-                                                        <option>Select Area</option>
-                                                        {districts.map((area, index) => (
-                                                            <option key={index} value={area.id}>{area.name}</option>
-                                                        ))}
-                                                    </select>
+                                                        defaultValue={input.area_id}
+                                                        onChange={(selected_option)=>handleAreaInput(selected_option, 'area_id')}
+                                                        isDisabled={Object.keys(areas).length < 1}
+                                                        options={areas}
+                                                    />
                                                     <p className={"login-error-msg"}>
                                                         <small>
                                                             {errors.area_id != undefined
