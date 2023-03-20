@@ -5,7 +5,7 @@ import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
-import Select from 'react-select';
+// import Select from 'react-select';
 
 const AddSupplier = () => {
     const navigate = useNavigate();
@@ -45,9 +45,9 @@ const AddSupplier = () => {
         }
         setInput((prevState) => ({...prevState,[e.target.name]: e.target.value}))
     }
-    const handleAreaInput = (selected_option, name) =>{
-        setInput((prevState) => ({...prevState,[name]: selected_option.value}))
-    }
+    // const handleAreaInput = (selected_option, name) =>{
+    //     setInput((prevState) => ({...prevState,[name]: selected_option.value}))
+    // }
 
     const handleLogo = (e) => {
         let file = e.target.files[0];
@@ -72,7 +72,7 @@ const AddSupplier = () => {
                     toast: true,
                     timer: 1500,
                 });
-                navigate("/supplier");
+                // navigate("/supplier");
             })
             .catch((errors) => {
                 setIsLoading(false);
@@ -112,20 +112,20 @@ const AddSupplier = () => {
                                                     <p>Company Name</p>
                                                     <input
                                                         className={
-                                                            errors.company_name != undefined
+                                                            errors.name != undefined
                                                                 ? "form-control mt-2 is-invalid"
                                                                 : "form-control mt-2"
                                                         }
                                                         type={"text"}
-                                                        name={"company_name"}
-                                                        value={input.company_name}
+                                                        name={"name"}
+                                                        value={input.name}
                                                         onChange={handleInput}
                                                         placeholder={"Enter supplier Company name"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
-                                                            {errors.company_name != undefined
-                                                                ? errors.company_name[0]
+                                                            {errors.name != undefined
+                                                                ? errors.name[0]
                                                                 : null}
                                                         </small>
                                                     </p>
@@ -354,17 +354,22 @@ const AddSupplier = () => {
                                             <div className="col-md-12">
                                                 <label className="w-100 mt-4">
                                                     <p>Select Area</p>
-                                                    <Select
+                                                    <select
                                                         className={
-                                                            errors.district_id != undefined
-                                                                ? "mt-2 is-invalid"
-                                                                : "mt-2"
+                                                            errors.area_id != undefined
+                                                                ? "form-select mt-2 is-invalid"
+                                                                : "form-select mt-2"
                                                         }
-                                                        defaultValue={input.area_id}
-                                                        onChange={(selected_option)=>handleAreaInput(selected_option, 'area_id')}
-                                                        isDisabled={Object.keys(areas).length < 1}
-                                                        options={areas}
-                                                    />
+                                                        name={"area_id"}
+                                                        value={input.area_id}
+                                                        onChange={handleInput}
+                                                        disabled={Object.keys(areas).length < 1}
+                                                    >
+                                                        <option>Select area</option>
+                                                        {areas.map((area, index) => (
+                                                            <option key={index} value={area.id}>{area.name}</option>
+                                                        ))}
+                                                    </select>
                                                     <p className={"login-error-msg"}>
                                                         <small>
                                                             {errors.area_id != undefined
