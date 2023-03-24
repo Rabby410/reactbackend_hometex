@@ -72,7 +72,11 @@ const AddSupplier = () => {
                     toast: true,
                     timer: 1500,
                 });
-                // navigate("/supplier");
+                if(res.data.flag){
+                }else{
+
+                    navigate("/suppliers");
+                }
             })
             .catch((errors) => {
                 setIsLoading(false);
@@ -213,7 +217,7 @@ const AddSupplier = () => {
                                                                 ? "form-control mt-2 is-invalid"
                                                                 : "form-control mt-2"
                                                         }
-                                                        name={"description"}
+                                                        name={"details"}
                                                         value={input.details}
                                                         onChange={handleInput}
                                                         placeholder={"Enter supplier details"}

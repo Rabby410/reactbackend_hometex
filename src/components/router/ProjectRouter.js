@@ -15,6 +15,7 @@ import SubcategoryList from "../modules/subCategory/SubcategoryList";
 import AddSupplier from "../modules/suppliers/AddSupplier";
 import SuppliersList from "../modules/suppliers/SuppliersList";
 import SupplierEdit from "../modules/suppliers/SupplierEdit";
+import ProductAttributes from "../modules/productAttribute/ProductAttributes";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/supplier/edit/:id",
         element: <SupplierEdit/>,
+      },
+      {
+        path: "/product-attributes",
+        element: <ProductAttributes/>,
       },
       {
         path: "/error-500",

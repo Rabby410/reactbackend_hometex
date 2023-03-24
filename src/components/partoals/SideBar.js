@@ -57,9 +57,9 @@ export default function SideBar() {
                                 <Link className="nav-link" to="/supplier/create">Add Supplier</Link>
                             </nav>
                         </div>
-                        <Link className="nav-link" to="tables.html">
+                        <Link className="nav-link" to="/product-attributes">
                             <div className="sb-nav-link-icon"><i className="fas fa-table"></i></div>
-                            Tables
+                            Product Attributes
                         </Link>
                     </div>
                 </div>
