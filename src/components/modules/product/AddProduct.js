@@ -142,7 +142,7 @@ const AddProduct = () => {
                 toast: true,
                 timer: 1500
             })
-            //navigate('/product')
+            navigate('/product/photo/'+res.data.product_id)
         }).catch(errors => {
             setIsLoading(false)
             if (errors.response.status == 422) {
