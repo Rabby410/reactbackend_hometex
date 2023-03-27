@@ -22,3 +22,63 @@
         }
     }
 }
+.search-area{
+    lable{
+        font-size: 14px;
+        color: $theme-color;
+        p{
+            margin-bottom: 5px;
+        }
+    }
+}
+
+.small-button{
+    border: none;
+    background: $theme-color;
+    border-radius: 5px;
+    padding: 2px 6px 1px 6px;
+    color: $white;
+    @include transition;
+    &:hover{
+        background: $theme-color-light;
+    }
+}
+.value-container-parent{
+    width: 312px;
+    display: flex;
+    flex-wrap: wrap;
+    .value-container{
+        color: $white;
+        width: 100px;
+        line-height: 30px;
+        font-weight: bolder;
+        position: relative;
+        background: $theme-color;
+        cursor: pointer;
+        margin: 2px;
+        text-align: center;
+        &:hover .value-buttons{
+            display: block;
+            @include transition;
+        }
+        .value-buttons{
+            @include center;
+            @include transition;
+            width: 100px;
+            display: none;
+            button{
+                line-height: 24px;
+                border: 0;
+                padding: 0 6px 0 6px;
+                font-size: 13px;
+                color: $white;
+                border-radius: 3px;
+                @include transition;
+                margin: 1px;
+                &:hover{
+                    color: black;
+                }
+            }
+        }
+    }
+}
