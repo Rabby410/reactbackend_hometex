@@ -96,6 +96,9 @@ label{
         vertical-align: middle;
     }
 }
+.product-table{
+    font-size: 12px;
+}
 .table-image{
     width: 75px;
     cursor: pointer;
@@ -128,4 +131,7 @@ label{
     .no-data-found{
         position: absolute;
     }
+}
+.w-40{
+    width: 40px;
 }

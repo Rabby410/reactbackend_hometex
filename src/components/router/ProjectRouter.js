@@ -19,6 +19,11 @@ import ProductAttributes from "../modules/productAttribute/ProductAttributes";
 import AddProduct from "../modules/product/AddProduct";
 import AddProductPhoto from "../modules/product/AddProductPhoto";
 import ProductList from "../modules/product/ProductList";
+import AddShop from "../modules/shop/AddShop";
+import ShopList from "../modules/shop/ShopList";
+import ShopEdit from "../modules/shop/ShopEdit";
+import AddSalesManger from "../modules/salesManager/AddSalesManger";
+import SalesManagerList from "../modules/salesManager/SalesManagerList";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -92,6 +97,26 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/product/photo/:id",
         element: <AddProductPhoto/>,
+      },
+      {
+        path: "/shop/edit/:id",
+        element: <ShopEdit/>,
+      },
+      {
+        path: "/shop/Create",
+        element: <AddShop/>,
+      },
+      {
+        path: "/shops",
+        element: <ShopList/>,
+      },
+      {
+        path: "/sales-manager/create",
+        element: <AddSalesManger/>,
+      },
+      {
+        path: "/sales-manager",
+        element: <SalesManagerList/>,
       },
       {
         path: "/error-500",

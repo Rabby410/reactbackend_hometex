@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 
-const AddSupplier = () => {
+const AddSalesManger = () => {
     const navigate = useNavigate();
     const [input, setInput] = useState({ status: 1 });
     const [errors, setErrors] = useState([]);
@@ -14,7 +14,13 @@ const AddSupplier = () => {
     const [divisions, setDivisions] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [areas, setAreas] = useState([]);
+    const [shops, setShops] = useState([]);
 
+    const getShops = () => {
+        axios.get(`${Constants.BASE_URL}/get-shop-list`).then(res => {
+                setShops(res.data)
+            })
+    }
     const getDivisions = () => {
         axios.get(`${Constants.BASE_URL}/divisions`).then(res => {
                 setDivisions(res.data)
@@ -48,19 +54,19 @@ const AddSupplier = () => {
     //     setInput((prevState) => ({...prevState,[name]: selected_option.value}))
     // }
 
-    const handleLogo = (e) => {
+    const handlePhoto = (e) => {
         let file = e.target.files[0];
         let reader = new FileReader();
         reader.onloadend = () => {
-            setInput((prevState) => ({ ...prevState, logo: reader.result }));
+            setInput((prevState) => ({ ...prevState, [e.target.name]: reader.result }));
         };
         reader.readAsDataURL(file);
     };
 
-    const handleSupplierCreate = () => {
+    const handleShopCreate = () => {
         setIsLoading(true);
         axios
-            .post(`${Constants.BASE_URL}/supplier`, input)
+            .post(`${Constants.BASE_URL}/sales-manager`, input)
             .then((res) => {
                 setIsLoading(false);
                 Swal.fire({
@@ -71,10 +77,8 @@ const AddSupplier = () => {
                     toast: true,
                     timer: 1500,
                 });
-                if(res.data.flag){
-                }else{
-
-                    navigate("/suppliers");
+                if(res.data.flag == undefined){
+                //    navigate("/sales-manager");
                 }
             })
             .catch((errors) => {
@@ -86,18 +90,18 @@ const AddSupplier = () => {
     };
     useEffect(() => {
         getDivisions()
+        getShops()
     }, []);
-
-    return (
-        <>
-            <Breadcrumb title={"Add Supplier"} />
+  return (
+    <>
+            <Breadcrumb title={"Add Sales Manager"} />
             <div className="row">
                 <div className="col-md-12">
                     <div className="card">
                         <div className="card-header">
                             <CardHeader
-                                title={"Add Supplier"}
-                                link={"/suppliers"}
+                                title={"Add Sales Manager"}
+                                link={"/sales-manager"}
                                 icon={"fa-list"}
                                 button_text={"List"}
                             />
@@ -107,12 +111,12 @@ const AddSupplier = () => {
                                 <div className="col-md-6">
                                     <div className="card">
                                         <div className="card-header">
-                                            <h5>Supplier Details</h5>
+                                            <h5>Sales Manager Details</h5>
                                         </div>
                                         <div className="card-body">
                                             <div className="col-md-12">
                                                 <label className="w-100">
-                                                    <p>Company Name</p>
+                                                    <p>Name</p>
                                                     <input
                                                         className={
                                                             errors.name != undefined
@@ -123,7 +127,7 @@ const AddSupplier = () => {
                                                         name={"name"}
                                                         value={input.name}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier Company name"}
+                                                        placeholder={"Enter Sales Manager name"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -135,7 +139,7 @@ const AddSupplier = () => {
                                                 </label>
                                             </div>
                                             <div className="col-md-12">
-                                                <label className="w-100">
+                                                <label className="w-100 mt-4">
                                                     <p>Phone</p>
                                                     <input
                                                         className={
@@ -147,7 +151,7 @@ const AddSupplier = () => {
                                                         name={"phone"}
                                                         value={input.phone}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier phone number"}
+                                                        placeholder={"Enter Sales Manager phone number"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -159,7 +163,31 @@ const AddSupplier = () => {
                                                 </label>
                                             </div>
                                             <div className="col-md-12">
-                                                <label className="w-100">
+                                                <label className="w-100 mt-4">
+                                                    <p>Password</p>
+                                                    <input
+                                                        className={
+                                                            errors.password != undefined
+                                                                ? "form-control mt-2 is-invalid"
+                                                                : "form-control mt-2"
+                                                        }
+                                                        type={"password"}
+                                                        name={"password"}
+                                                        value={input.password}
+                                                        onChange={handleInput}
+                                                        placeholder={"Enter Sales Manager password"}
+                                                    />
+                                                    <p className={"login-error-msg"}>
+                                                        <small>
+                                                            {errors.password != undefined
+                                                                ? errors.password[0]
+                                                                : null}
+                                                        </small>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div className="col-md-12">
+                                                <label className="w-100 mt-4">
                                                     <p>Email Address</p>
                                                     <input
                                                         className={
@@ -171,12 +199,64 @@ const AddSupplier = () => {
                                                         name={"email"}
                                                         value={input.email}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier email address"}
+                                                        placeholder={"Enter Sales Manager email address"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
                                                             {errors.email != undefined
                                                                 ? errors.email[0]
+                                                                : null}
+                                                        </small>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div className="col-md-12">
+                                                <label className="w-100 mt-4">
+                                                    <p>NID / Passport / Birth Certificate / Driving License No</p>
+                                                    <input
+                                                        className={
+                                                            errors.nid != undefined
+                                                                ? "form-control mt-2 is-invalid"
+                                                                : "form-control mt-2"
+                                                        }
+                                                        type={"text"}
+                                                        name={"nid"}
+                                                        value={input.nid}
+                                                        onChange={handleInput}
+                                                        placeholder={"Enter Sales Manager photo identification"}
+                                                    />
+                                                    <p className={"login-error-msg"}>
+                                                        <small>
+                                                            {errors.nid != undefined
+                                                                ? errors.nid[0]
+                                                                : null}
+                                                        </small>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div className="col-md-12">
+                                                <label className="w-100 mt-4">
+                                                    <p>Select Shop</p>
+                                                    <select
+                                                        className={
+                                                            errors.shop_id != undefined
+                                                                ? "form-select mt-2 is-invalid"
+                                                                : "form-select mt-2"
+                                                        }
+                                                        name={"shop_id"}
+                                                        value={input.shop_id}
+                                                        onChange={handleInput}
+                                                    >
+                                                        <option >Select Shop</option>
+                                                        {shops.map((shop, index)=>(
+
+                                                        <option value={shop.id}>{shop.name}</option>
+                                                        ))}
+                                                    </select>
+                                                    <p className={"login-error-msg"}>
+                                                        <small>
+                                                            {errors.shop_id != undefined
+                                                                ? errors.shop_id[0]
                                                                 : null}
                                                         </small>
                                                     </p>
@@ -207,56 +287,68 @@ const AddSupplier = () => {
                                                     </p>
                                                 </label>
                                             </div>
+                                            
                                             <div className="col-md-12">
                                                 <label className="w-100 mt-4">
-                                                    <p>Details</p>
-                                                    <textarea
-                                                        className={
-                                                            errors.details != undefined
-                                                                ? "form-control mt-2 is-invalid"
-                                                                : "form-control mt-2"
-                                                        }
-                                                        name={"details"}
-                                                        value={input.details}
-                                                        onChange={handleInput}
-                                                        placeholder={"Enter supplier details"}
-                                                    ></textarea>
-                                                    <p className={"login-error-msg"}>
-                                                        <small>
-                                                            {errors.details != undefined
-                                                                ? errors.details[0]
-                                                                : null}
-                                                        </small>
-                                                    </p>
-                                                </label>
-                                            </div>
-                                            <div className="col-md-12">
-                                                <label className="w-100 mt-4">
-                                                    <p>Logo</p>
+                                                    <p>Photo</p>
                                                     <input
                                                         className={
-                                                            errors.logo != undefined
+                                                            errors.photo != undefined
                                                                 ? "form-control mt-2 is-invalid"
                                                                 : "form-control mt-2"
                                                         }
                                                         type={"file"}
-                                                        name={"logo"}
-                                                        onChange={handleLogo}
-                                                        placeholder={"Enter supplier logo"}
+                                                        name={"photo"}
+                                                        onChange={handlePhoto}
+                                                        placeholder={"Enter Sales Manager picture"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
-                                                            {errors.logo != undefined ? errors.logo[0] : null}
+                                                            {errors.photo != undefined ? errors.photo[0] : null}
                                                         </small>
                                                     </p>
                                                 </label>
-                                                {input.logo != undefined ? (
+                                                {input.photo != undefined ? (
                                                     <div className="row">
                                                         <div className="col-6">
-                                                            <div className="logo-preview mt-3">
+                                                            <div className="photo-preview mt-3">
                                                                 <img
-                                                                    alt={"Hometex supplier"}
-                                                                    src={input.logo}
+                                                                    alt={"Hometex Sales Manager"}
+                                                                    src={input.photo}
+                                                                    className={"img-thumbnail aspect-one"}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : null}
+                                            </div>
+                                            <div className="col-md-12">
+                                                <label className="w-100 mt-4">
+                                                    <p>NID / Passport / Birth Certificate / Driving License</p>
+                                                    <input
+                                                        className={
+                                                            errors.nid_photo != undefined
+                                                                ? "form-control mt-2 is-invalid"
+                                                                : "form-control mt-2"
+                                                        }
+                                                        type={"file"}
+                                                        name={"nid_photo"}
+                                                        onChange={handlePhoto}
+                                                        placeholder={"Enter Sales Manager picture"}
+                                                    />
+                                                    <p className={"login-error-msg"}>
+                                                        <small>
+                                                            {errors.nid_photo != undefined ? errors.nid_photo[0] : null}
+                                                        </small>
+                                                    </p>
+                                                </label>
+                                                {input.photo != undefined ? (
+                                                    <div className="row">
+                                                        <div className="col-6">
+                                                            <div className="photo-preview mt-3">
+                                                                <img
+                                                                    alt={"Hometex Sales Manager"}
+                                                                    src={input.nid_photo}
                                                                     className={"img-thumbnail aspect-one"}
                                                                 />
                                                             </div>
@@ -270,7 +362,7 @@ const AddSupplier = () => {
                                 <div className="col-md-6">
                                     <div className="card">
                                         <div className="card-header">
-                                            <h5>Supplier Address</h5>
+                                            <h5>Sales Manager Address</h5>
                                         </div>
                                         <div className="card-body">
                                             <div className="col-md-12">
@@ -288,7 +380,7 @@ const AddSupplier = () => {
                                                         name={"address"}
                                                         value={input.address}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier address"}
+                                                        placeholder={"Enter Sales Manager address"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -398,12 +490,35 @@ const AddSupplier = () => {
                                                         name={"landmark"}
                                                         value={input.landmark}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier landmark"}
+                                                        placeholder={"Enter Sales Manager  landmark"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
                                                             {errors.landmark != undefined
                                                                 ? errors.landmark[0]
+                                                                : null}
+                                                        </small>
+                                                    </p>
+                                                </label>
+                                            </div>
+                                            <div className="col-md-12">
+                                                <label className="w-100 mt-4">
+                                                    <p>BIO</p>
+                                                    <textarea
+                                                        className={
+                                                            errors.bio != undefined
+                                                                ? "form-control mt-2 is-invalid"
+                                                                : "form-control mt-2"
+                                                        }
+                                                        name={"bio"}
+                                                        value={input.bio}
+                                                        onChange={handleInput}
+                                                        placeholder={"Enter Sales Manager bio data"}
+                                                    ></textarea>
+                                                    <p className={"login-error-msg"}>
+                                                        <small>
+                                                            {errors.bio != undefined
+                                                                ? errors.bio[0]
                                                                 : null}
                                                         </small>
                                                     </p>
@@ -419,12 +534,12 @@ const AddSupplier = () => {
                                         <div className="col-md-4">
                                             <div className="d-grid mt-4">
                                                 <button
-                                                    onClick={handleSupplierCreate}
+                                                    onClick={handleShopCreate}
                                                     className={"btn theme-button"}
                                                     dangerouslySetInnerHTML={{
                                                         __html: isLoading
-                                                            ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add supplier...'
-                                                            : "Add supplier",
+                                                            ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Shop...'
+                                                            : "Add Shop",
                                                     }}
                                                 />
                                             </div>
@@ -437,7 +552,7 @@ const AddSupplier = () => {
                 </div>
             </div>
         </>
-    );
-};
+  )
+}
 
-export default AddSupplier;
+export default AddSalesManger

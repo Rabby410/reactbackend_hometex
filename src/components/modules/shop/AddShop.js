@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 
-const AddSupplier = () => {
+const AddShop = () => {
     const navigate = useNavigate();
     const [input, setInput] = useState({ status: 1 });
     const [errors, setErrors] = useState([]);
@@ -57,10 +57,10 @@ const AddSupplier = () => {
         reader.readAsDataURL(file);
     };
 
-    const handleSupplierCreate = () => {
+    const handleShopCreate = () => {
         setIsLoading(true);
         axios
-            .post(`${Constants.BASE_URL}/supplier`, input)
+            .post(`${Constants.BASE_URL}/shop`, input)
             .then((res) => {
                 setIsLoading(false);
                 Swal.fire({
@@ -71,10 +71,8 @@ const AddSupplier = () => {
                     toast: true,
                     timer: 1500,
                 });
-                if(res.data.flag){
-                }else{
-
-                    navigate("/suppliers");
+                if(res.data.flag == undefined){
+                   navigate("/shops");
                 }
             })
             .catch((errors) => {
@@ -90,14 +88,14 @@ const AddSupplier = () => {
 
     return (
         <>
-            <Breadcrumb title={"Add Supplier"} />
+            <Breadcrumb title={"Add Shop"} />
             <div className="row">
                 <div className="col-md-12">
                     <div className="card">
                         <div className="card-header">
                             <CardHeader
-                                title={"Add Supplier"}
-                                link={"/suppliers"}
+                                title={"Add Shop"}
+                                link={"/shops"}
                                 icon={"fa-list"}
                                 button_text={"List"}
                             />
@@ -107,12 +105,12 @@ const AddSupplier = () => {
                                 <div className="col-md-6">
                                     <div className="card">
                                         <div className="card-header">
-                                            <h5>Supplier Details</h5>
+                                            <h5>Shop Details</h5>
                                         </div>
                                         <div className="card-body">
                                             <div className="col-md-12">
                                                 <label className="w-100">
-                                                    <p>Company Name</p>
+                                                    <p>Shop Name</p>
                                                     <input
                                                         className={
                                                             errors.name != undefined
@@ -123,7 +121,7 @@ const AddSupplier = () => {
                                                         name={"name"}
                                                         value={input.name}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier Company name"}
+                                                        placeholder={"Enter Shop name"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -147,7 +145,7 @@ const AddSupplier = () => {
                                                         name={"phone"}
                                                         value={input.phone}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier phone number"}
+                                                        placeholder={"Enter Shop phone number"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -171,7 +169,7 @@ const AddSupplier = () => {
                                                         name={"email"}
                                                         value={input.email}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier email address"}
+                                                        placeholder={"Enter Shop email address"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -219,7 +217,7 @@ const AddSupplier = () => {
                                                         name={"details"}
                                                         value={input.details}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier details"}
+                                                        placeholder={"Enter Shop details"}
                                                     ></textarea>
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -242,7 +240,7 @@ const AddSupplier = () => {
                                                         type={"file"}
                                                         name={"logo"}
                                                         onChange={handleLogo}
-                                                        placeholder={"Enter supplier logo"}
+                                                        placeholder={"Enter Shop logo"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -255,7 +253,7 @@ const AddSupplier = () => {
                                                         <div className="col-6">
                                                             <div className="logo-preview mt-3">
                                                                 <img
-                                                                    alt={"Hometex supplier"}
+                                                                    alt={"Hometex Shop"}
                                                                     src={input.logo}
                                                                     className={"img-thumbnail aspect-one"}
                                                                 />
@@ -270,7 +268,7 @@ const AddSupplier = () => {
                                 <div className="col-md-6">
                                     <div className="card">
                                         <div className="card-header">
-                                            <h5>Supplier Address</h5>
+                                            <h5>Shop Address</h5>
                                         </div>
                                         <div className="card-body">
                                             <div className="col-md-12">
@@ -288,7 +286,7 @@ const AddSupplier = () => {
                                                         name={"address"}
                                                         value={input.address}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier address"}
+                                                        placeholder={"Enter Shop address"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -398,7 +396,7 @@ const AddSupplier = () => {
                                                         name={"landmark"}
                                                         value={input.landmark}
                                                         onChange={handleInput}
-                                                        placeholder={"Enter supplier landmark"}
+                                                        placeholder={"Enter Shop landmark"}
                                                     />
                                                     <p className={"login-error-msg"}>
                                                         <small>
@@ -419,12 +417,12 @@ const AddSupplier = () => {
                                         <div className="col-md-4">
                                             <div className="d-grid mt-4">
                                                 <button
-                                                    onClick={handleSupplierCreate}
+                                                    onClick={handleShopCreate}
                                                     className={"btn theme-button"}
                                                     dangerouslySetInnerHTML={{
                                                         __html: isLoading
-                                                            ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add supplier...'
-                                                            : "Add supplier",
+                                                            ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Shop...'
+                                                            : "Add Shop",
                                                     }}
                                                 />
                                             </div>
@@ -440,4 +438,5 @@ const AddSupplier = () => {
     );
 };
 
-export default AddSupplier;
+
+export default AddShop
