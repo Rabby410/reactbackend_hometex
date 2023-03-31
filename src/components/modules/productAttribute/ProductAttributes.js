@@ -296,9 +296,9 @@ const ProductAttributes = () => {
                                                                 </p>
                                                             </td>
                                                             <td>
-                                                                {/* <button className={"btn btn-sm my-1 btn-info"}><i class="fa-solid fa-eye"></i></button> */}
-                                                                <button onClick={()=>handleModel(attribute)} className={"btn btn-sm my-1 mx-1 btn-warning"}><i class="fa-solid fa-pen-to-square"></i></button>
-                                                                <button onClick={() => handleAttributeDelete(attribute.id)} className={"btn btn-sm my-1 btn-danger"}><i class="fa-solid fa-trash"></i></button>
+                                                                {/* <button className={"btn btn-sm my-1 btn-info"}><i className="fa-solid fa-eye"></i></button> */}
+                                                                <button onClick={()=>handleModel(attribute)} className={"btn btn-sm my-1 mx-1 btn-warning"}><i className="fa-solid fa-pen-to-square"></i></button>
+                                                                <button onClick={() => handleAttributeDelete(attribute.id)} className={"btn btn-sm my-1 btn-danger"}><i className="fa-solid fa-trash"></i></button>
                                                             </td>
                                                         </tr>
                                                     )) : <NoDataFound />}
@@ -321,8 +321,8 @@ const ProductAttributes = () => {
                                     nextPageText={"Next"}
                                     prevPageText={"Previous"}
                                     lastPageText={"Last"}
-                                    itemClass={"page-item"}
-                                    linkClass={"page-link"}
+                                    itemclassName={"page-item"}
+                                    linkclassName={"page-link"}
                                 />
                             </nav>
                         </div>
@@ -366,7 +366,7 @@ const ProductAttributes = () => {
                             <p className={'login-error-msg'}><small>{errors.status != undefined ? errors.status[0] : null}</small></p>
                         </label>
                         <button onClick={isEditMode ? ()=> handleAttributeUpdate(input.id) :handleAttributeCreate} className={"btn theme-button mt-3"}
-                            dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : `${modalTitle} Attribute` }}
+                            dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : `${modalTitle} Attribute` }}
                         />
                     </Modal.Body>
             </Modal>
@@ -407,7 +407,7 @@ const ProductAttributes = () => {
                             <p className={'login-error-msg'}><small>{errors.status != undefined ? errors.status[0] : null}</small></p>
                         </label>
                         <button onClick={isEditMode ? handleValueEdit : handleAttributeValueCreate} className={"btn theme-button mt-3"}
-                            dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : `${valueModalTitle} Attribute Value` }}
+                            dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : `${valueModalTitle} Attribute Value` }}
                         />
                     </Modal.Body>
             </Modal>

@@ -115,7 +115,7 @@ const AddProductPhoto = () => {
                   </div>
                   <div className='col-md-3 tex-end'>
                     <button onClick={handlePhotoUpload} className={"btn theme-button"} disabled={isLoading}
-                      dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : 'Upload Photo' }}
+                      dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : 'Upload Photo' }}
                     />
                   </div>
                 </div>

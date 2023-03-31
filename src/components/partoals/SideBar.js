@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import GlobalFunction from '../../assets/GlobalFunction'
 
 export default function SideBar() {
     return (
@@ -21,11 +22,20 @@ export default function SideBar() {
                         <div className="collapse" id="products" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
                                 <Link className="nav-link" to="/products">Products List</Link>
-                                <Link className="nav-link" to="/product/create">Add Product</Link>
-                                <Link className="nav-link" to="/product/trash">Trash Products</Link>
+                                {
+                                    GlobalFunction.isAdmin() &&
+                                    <>
+                                      <Link className="nav-link" to="/product/create">Add Product</Link>
+                                        <Link className="nav-link" to="/product/trash">Trash Products</Link>
+                                    </>
+                                }
                             </nav>
                         </div>
-                        <div className="sb-sidenav-menu-heading">Shops</div>
+                        {
+                            GlobalFunction.isAdmin() &&
+
+                            <>
+                            <div className="sb-sidenav-menu-heading">Shops</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#shop" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
                             Shop
@@ -33,7 +43,7 @@ export default function SideBar() {
                         </Link>
                         <div className="collapse" id="shop" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
-                                <Link className="nav-link" to="/shop">Shop List</Link>
+                                <Link className="nav-link" to="/shops">Shop List</Link>
                                 <Link className="nav-link" to="/shop/create">Add Shop</Link>
                             </nav>
                         </div>
@@ -97,6 +107,23 @@ export default function SideBar() {
                             <div className="sb-nav-link-icon"><i className="fas fa-table"></i></div>
                             Product Attributes
                         </Link>
+                            </>
+                        }
+                        {/* POS start */}
+                        <div className="sb-sidenav-menu-heading">Pos System</div>
+                        <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#order" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
+                            Orders
+                            <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
+                        </Link>
+                        <div className="collapse" id="order" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav className="sb-sidenav-menu-nested nav">
+                                <Link className="nav-link" to="/orders">Order List</Link>
+                                <Link className="nav-link" to="/orders/create">Create Order</Link>
+                            </nav>
+                        </div>
+                        {/* POS end */}
+                        
                     </div>
                 </div>
                 <div className="sb-sidenav-footer bg-theme text-silver">

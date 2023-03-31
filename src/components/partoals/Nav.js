@@ -33,7 +33,6 @@ export default function Nav() {
                 axios(config)
                 .then(function (response) {
                     GlobalFunction.logOut();
-                    window.location.reload();
                 })
                 .catch(function (error) {
                   console.log(error);

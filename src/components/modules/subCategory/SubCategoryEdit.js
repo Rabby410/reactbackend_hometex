@@ -207,7 +207,7 @@ const getCategory = () =>{
                     <div className="col-md-4">
                       <div className="d-grid mt-4">
                         <button onClick={handleCategoryUpdate} className={"btn theme-button"}
-                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update Sub Category...' : 'Update Sub Category' }}
+                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update Sub Category...' : 'Update Sub Category' }}
                         />
                       </div>
                     </div>

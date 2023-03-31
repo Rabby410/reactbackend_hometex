@@ -622,7 +622,7 @@ const AddProduct = () => {
                                         <div className="col-md-4">
                                             <div className="d-grid mt-4">
                                                 <button className={'btn theme-button'} onClick={handleProductCreate}
-                                                        dangerouslySetInnerHTML={{__html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : 'Add Product'}}/>
+                                                        dangerouslySetInnerHTML={{__html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : 'Add Product'}}/>
                                             </div>
                                         </div>
                                     </div>

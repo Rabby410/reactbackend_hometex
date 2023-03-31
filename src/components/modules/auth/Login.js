@@ -18,6 +18,7 @@ export default function Login() {
             localStorage.name = res.data.name
             localStorage.photo = res.data.photo
             localStorage.token = res.data.token
+            localStorage.role = res.data.role
             setIsLoading(false)
             window.location.reload()
         }).catch(errors =>
@@ -60,11 +61,25 @@ export default function Login() {
                 value={input.password} 
                 onChange={handleInput} 
                 />
-            <p className={'login-error-msg'}><small>{errors.password != undefined ? errors.password[0]: null}</small></p>
+            <p className={'login-error-msg'}><small>{errors.user_type != undefined ? errors.password[0]: null}</small></p>
+            </label>
+            <label className={'w-100 mt-4'}>
+                <p>Login As</p>
+                <select 
+                className={errors.user_type != undefined ? 'is-invalid form-control mt-2' : 'form-select mt-2'}
+                name={'user_type'} 
+                value={input.user_type} 
+                onChange={handleInput} 
+                >
+                    <option>Select User Type</option>
+                    <option value={1}>Admin</option>
+                    <option value={2}>sales Manager</option>
+                </select>
+            <p className={'login-error-msg'}><small>{errors.user_type != undefined ? errors.user_type[0]: null}</small></p>
             </label>
             <div className="d-grid mt-4">
                 <button onClick={handleLogin} className={'brn btn-outline-warning'} 
-                dangerouslySetInnerHTML={{ __html: isLoading ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Login...':'Login' }} />
+                dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Login...':'Login' }} />
             </div>
         </div>
 

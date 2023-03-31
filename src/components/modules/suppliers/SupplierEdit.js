@@ -430,7 +430,7 @@ const SupplierEdit = () => {
                                                     className={"btn theme-button"}
                                                     dangerouslySetInnerHTML={{
                                                         __html: isLoading
-                                                            ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update supplier...'
+                                                            ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update supplier...'
                                                             : "Update supplier",
                                                     }}
                                                 />

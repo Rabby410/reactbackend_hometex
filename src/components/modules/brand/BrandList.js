@@ -173,7 +173,7 @@ function BrandList() {
                                             onClick={() => getCategories(1)}
                                             className={"btn theme-button"}
                                         >
-                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                            <i className="fa-solid fa-magnifying-glass"></i>
                                             Search
                                         </button>
                                     </div>
@@ -233,9 +233,9 @@ function BrandList() {
                                                         onClick={() =>
                                                             handleDetailsModal(brand)
                                                         }
-                                                        className={"btn btn-sm my-1 btn-info"}><i class="fa-solid fa-eye"></i></button>
-                                                    <Link to={`/brand/edit/${brand.id}`}><button className={"btn btn-sm my-1 mx-1 btn-warning"}><i class="fa-solid fa-pen-to-square"></i></button></Link>
-                                                    <button onClick={() => handlebrandDelete(brand.id)} className={"btn btn-sm my-1 btn-danger"}><i class="fa-solid fa-trash"></i></button>
+                                                        className={"btn btn-sm my-1 btn-info"}><i className="fa-solid fa-eye"></i></button>
+                                                    <Link to={`/brand/edit/${brand.id}`}><button className={"btn btn-sm my-1 mx-1 btn-warning"}><i className="fa-solid fa-pen-to-square"></i></button></Link>
+                                                    <button onClick={() => handlebrandDelete(brand.id)} className={"btn btn-sm my-1 btn-danger"}><i className="fa-solid fa-trash"></i></button>
                                                 </td>
                                             </tr>
                                         )): <NoDataFound/>}
@@ -271,8 +271,8 @@ function BrandList() {
                                     nextPageText={"Next"}
                                     prevPageText={"Previous"}
                                     lastPageText={"Last"}
-                                    itemClass={"page-item"}
-                                    linkClass={"page-link"}
+                                    itemclassName={"page-item"}
+                                    linkclassName={"page-link"}
                                 />
                             </nav>
                         </div>

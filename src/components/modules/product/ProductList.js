@@ -157,7 +157,7 @@ const ProductList = () => {
                                     onClick={() => getProducts(1)}
                                     className={"btn theme-button"}
                                 >
-                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <i className="fa-solid fa-magnifying-glass"></i>
                                     Search
                                 </button>
                             </div>
@@ -198,6 +198,7 @@ const ProductList = () => {
                                             </p>
                                         </td>
                                         <td>
+                                            <p className={"text-theme"}><strong>Sale Price: {product.sell_price.price} {product.sell_price.symbol} | Discount: {product.sell_price.discount} {product.sell_price.symbol}</strong></p>
                                             <p className={"text-theme"}>Price: {product.price}</p>
                                             <p className={"text-success"}>Discount : {product.discount_percent}  + {product.discount_fixed}</p>
                                             <p className={"text-theme"}>Cost: {product.cost}</p>
@@ -232,9 +233,9 @@ const ProductList = () => {
                                         <td>
                                             <div className={"w-40"}>
                                             <button
-                                                className={"btn btn-sm btn-info"}><i class="fa-solid fa-eye"></i></button>
-                                            <Link to={`/product/edit/${product.id}`}><button className={"btn btn-sm my-1 btn-warning"}><i class="fa-solid fa-pen-to-square"></i></button></Link>
-                                            <button onClick={() => handleProductDelete(product.id)} className={"btn btn-sm btn-danger"}><i class="fa-solid fa-trash"></i></button>
+                                                className={"btn btn-sm btn-info"}><i className="fa-solid fa-eye"></i></button>
+                                            <Link to={`/product/edit/${product.id}`}><button className={"btn btn-sm my-1 btn-warning"}><i className="fa-solid fa-pen-to-square"></i></button></Link>
+                                            <button onClick={() => handleProductDelete(product.id)} className={"btn btn-sm btn-danger"}><i className="fa-solid fa-trash"></i></button>
                                         
                                             </div>
                                             </td>
@@ -258,8 +259,8 @@ const ProductList = () => {
                             nextPageText={"Next"}
                             prevPageText={"Previous"}
                             lastPageText={"Last"}
-                            itemClass={"page-item"}
-                            linkClass={"page-link"}
+                            itemclassName={"page-item"}
+                            linkclassName={"page-link"}
                         />
                     </nav>
                 </div>

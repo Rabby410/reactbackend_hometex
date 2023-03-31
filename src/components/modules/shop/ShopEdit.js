@@ -430,7 +430,7 @@ const ShopEdit = () => {
                                             className={"btn theme-button"}
                                             dangerouslySetInnerHTML={{
                                                 __html: isLoading
-                                                    ? '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update shop...'
+                                                    ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Update shop...'
                                                     : "Update shop",
                                             }}
                                         />
