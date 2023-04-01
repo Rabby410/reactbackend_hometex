@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import Logo from './../../assets/img/hometex-logo.png';
 import Constants from '../../Constants';
 import GlobalFunction from './../../assets/GlobalFunction';
+import { Link } from 'react-router-dom';
 
 export default function Nav() {
 
+  const [branch, setBranch] = useState({})
     const handleLogout = () => {
         Swal.fire({
             title: 'Are you sure?',
@@ -46,18 +48,25 @@ export default function Nav() {
        $('body').toggleClass('sb-sidenav-toggled') 
     }
 
-
+    useEffect(()=>{
+      if(localStorage.branch != undefined){
+        setBranch(JSON.parse(localStorage.branch))
+    
+      }
+    },[])
   return (
     <nav className="sb-topnav navbar navbar-expand navbar-dark bg-theme">
             {/* <!-- Navbar Brand--> */}
-            <a className="navbar-brand ps-3" href="index.html"><img src={Logo} alt={'Hometex Bangladesh'} className={'img-thumbnail w-25'}/></a>
+            <Link className="navbar-brand ps-3" to='/'>
+            <img src={Logo} alt={'Hometex Bangladesh'} className={'img-thumbnail w-25'} />
+            </Link>
             {/* <!-- Sidebar Toggle--> */}
             <button onClick={handleSidebar} className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i className="fas fa-bars"></i></button>
             
             
             {/* <!-- Navbar--> */}
             <ul className="navbar-nav align-items-center ms-auto me-3 me-lg-4">
-            <p className='text-white'>{localStorage.name != undefined ? localStorage.name: null}</p>
+            <p className='text-white'><strong>{branch != undefined ? branch.name + ' | ': ''}</strong>{localStorage.name != undefined ? localStorage.name: null}</p>
                 <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i className="fas fa-user fa-fw"></i></a>
                     <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

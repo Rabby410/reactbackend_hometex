@@ -117,6 +117,50 @@
 }
 .details-area{
     position: absolute;
-    right: 0;
+    right: 7px;
     top: 5px;
+}
+.customer-list{
+margin-top: 5px;
+    li{
+        list-style: none;
+        border-bottom: 1px solid silver;
+        padding: 3px 0;
+        cursor: pointer;
+        &:hover{
+            color: $theme-color;
+            background: #9acd3236;
+        }
+    }
+}
+.quantity-button{
+    border: none;
+    background: $theme-color;
+    border-radius: 5px;
+    padding: 0 8px;
+    color: $white;
+    margin: 0 10px;
+    &:disabled{
+        background: $theme-color-disabled;
+    }
+}
+.order-product-container{
+    background: #f4e8ff;
+    border-radius: 5px;
+    margin: 5px 0;
+    border: 1px solid #e2c9f9;
+    box-shadow: 0 0 4px silver;
+}
+.order-details-confirmation{
+    h4{
+        color: $theme-color;
+    }
+    p{
+        strong{
+            color: $theme-color;
+        }
+        address{
+            font-size: 14px;
+        }
+    }
 }
