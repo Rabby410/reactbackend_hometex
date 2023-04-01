@@ -20,8 +20,17 @@ const OrderCreate = () => {
   const [customerInput, setCustomerInput] = useState('')
   const [customers, setCustomers] = useState([])
 
-  const [modalShow, setModalShow] = React.useState(false);
-  const [showOrderConfirmationModal, setShowOrderConfirmationModal] = React.useState(false);
+  const [modalShow, setModalShow] = useState(false);
+  const [showOrderConfirmationModal, setShowOrderConfirmationModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState([]);
+
+  const getPaymentMethod = () =>{
+    axios
+    .get(
+      `${Constants.BASE_URL}/get-payment-methods`).then((res) => {
+        setPaymentMethod(res.data);
+      });
+  }
 
 
 
@@ -40,9 +49,21 @@ const OrderCreate = () => {
     pay_able: 0,
     customer: '',
     customer_id: 0,
+    paid_amount: 0,
+    due_amount: 0,
+    payment_method_id: 1,
   });
 
   const [order, setOrder] = useState({})
+
+  const handleOrderPlace= () => {
+    setIsLoading(true);
+    axios
+      .post(
+        `${Constants.BASE_URL}/order`, {carts: carts, 'orderSummary': orderSummary}).then((res) => {
+          setIsLoading(false);
+        });
+  }
 
   const selectCustomer = (customer) => {
     setOrder(prevState => ({ ...prevState, customer_id: customer.id }))
@@ -87,7 +108,6 @@ const OrderCreate = () => {
 
   const handleCustomerSearch = (e) => {
     setCustomerInput(e.target.value)
-
   }
 
   const handleDecrease = (id) => {
@@ -122,6 +142,10 @@ const OrderCreate = () => {
         });
   }
 
+  // useEffect(()=>{
+  //   getCustomer()
+  // },[customerInput])
+
   const handleInput = (e) => {
     setInput((prevState) => ({
       ...prevState,
@@ -152,6 +176,7 @@ const OrderCreate = () => {
     let amount = 0
     let discount = 0
     let pay_able = 0
+    let paid_amount = 0
     Object.keys(carts).map((key) => {
       items +=carts[key].quantity
       amount += carts[key].original_price * carts[key].quantity
@@ -163,10 +188,26 @@ const OrderCreate = () => {
       amount: amount,
       discount: discount,
       pay_able: pay_able,
+      paid_amount: pay_able
     }))
   }
+
+  const handleOrderSummaryInput = (e) =>{
+    if (e.target.name == 'paid_amount' && orderSummary.pay_able >= e.target.value){
+      setOrderSummary(prevState => ({...prevState, 
+        paid_amount: e.target.value,
+        due_amount: orderSummary.pay_able - e.target.value,
+      }))
+    }else if(e.target.name == 'payment_method_id'){
+      setOrderSummary(prevState => ({...prevState,
+        payment_method_id: e.target.value,
+      }))
+    }
+  }
+
   useEffect(() => {
     getProducts();
+    getPaymentMethod();
   }, []);
   useEffect(() => {
     calculateOrderSummery()
@@ -325,7 +366,7 @@ const OrderCreate = () => {
                         ))}
                       </ul>
                       <div className="d-grid mt-4">
-                        <button onClick={() => setShowOrderConfirmationModal(true)} className={"btn theme-button"}>Place Order</button>
+                        <button disabled={orderSummary.items == 0 || orderSummary.customer_id == 0} onClick={() => setShowOrderConfirmationModal(true)} className={"btn theme-button"}>Place Order</button>
 
                       </div>
                     </div>
@@ -344,6 +385,12 @@ const OrderCreate = () => {
       <ShowOrderConfirmation 
       show={showOrderConfirmationModal}
       onHide={() => setShowOrderConfirmationModal(false)}
+      order_summary={orderSummary}
+      carts={carts}
+      is_loading={isLoading}
+      handleOrderPlace={handleOrderPlace}
+      handleOrderSummaryInput={handleOrderSummaryInput}
+      paymentMethod={paymentMethod}
       />
     </>
   );
