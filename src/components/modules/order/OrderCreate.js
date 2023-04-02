@@ -24,13 +24,17 @@ const OrderCreate = () => {
   const [showOrderConfirmationModal, setShowOrderConfirmationModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState([]);
 
-  const getPaymentMethod = () =>{
-    axios
-    .get(
-      `${Constants.BASE_URL}/get-payment-methods`).then((res) => {
-        setPaymentMethod(res.data);
-      });
+  const getPaymentMethod = () => {
+    const token = localStorage.getItem('token');
+    axios.get(`${Constants.BASE_URL}/get-payment-methods`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then((res) => {
+      setPaymentMethod(res.data);
+    });
   }
+  
 
 
 
@@ -58,12 +62,28 @@ const OrderCreate = () => {
 
   const handleOrderPlace= () => {
     setIsLoading(true);
+    const token = localStorage.getItem('token');
     axios
       .post(
-        `${Constants.BASE_URL}/order`, {carts: carts, 'orderSummary': orderSummary}).then((res) => {
+        `${Constants.BASE_URL}/order`, 
+        {carts: carts, 'orderSummary': orderSummary},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      )
+      .then((res) => {
           setIsLoading(false);
-        });
-  }
+          // handle success response here
+      })
+      .catch((error) => {
+          setIsLoading(false);
+          console.log(error);
+          // handle error here, e.g. set an error state or display an error message
+      });
+}
+
 
   const selectCustomer = (customer) => {
     setOrder(prevState => ({ ...prevState, customer_id: customer.id }))
@@ -134,13 +154,20 @@ const OrderCreate = () => {
   }
 
   const getCustomer = () => {
+    setIsLoading(true);
+    const token = localStorage.getItem('token');
     axios
       .get(
-        `${Constants.BASE_URL}/customer?&search=${customerInput}`).then((res) => {
+        `${Constants.BASE_URL}/customer?&search=${customerInput}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then((res) => {
           setCustomers(res.data);
           setIsLoading(false);
         });
   }
+
 
   // useEffect(()=>{
   //   getCustomer()
@@ -155,9 +182,15 @@ const OrderCreate = () => {
 
   const getProducts = (pageNumber = 1) => {
     setIsLoading(true);
+    const token = localStorage.getItem('token');
     axios
       .get(
-        `${Constants.BASE_URL}/product?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`
+        `${Constants.BASE_URL}/product?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
       .then((res) => {
         setProducts(res.data.data);
@@ -168,6 +201,7 @@ const OrderCreate = () => {
         setIsLoading(false);
       });
   };
+
 
 
   const calculateOrderSummery = () =>

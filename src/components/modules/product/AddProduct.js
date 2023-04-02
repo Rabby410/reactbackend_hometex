@@ -75,36 +75,65 @@ const AddProduct = () => {
         }))
     }
     const getAttributes = () => {
-        axios.get(`${Constants.BASE_URL}/get-attribute-list`).then(res => {
-            setAttributes(res.data)
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/get-attribute-list`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(res => {
+          setAttributes(res.data)
         })
-    }
-    const getSuppliers = () => {
-        axios.get(`${Constants.BASE_URL}/get-supplier-list`).then(res => {
-            setSuppliers(res.data)
+      }
+      
+      const getSuppliers = () => {
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/get-supplier-list`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(res => {
+          setSuppliers(res.data)
         })
-    }
+      }
+      
     const getCountries = () => {
         axios.get(`${Constants.BASE_URL}/get-country-list`).then(res => {
             setCountries(res.data)
         })
     }
     const getCategories = () => {
-        axios.get(`${Constants.BASE_URL}/get-category-list`).then(res => {
-            setCategories(res.data)
-        })
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/get-category-list`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(res => {
+          setCategories(res.data);
+        });
+      }
+      const getBrands = () => {
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/get-brand-list`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(res => {
+            setBrands(res.data);
+        });
     }
-    const getBrands = () => {
-        axios.get(`${Constants.BASE_URL}/get-brand-list`).then(res => {
-            setBrands(res.data)
-        })
-    }
+    
 
     const getSubCategories = (category_id) => {
-        axios.get(`${Constants.BASE_URL}/get-sub-category-list/${category_id}`).then(res => {
-            setSubCategories(res.data)
-        })
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/get-sub-category-list/${category_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(res => {
+            setSubCategories(res.data);
+        });
     }
+    
 
     const handleInput = (e) => {
         if (e.target.name == 'name') {
@@ -131,9 +160,14 @@ const AddProduct = () => {
         reader.readAsDataURL(file)
     }
     const handleProductCreate = () => {
-        setIsLoading(true)
-        axios.post(`${Constants.BASE_URL}/product`, input).then(res => {
-            setIsLoading(false)
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
+        axios.post(`${Constants.BASE_URL}/product`, input, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(res => {
+            setIsLoading(false);
             Swal.fire({
                 position: 'top-end',
                 icon: res.data.cls,
@@ -146,12 +180,13 @@ const AddProduct = () => {
                 navigate('/product/photo/'+res.data.product_id)
             }
         }).catch(errors => {
-            setIsLoading(false)
+            setIsLoading(false);
             if (errors.response.status == 422) {
                 setErrors(errors.response.data.errors)
             }
         })
     }
+    
 
 
     useEffect(() => {

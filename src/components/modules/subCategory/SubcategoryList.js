@@ -20,7 +20,7 @@ const SubcategoryList = () => {
     });
 
     const [itemsCountsPerPage, setItemsCountPerPage] = useState(0);
-    const [toltalCountsPerPage, setTotlaCountPerPage] = useState(1);
+    const [totalCountsPerPage, setTotalCountPerPage] = useState(1);
     const [startFrom, setStartFrom] = useState(1);
     const [activePage, setActivePage] = useState(1);
 
@@ -30,7 +30,7 @@ const SubcategoryList = () => {
     const [modalPhoto, setModalPhoto] = useState("");
     const [isLoading, setIsLoading] = useState(false)
 
-    const [categories, setCategories] = useState([]);
+    const [subCategories, setSubCategories] = useState([]);
 
     const handleInput = (e) => {
         setInput((prevState) => ({
@@ -39,19 +39,35 @@ const SubcategoryList = () => {
         }));
     };
 
-    const getCategories = (pageNumber = 1) => {
-        setIsLoading(true)
-        axios
-            .get(`${Constants.BASE_URL}/sub-category?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
+    const getSubCategories = (pageNumber = 1) => {
+        const token = localStorage.getItem('token');
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${Constants.BASE_URL}/sub-category?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            }
+        };
+    
+        setIsLoading(true);
+        setSubCategories([]); // set a default value
+    
+        axios.request(config)
             .then((res) => {
-                setCategories(res.data.data);
+                setSubCategories(res.data.data);
                 setItemsCountPerPage(res.data.meta.per_page);
                 setStartFrom(res.data.meta.from);
-                setTotlaCountPerPage(res.data.meta.total);
+                setTotalCountPerPage(res.data.meta.total);
                 setActivePage(res.data.meta.current_page);
-                setIsLoading(false)
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error(error);
+                setIsLoading(false);
             });
     };
+    
 
     const handlePhotoModal = (photo) => {
         setModalPhoto(photo);
@@ -61,7 +77,7 @@ const SubcategoryList = () => {
         setCategory(category);
         setModalShow(true);
     };
-    const handleCategoryDelete = (id) => {
+    const handleSubCategoryDelete = (id) => {
         Swal.fire({
             title: 'Are you sure?',
             text: "You want to delete the Category!",
@@ -72,8 +88,13 @@ const SubcategoryList = () => {
             confirmButtonText: 'Yes, DELETE IT!'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${Constants.BASE_URL}/sub-category/${id}`).then(res => {
-                    getCategories()
+                const token = localStorage.getItem('token');
+                axios.delete(`${Constants.BASE_URL}/sub-category/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }).then(res => {
+                    getSubCategories()
                     Swal.fire({
                         position: 'top-end',
                         icon: res.data.cls,
@@ -86,9 +107,10 @@ const SubcategoryList = () => {
             }
         })
     };
+    
 
     useEffect(() => {
-        getCategories();
+        getSubCategories();
     }, []);
   return (
     <>
@@ -169,7 +191,7 @@ const SubcategoryList = () => {
                                 <div className="col-md-2">
                                     <div className="d-grid mt-4">
                                         <button
-                                            onClick={() => getCategories(1)}
+                                            onClick={() => getSubCategories(1)}
                                             className={"btn theme-button"}
                                         >
                                             <i className="fa-solid fa-magnifying-glass"></i>
@@ -197,7 +219,7 @@ const SubcategoryList = () => {
                                     </thead>
 
                                     <tbody>
-                                        {Object.keys(categories).length > 0 ? categories.map((category, number) => (
+                                        {Object.keys(subCategories).length > 0 ? subCategories.map((category, number) => (
                                             <tr key={number}>
                                                 <td>{startFrom + number}</td>
                                                 <td>
@@ -233,7 +255,7 @@ const SubcategoryList = () => {
                                                         }
                                                         className={"btn btn-sm my-1 btn-info"}><i className="fa-solid fa-eye"></i></button>
                                                     <Link to={`/sub-category/edit/${category.id}`}><button className={"btn btn-sm my-1 mx-1 btn-warning"}><i className="fa-solid fa-pen-to-square"></i></button></Link>
-                                                    <button onClick={() => handleCategoryDelete(category.id)} className={"btn btn-sm my-1 btn-danger"}><i className="fa-solid fa-trash"></i></button>
+                                                    <button onClick={() => handleSubCategoryDelete(category.id)} className={"btn btn-sm my-1 btn-danger"}><i className="fa-solid fa-trash"></i></button>
                                                 </td>
                                             </tr>
                                         )): <NoDataFound/>}
@@ -262,9 +284,9 @@ const SubcategoryList = () => {
                                 <Pagination
                                     activePage={activePage}
                                     itemsCountPerPage={itemsCountsPerPage}
-                                    totalItemsCount={toltalCountsPerPage}
+                                    totalItemsCount={totalCountsPerPage}
                                     pageRangeDisplayed={5}
-                                    onChange={getCategories}
+                                    onChange={getSubCategories}
                                     firstPageText={"First"}
                                     nextPageText={"Next"}
                                     prevPageText={"Previous"}

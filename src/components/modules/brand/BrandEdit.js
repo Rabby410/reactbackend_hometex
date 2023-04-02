@@ -15,11 +15,32 @@ const BrandEdit = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [brand, setBrand] = useState([])
 
+    // const getBrand = () => {
+    //     axios.get(`${Constants.BASE_URL}/brand/${params.id}`).then(res => {
+    //         setInput(res.data.data)
+    //     })
+    // }
+
     const getBrand = () => {
-        axios.get(`${Constants.BASE_URL}/brand/${params.id}`).then(res => {
-            setInput(res.data.data)
-        })
-    }
+        const token = localStorage.getItem('token');
+        const config = {
+          method: 'get',
+          maxBodyLength: Infinity,
+          url: `${Constants.BASE_URL}/brand/${params.id}`,
+          headers: { 
+            'Authorization': `Bearer ${token}`
+          }
+        };
+      
+        axios.request(config)
+          .then((response) => {
+            setInput(response.data.data);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+      
 
     const handleInput = (e) => {
         if (e.target.name === 'name') {
@@ -40,28 +61,63 @@ const BrandEdit = () => {
         reader.readAsDataURL(file)
     }
 
-    const handleBrandUpdate = () => {
-        setIsLoading(true)
-        axios.put(`${Constants.BASE_URL}/brand/${params.id}`, input)
-            .then(res => {
-                setIsLoading(false)
-                Swal.fire({
-                    position: 'top-end',
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500
+    const handleBrandUpdate = () => { 
+        let token = localStorage.getItem('token');
+        setIsLoading(true);
+        if (token) {
+            const config = {
+                method: 'put',
+                url: `${Constants.BASE_URL}/brand/${params.id}`,
+                headers: { 
+                    'Authorization': `Bearer ${token}`
+                },
+                data: input // assuming input is defined elsewhere
+            };
+                    
+            axios(config)
+                .then(function (res) {
+                    setIsLoading(false);
+                    Swal.fire({
+                        position: "top-end",
+                        icon: res.data.cls,
+                        title: res.data.msg,
+                        showConfirmButton: false,
+                        toast: true,
+                        timer: 1500,
+                    });
+                      navigate('/brand');
                 })
-                navigate('/brand')
-            })
-            .catch(errors => {
-                setIsLoading(false)
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors)
-                }
-            })
+                .catch((error) => {
+                    setIsLoading(false);
+                    if (error.res.status === 422) {
+                        setErrors(error.res.data.errors);
+                    }
+                });
+        }
     }
+
+    // const handleBrandUpdate = () => {
+    //     setIsLoading(true)
+    //     axios.put(`${Constants.BASE_URL}/brand/${params.id}`, input)
+    //         .then(res => {
+    //             setIsLoading(false)
+    //             Swal.fire({
+    //                 position: 'top-end',
+    //                 icon: res.data.cls,
+    //                 title: res.data.msg,
+    //                 showConfirmButton: false,
+    //                 toast: true,
+    //                 timer: 1500
+    //             })
+    //             navigate('/brand')
+    //         })
+    //         .catch(errors => {
+    //             setIsLoading(false)
+    //             if (errors.res.status === 422) {
+    //                 setErrors(errors.res.data.errors)
+    //             }
+    //         })
+    // }
 
     useEffect(() => {
         getBrand()

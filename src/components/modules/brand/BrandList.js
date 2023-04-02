@@ -20,7 +20,7 @@ function BrandList() {
     });
 
     const [itemsCountsPerPage, setItemsCountPerPage] = useState(0);
-    const [toltalCountsPerPage, setTotlaCountPerPage] = useState(1);
+    const [toltalCountsPerPage, setTotalCountPerPage] = useState(1);
     const [startFrom, setStartFrom] = useState(1);
     const [activePage, setActivePage] = useState(1);
 
@@ -30,7 +30,8 @@ function BrandList() {
     const [modalPhoto, setModalPhoto] = useState("");
     const [isLoading, setIsLoading] = useState(false)
 
-    const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
+    let token=localStorage.getItem('token');
 
     const handleInput = (e) => {
         setInput((prevState) => ({
@@ -39,19 +40,37 @@ function BrandList() {
         }));
     };
 
-    const getCategories = (pageNumber = 1) => {
-        setIsLoading(true)
-        axios
-            .get(`${Constants.BASE_URL}/brand?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
+    const getBrands = (pageNumber = 1) => {
+        const token = localStorage.getItem('token');
+        const url = `${Constants.BASE_URL}/brand?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`;
+    
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            }
+        };
+    
+        setIsLoading(true);
+        setBrands([]); // set a default value
+    
+        axios.request(config)
             .then((res) => {
-                setCategories(res.data.data);
+                setBrands(res.data.data);
                 setItemsCountPerPage(res.data.meta.per_page);
                 setStartFrom(res.data.meta.from);
-                setTotlaCountPerPage(res.data.meta.total);
+                setTotalCountPerPage(res.data.meta.total);
                 setActivePage(res.data.meta.current_page);
-                setIsLoading(false)
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error(error);
+                setIsLoading(false);
             });
     };
+    
 
     const handlePhotoModal = (photo) => {
         setModalPhoto(photo);
@@ -61,34 +80,53 @@ function BrandList() {
         setCategory(brand);
         setModalShow(true);
     };
+
+
+
     const handlebrandDelete = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You want to delete the brand!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, DELETE IT!'
+          title: 'Are you sure?',
+          text: 'You want to delete the brand!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, DELETE IT!',
         }).then((result) => {
-            if (result.isConfirmed) {
-                axios.delete(`${Constants.BASE_URL}/brand/${id}`).then(res => {
-                    getCategories()
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: res.data.cls,
-                        title: res.data.msg,
-                        showConfirmButton: false,
-                        toast:true,
-                        timer: 1500
-                      })
-                })
-            }
-        })
-    };
+          if (result.isConfirmed) {
+            const token = localStorage.getItem('token');
+      
+            const config = {
+              method: 'delete',
+              url: `${Constants.BASE_URL}/brand/${id}`,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            };
+      
+            axios(config)
+              .then((response) => {
+                console.log(JSON.stringify(response.data));
+                getBrands();
+                Swal.fire({
+                  position: 'top-end',
+                  icon: response.data.cls,
+                  title: response.data.msg,
+                  showConfirmButton: false,
+                  toast: true,
+                  timer: 1500,
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        });
+      };
+      
 
     useEffect(() => {
-        getCategories();
+        getBrands();
     }, []);
 
     return (
@@ -170,7 +208,7 @@ function BrandList() {
                                 <div className="col-md-2">
                                     <div className="d-grid mt-4">
                                         <button
-                                            onClick={() => getCategories(1)}
+                                            onClick={() => getBrands(1)}
                                             className={"btn theme-button"}
                                         >
                                             <i className="fa-solid fa-magnifying-glass"></i>
@@ -198,7 +236,7 @@ function BrandList() {
                                     </thead>
 
                                     <tbody>
-                                        {Object.keys(categories).length > 0 ? categories.map((brand, number) => (
+                                        {Object.keys(brands).length > 0 ? brands.map((brand, number) => (
                                             <tr key={number}>
                                                 <td>{startFrom + number}</td>
                                                 <td>
@@ -266,7 +304,7 @@ function BrandList() {
                                     itemsCountPerPage={itemsCountsPerPage}
                                     totalItemsCount={toltalCountsPerPage}
                                     pageRangeDisplayed={5}
-                                    onChange={getCategories}
+                                    onChange={getBrands}
                                     firstPageText={"First"}
                                     nextPageText={"Next"}
                                     prevPageText={"Previous"}

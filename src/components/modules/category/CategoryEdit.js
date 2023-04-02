@@ -16,10 +16,25 @@ const CategoryEdit = () => {
     const [category, setCategory] = useState([])
 
     const getCategory = () => {
-        axios.get(`${Constants.BASE_URL}/category/${params.id}`).then(res => {
-            setInput(res.data.data)
-        })
+        const token = localStorage.getItem('token');
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${Constants.BASE_URL}/category/${params.id}`,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            }
+        };
+    
+        axios.request(config)
+            .then((response) => {
+                setInput(response.data.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
+    
 
     const handleInput = (e) => {
         if (e.target.name === 'name') {
@@ -41,27 +56,40 @@ const CategoryEdit = () => {
     }
 
     const handleCategoryUpdate = () => {
-        setIsLoading(true)
-        axios.put(`${Constants.BASE_URL}/category/${params.id}`, input)
-            .then(res => {
-                setIsLoading(false)
-                Swal.fire({
-                    position: 'top-end',
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500
-                })
-                navigate('/category')
+        const token = localStorage.getItem('token');
+        setIsLoading(true);
+        if (token) {
+          const config = {
+            method: 'put',
+            url: `${Constants.BASE_URL}/category/${params.id}`,
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            data: input // assuming input is defined elsewhere
+          };
+      
+          axios(config)
+            .then((res) => {
+              setIsLoading(false);
+              Swal.fire({
+                position: 'top-end',
+                icon: res.data.cls,
+                title: res.data.msg,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500
+              });
+              navigate('/category');
             })
-            .catch(errors => {
-                setIsLoading(false)
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors)
-                }
-            })
-    }
+            .catch((error) => {
+              setIsLoading(false);
+              if (error.response.status === 422) {
+                setErrors(error.response.data.errors);
+              }
+            });
+        }
+      };
+      
 
     useEffect(() => {
         getCategory()

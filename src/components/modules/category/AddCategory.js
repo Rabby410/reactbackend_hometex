@@ -33,27 +33,41 @@ const AddCategory = () => {
   }
 
   const handleCategoryCreate = () => {
-    setIsLoading(true)
-    axios.post(`${Constants.BASE_URL}/category`, input)
-      .then(res => {
-        setIsLoading(false)
-        Swal.fire({
+    const token = localStorage.getItem('token');
+    setIsLoading(true);
+  
+    if (token) {
+      const config = {
+        method: 'post',
+        url: `${Constants.BASE_URL}/category`,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        data: input
+      };
+  
+      axios(config)
+        .then((response) => {
+          setIsLoading(false);
+          Swal.fire({
             position: 'top-end',
-            icon: res.data.cls,
-            title: res.data.msg,
+            icon: response.data.cls,
+            title: response.data.msg,
             showConfirmButton: false,
-            toast:true,
+            toast: true,
             timer: 1500
-          })
-          navigate('/category')
-      })
-      .catch(errors => {
-        setIsLoading(false)
-        if (errors.response.status === 422) {
-          setErrors(errors.response.data.errors)
-        }
-      })
-  }
+          });
+          navigate('/category');
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          if (error.response.status === 422) {
+            setErrors(error.response.data.errors);
+          }
+        });
+    }
+  };
+  
 
   return (
     <>

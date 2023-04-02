@@ -38,20 +38,54 @@ const SalesManagerList = () => {
             [e.target.name]: e.target.value,
         }));
     };
+   
     
     const getSalesManagers = (pageNumber = 1) => {
-        setIsLoading(true)
-        axios
-            .get(`${Constants.BASE_URL}/sales-manager?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
-            .then((res) => {
-                setSalesManagers(res.data.data);
-                setItemsCountPerPage(res.data.meta.per_page);
-                setStartFrom(res.data.meta.from);
-                setTotCountPerPage(res.data.meta.total);
-                setActivePage(res.data.meta.current_page);
-                setIsLoading(false)
+        const token = localStorage.getItem('token');
+        const url = `${Constants.BASE_URL}/sales-manager?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`;
+    
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            }
+        };
+    
+        setSalesManagers([]); // set a default value
+    
+        axios.get(url, config)
+            .then((response) => {
+                setSalesManagers(response.data.data);
+                setItemsCountPerPage(response.data.meta.per_page);
+                setStartFrom(response.data.meta.from);
+                setTotCountPerPage(response.data.meta.total);
+                setActivePage(response.data.meta.current_page);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error(error);
             });
     };
+    
+
+
+
+
+    // const getSalesManagers = (pageNumber = 1) => {
+    //     setIsLoading(true)
+    //     axios
+    //         .get(`${Constants.BASE_URL}/sales-manager?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
+    //         .then((res) => {
+    //             setSalesManagers(res.data.data);
+    //             setItemsCountPerPage(res.data.meta.per_page);
+    //             setStartFrom(res.data.meta.from);
+    //             setTotCountPerPage(res.data.meta.total);
+    //             setActivePage(res.data.meta.current_page);
+    //             setIsLoading(false)
+    //         });
+    // };
     
     const handlePhotoModal = (photo) => {
         setModalPhoto(photo);

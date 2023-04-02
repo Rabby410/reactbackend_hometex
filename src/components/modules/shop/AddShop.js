@@ -59,8 +59,13 @@ const AddShop = () => {
 
     const handleShopCreate = () => {
         setIsLoading(true);
+        const token = localStorage.getItem('token');
         axios
-            .post(`${Constants.BASE_URL}/shop`, input)
+            .post(`${Constants.BASE_URL}/shop`, input, {
+                headers: { 
+                    'Authorization': `Bearer ${token}`
+                }
+            })
             .then((res) => {
                 setIsLoading(false);
                 Swal.fire({
@@ -82,6 +87,7 @@ const AddShop = () => {
                 }
             });
     };
+    
     useEffect(() => {
         getDivisions()
     }, []);

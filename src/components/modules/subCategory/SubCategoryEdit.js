@@ -16,17 +16,28 @@ const SubCategoryEdit = () => {
   const [category, setCategory] = useState([])
   const [categories, setCategories] = useState([])
 
-  const getCategories = () =>{
-    axios.get(`${Constants.BASE_URL}/get-category-list`).then(res=>{
-        setCategories(res.data)
-    })
-  }
-
-const getCategory = () =>{
-    axios.get(`${Constants.BASE_URL}/sub-category/${params.id}`).then(res=>{
-        setInput(res.data.data)
-    })
+  const getCategories = () => {
+    const token = localStorage.getItem('token');
+    axios.get(`${Constants.BASE_URL}/get-category-list`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(res => {
+      setCategories(res.data);
+    });
 }
+
+const getSubCategory = () =>{
+  const token = localStorage.getItem('token');
+  axios.get(`${Constants.BASE_URL}/sub-category/${params.id}`, {
+      headers: {
+          'Authorization': `Bearer ${token}`
+      }
+  }).then(res=>{
+      setInput(res.data.data)
+  })
+}
+
 
   const handleInput = (e) => {
     if (e.target.name === 'name') {
@@ -49,7 +60,12 @@ const getCategory = () =>{
 
   const handleCategoryUpdate = () => {
     setIsLoading(true)
-    axios.put(`${Constants.BASE_URL}/sub-category/${params.id}`, input)
+    const token = localStorage.getItem('token');
+    axios.put(`${Constants.BASE_URL}/sub-category/${params.id}`, input, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
       .then(res => {
         setIsLoading(false)
         Swal.fire({
@@ -70,9 +86,10 @@ const getCategory = () =>{
       })
   }
 
+
   useEffect(()=>{
     getCategories()
-    getCategory()
+    getSubCategory()
   }, [])
 
   return (
@@ -95,7 +112,7 @@ const getCategory = () =>{
                   <label className="w-100 mt-4">
                     <p>Select Category</p>
                     <select
-                      className={errors.category_id != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
+                      className={errors.category_id != undefined ? 'form-select mt-2 is-invalid' : 'form-select mt-2'}
                       name={'category_id'}
                       value={input.category_id}
                       onChange={handleInput}

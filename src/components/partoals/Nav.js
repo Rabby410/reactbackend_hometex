@@ -49,10 +49,10 @@ export default function Nav() {
     }
 
     useEffect(()=>{
-      if(localStorage.branch != undefined){
-        setBranch(JSON.parse(localStorage.branch))
+      // if(localStorage.branch != undefined){
+      //   setBranch(JSON.parse(localStorage.branch))
     
-      }
+      // }
     },[])
   return (
     <nav className="sb-topnav navbar navbar-expand navbar-dark bg-theme">
@@ -66,7 +66,9 @@ export default function Nav() {
             
             {/* <!-- Navbar--> */}
             <ul className="navbar-nav align-items-center ms-auto me-3 me-lg-4">
-            <p className='text-white'><strong>{branch != undefined ? branch.name + ' | ': ''}</strong>{localStorage.name != undefined ? localStorage.name: null}</p>
+            <p className='text-white'>
+              {/* <strong>{branch != undefined ? branch.name + ' | ': ''}</strong> */}
+              {localStorage.name != undefined ? localStorage.name: null}</p>
                 <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i className="fas fa-user fa-fw"></i></a>
                     <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

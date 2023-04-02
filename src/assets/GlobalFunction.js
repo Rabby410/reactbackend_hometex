@@ -5,7 +5,7 @@ const GlobalFunction = {
             localStorage.removeItem('name')
             localStorage.removeItem('photo')
             localStorage.removeItem('token')
-            localStorage.removeItem('role')
+            // localStorage.removeItem('role')
             window.location.href=window.location.origin
     },
     isAdmin(){

@@ -33,18 +33,29 @@ const ProductList = () => {
     };
 
     const getProducts = (pageNumber = 1) => {
-        setIsLoading(true)
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
         axios
-            .get(`${Constants.BASE_URL}/product?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
-            .then((res) => {
-                setProducts(res.data.data);
-                setItemsCountPerPage(res.data.meta.per_page);
-                setStartFrom(res.data.meta.from);
-                setTotalCountPerPage(res.data.meta.total);
-                setActivePage(res.data.meta.current_page);
-                setIsLoading(false)
-            });
+    .get(`${Constants.BASE_URL}/product?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then((res) => {
+        setProducts(res.data.data);
+        setItemsCountPerPage(res.data.meta.per_page);
+        setStartFrom(res.data.meta.from);
+        setTotalCountPerPage(res.data.meta.total);
+        setActivePage(res.data.meta.current_page);
+        setIsLoading(false)
+    })
+    .catch((error) => {
+        console.log(error);
+        // handle error here, e.g. set an error state or display an error message
+    });
+
     };
+    
 
     const handleProductDelete = (id) => {
         Swal.fire({
@@ -57,7 +68,12 @@ const ProductList = () => {
             confirmButtonText: 'Yes, DELETE IT!'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${Constants.BASE_URL}/product/${id}`).then(res => {
+                const token = localStorage.getItem('token');
+                axios.delete(`${Constants.BASE_URL}/product/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(res => {
                     getProducts()
                     Swal.fire({
                         position: 'top-end',
@@ -66,11 +82,12 @@ const ProductList = () => {
                         showConfirmButton: false,
                         toast:true,
                         timer: 1500
-                      })
+                    })
                 })
             }
         })
     };
+    
 
     useEffect(() => {
         getProducts();

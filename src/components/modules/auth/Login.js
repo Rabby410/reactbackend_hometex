@@ -19,7 +19,7 @@ export default function Login() {
             localStorage.photo = res.data.photo
             localStorage.token = res.data.token
             localStorage.role = res.data.role
-            localStorage.branch = JSON.stringify(res.data.branch)
+            // localStorage.branch = JSON.stringify(res.data.branch)
             setIsLoading(false)
             window.location.reload()
         }).catch(errors =>

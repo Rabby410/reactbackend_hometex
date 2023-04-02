@@ -16,11 +16,39 @@ const AddSalesManger = () => {
     const [areas, setAreas] = useState([]);
     const [shops, setShops] = useState([]);
 
+   
     const getShops = () => {
-        axios.get(`${Constants.BASE_URL}/get-shop-list`).then(res => {
-                setShops(res.data)
+        const token = localStorage.getItem('token');
+    
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${Constants.BASE_URL}/get-shop-list`,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            }
+        };
+    
+        setShops([]); // set a default value
+    
+        axios.get(config.url, config)
+            .then((response) => {
+                setShops(response.data);
             })
-    }
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+    
+   
+   
+   
+   
+    // const getShops = () => {
+    //     axios.get(`${Constants.BASE_URL}/get-shop-list`).then(res => {
+    //             setShops(res.data)
+    //         })
+    // }
     const getDivisions = () => {
         axios.get(`${Constants.BASE_URL}/divisions`).then(res => {
                 setDivisions(res.data)
@@ -63,31 +91,73 @@ const AddSalesManger = () => {
         reader.readAsDataURL(file);
     };
 
-    const handleShopCreate = () => {
+    // const handleShopCreate = () => {
+    //     setIsLoading(true);
+    //     axios
+    //         .post(`${Constants.BASE_URL}/sales-manager`, input)
+    //         .then((res) => {
+    //             setIsLoading(false);
+    //             Swal.fire({
+    //                 position: "top-end",
+    //                 icon: res.data.cls,
+    //                 title: res.data.msg,
+    //                 showConfirmButton: false,
+    //                 toast: true,
+    //                 timer: 1500,
+    //             });
+    //             if(res.data.flag == undefined){
+    //             //    navigate("/sales-manager");
+    //             }
+    //         })
+    //         .catch((errors) => {
+    //             setIsLoading(false);
+    //             if (errors.response.status === 422) {
+    //                 setErrors(errors.response.data.errors);
+    //             }
+    //         });
+    // };
+
+    const handleShopCreate = () => { 
+        let token = localStorage.getItem('token');
         setIsLoading(true);
-        axios
-            .post(`${Constants.BASE_URL}/sales-manager`, input)
-            .then((res) => {
-                setIsLoading(false);
-                Swal.fire({
-                    position: "top-end",
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
+        if (token) {
+            const config = {
+                method: 'post',
+                url: `${Constants.BASE_URL}/sales-manager`,
+                headers: { 
+                    'Authorization': `Bearer ${token}`
+                },
+                data: input // assuming input is defined elsewhere
+            };
+                    
+            axios(config)
+                .then(function (response) {
+                    setIsLoading(false);
+                    Swal.fire({
+                        position: "top-end",
+                        icon: response.data.cls,
+                        title: response.data.msg,
+                        showConfirmButton: false,
+                        toast: true,
+                        timer: 1500,
+                    });
+                    if (response.data.flag === undefined) {
+                        navigate("/sales-manager");
+                    }
+                })
+                .catch((error) => {
+                    setIsLoading(false);
+                    if (error.response.status === 422) {
+                        setErrors(error.response.data.errors);
+                    }
                 });
-                if(res.data.flag == undefined){
-                //    navigate("/sales-manager");
-                }
-            })
-            .catch((errors) => {
-                setIsLoading(false);
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors);
-                }
-            });
-    };
+        }
+    }
+    
+
+
+
+
     useEffect(() => {
         getDivisions()
         getShops()

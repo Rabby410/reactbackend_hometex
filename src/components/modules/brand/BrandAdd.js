@@ -32,28 +32,44 @@ const BrandAdd = () => {
     reader.readAsDataURL(file)
   }
 
-  const handleBrandCreate = () => {
-    setIsLoading(true)
-    axios.post(`${Constants.BASE_URL}/brand`, input)
-      .then(res => {
-        setIsLoading(false)
-        Swal.fire({
-            position: 'top-end',
-            icon: res.data.cls,
-            title: res.data.msg,
-            showConfirmButton: false,
-            toast:true,
-            timer: 1500
-          })
-          navigate('/brand')
-      })
-      .catch(errors => {
-        setIsLoading(false)
-        if (errors.response.status === 422) {
-          setErrors(errors.response.data.errors)
-        }
-      })
-  }
+
+  const handleBrandCreate = () => { 
+    let token = localStorage.getItem('token');
+    setIsLoading(true);
+    if (token) {
+        const config = {
+            method: 'post',
+            url: `${Constants.BASE_URL}/brand`,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            },
+            data: input // assuming input is defined elsewhere
+        };
+                
+        axios(config)
+            .then(function (response) {
+                setIsLoading(false);
+                Swal.fire({
+                    position: "top-end",
+                    icon: response.data.cls,
+                    title: response.data.msg,
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 1500,
+                });
+                if (response.data.flag === undefined) {
+                  navigate('/brand');
+                }
+            })
+            .catch((error) => {
+                setIsLoading(false);
+                if (error.response.status === 422) {
+                    setErrors(error.response.data.errors);
+                }
+            });
+    }
+}
+
 
   return (
     <>

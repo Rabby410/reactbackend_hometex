@@ -72,7 +72,12 @@ const handleShopDelete = (id) => {
         confirmButtonText: 'Yes, DELETE IT!'
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.delete(`${Constants.BASE_URL}/shop/${id}`).then(res => {
+            const token = localStorage.getItem('token');
+            axios.delete(`${Constants.BASE_URL}/shop/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(res => {
                 getShops()
                 Swal.fire({
                     position: 'top-end',
@@ -86,6 +91,7 @@ const handleShopDelete = (id) => {
         }
     })
 };
+
 
 useEffect(() => {
     getShops();

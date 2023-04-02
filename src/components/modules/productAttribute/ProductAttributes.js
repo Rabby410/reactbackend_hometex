@@ -14,7 +14,7 @@ const ProductAttributes = () => {
     const [input, setInput] = useState({ status: 1 })
 
     const [itemsCountsPerPage, setItemsCountPerPage] = useState(0);
-    const [toltalCountsPerPage, setTotlaCountPerPage] = useState(1);
+    const [toltalCountsPerPage, setTotalCountPerPage] = useState(1);
     const [startFrom, setStartFrom] = useState(1);
     const [activePage, setActivePage] = useState(1);
 
@@ -32,8 +32,13 @@ const ProductAttributes = () => {
     const handleInput = (e) => setInput(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
 
     const handleAttributeValueCreate = () =>{
+        const token = localStorage.getItem('token');
         setIsLoading(true)
-        axios.post(`${Constants.BASE_URL}/attribute-value`, input)
+        axios.post(`${Constants.BASE_URL}/attribute-value`, input, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
             .then(res => {
                 setIsLoading(false)
                 Swal.fire({
@@ -56,94 +61,127 @@ const ProductAttributes = () => {
             })
     }
 
+
     const getAttribute = () => {
+        const token = localStorage.getItem('token');
         setIsLoading(true)
-        axios.get(`${Constants.BASE_URL}/attribute`).then(res => {
+        axios.get(`${Constants.BASE_URL}/attribute`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(res => {
             setAttributes(res.data.data)
             setItemsCountPerPage(res.data.meta.per_page);
             setStartFrom(res.data.meta.from);
-            setTotlaCountPerPage(res.data.meta.total);
+            setTotalCountPerPage(res.data.meta.total);
             setActivePage(res.data.meta.current_page);
             setIsLoading(false)
         })
+        .catch(error => {
+            console.error(error);
+            setIsLoading(false)
+        });
     }
+    
 
     const handleAttributeUpdate = (id) => {
+        const token = localStorage.getItem('token');
+        setIsLoading(true);
+        axios.put(`${Constants.BASE_URL}/attribute/${id}`, input, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(res => {
+            setIsLoading(false);
+            Swal.fire({
+              position: 'top-end',
+              icon: res.data.cls,
+              title: res.data.msg,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500
+            });
+            setErrors([]);
+            setInput({ status: 1 });
+            setModalShow(false);
+            getAttribute();
+          }).catch(errors => {
+            setIsLoading(false);
+            if (errors.response.status === 422) {
+              setErrors(errors.response.data.errors);
+            }
+          });
+      };
+      
+      const handleAttributeCreate = () => {
         setIsLoading(true)
-        axios.put(`${Constants.BASE_URL}/attribute/${id}`, input)
-            .then(res => {
-                setIsLoading(false)
-                Swal.fire({
-                    position: 'top-end',
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500
-                })
-                setErrors([])
-                setInput({ status: 1 })
-                setModalShow(false)
-                getAttribute()
-            }).catch(errors => {
-                setIsLoading(false)
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors)
-                }
+        const token = localStorage.getItem('token');
+        axios.post(`${Constants.BASE_URL}/attribute`, input, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(res => {
+            setIsLoading(false)
+            Swal.fire({
+                position: 'top-end',
+                icon: res.data.cls,
+                title: res.data.msg,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500
             })
+            setErrors([])
+            setInput({ status: 1 })
+            setModalShow(false)
+            getAttribute()
+        }).catch(errors => {
+            setIsLoading(false)
+            if (errors.response.status === 422) {
+                setErrors(errors.response.data.errors)
+            }
+        })
     }
-    const handleAttributeCreate = () => {
-        setIsLoading(true)
-        axios.post(`${Constants.BASE_URL}/attribute`, input)
-            .then(res => {
-                setIsLoading(false)
-                Swal.fire({
-                    position: 'top-end',
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500
-                })
-                setErrors([])
-                setInput({ status: 1 })
-                setModalShow(false)
-                getAttribute()
-            }).catch(errors => {
-                setIsLoading(false)
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors)
-                }
-            })
-    }
+    
     const handleAttributeDelete = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You want to delete the Attribute!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, DELETE IT!'
+          title: 'Are you sure?',
+          text: "You want to delete the Attribute!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, DELETE IT!'
         }).then((result) => {
-            if (result.isConfirmed) {
-        setIsLoading(true)
-        axios.delete(`${Constants.BASE_URL}/attribute/${id}`)
+          if (result.isConfirmed) {
+            const token = localStorage.getItem('token');
+            axios.delete(`${Constants.BASE_URL}/attribute/${id}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            })
             .then(res => {
-                setIsLoading(false)
-                Swal.fire({
-                    position: 'top-end',
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500
-                })
-                getAttribute()
+              setIsLoading(false)
+              Swal.fire({
+                position: 'top-end',
+                icon: res.data.cls,
+                title: res.data.msg,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500
+              })
+              getAttribute()
             })
-        }
+            .catch(error => {
+              setIsLoading(false)
+              console.log(error.response)
             })
-    }
+          }
+        })
+      }
+      
 
     const handleModel = (attribute = undefined) => {
         setInput({ status: 1 })
@@ -165,30 +203,37 @@ const ProductAttributes = () => {
     }
 
     const handleValueDelete = (id) => {
+        const token = localStorage.getItem('token');
+      
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You want to delete the Attribute Value!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, DELETE IT!'
+          title: 'Are you sure?',
+          text: "You want to delete the Attribute Value!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, DELETE IT!'
         }).then((result) => {
-            if (result.isConfirmed) {
-                axios.delete(`${Constants.BASE_URL}/attribute-value/${id}`).then(res => {
-                    getAttribute()
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: res.data.cls,
-                        title: res.data.msg,
-                        showConfirmButton: false,
-                        toast:true,
-                        timer: 1500
-                      })
-                })
-            }
+          if (result.isConfirmed) {
+            axios.delete(`${Constants.BASE_URL}/attribute-value/${id}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }).then(res => {
+              getAttribute()
+              Swal.fire({
+                position: 'top-end',
+                icon: res.data.cls,
+                title: res.data.msg,
+                showConfirmButton: false,
+                toast:true,
+                timer: 1500
+              })
+            })
+          }
         })
-    }
+      }
+      
     const handleValueCreateModal = (id) => {
         setValueModalShow(true)
         setIsEditMode(false)
@@ -202,30 +247,38 @@ const ProductAttributes = () => {
         setValueModalTitle('Update')
         setInput({status: value.status_original, name: value.name, id:value.id})
     }
-    const handleValueEdit = () =>{
-        setIsLoading(true)
-        axios.put(`${Constants.BASE_URL}/attribute-value/${input.id}`, input)
-            .then(res => {
-                setIsLoading(false)
-                Swal.fire({
-                    position: 'top-end',
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500
-                })
-                setErrors([])
-                setInput({ status: 1 })
-                setValueModalShow(false)
-                getAttribute()
-            }).catch(errors => {
-                setIsLoading(false)
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors)
-                }
-            })
-    }
+    const handleValueEdit = () => {
+        const token = localStorage.getItem('token');
+      
+        setIsLoading(true);
+        axios.put(`${Constants.BASE_URL}/attribute-value/${input.id}`, input, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+          .then(res => {
+            setIsLoading(false);
+            Swal.fire({
+              position: 'top-end',
+              icon: res.data.cls,
+              title: res.data.msg,
+              showConfirmButton: false,
+              toast: true,
+              timer: 1500
+            });
+            setErrors([]);
+            setInput({ status: 1 });
+            setValueModalShow(false);
+            getAttribute();
+          })
+          .catch(errors => {
+            setIsLoading(false);
+            if (errors.response.status === 422) {
+              setErrors(errors.response.data.errors);
+            }
+          });
+      };
+      
     
     useEffect(() => {
     getAttribute()

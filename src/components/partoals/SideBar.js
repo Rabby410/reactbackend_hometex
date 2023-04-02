@@ -31,10 +31,10 @@ export default function SideBar() {
                                 }
                             </nav>
                         </div>
-                        {
+                        {/* {
                             GlobalFunction.isAdmin() &&
 
-                            <>
+                            <> */}
                             <div className="sb-sidenav-menu-heading">Shops</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#shop" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
@@ -107,8 +107,8 @@ export default function SideBar() {
                             <div className="sb-nav-link-icon"><i className="fas fa-table"></i></div>
                             Product Attributes
                         </Link>
-                            </>
-                        }
+                            {/* </>
+                        } */}
                         {/* POS start */}
                         <div className="sb-sidenav-menu-heading">Pos System</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#order" aria-expanded="false" aria-controls="collapseLayouts">

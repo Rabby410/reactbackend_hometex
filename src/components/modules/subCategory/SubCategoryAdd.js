@@ -13,11 +13,17 @@ const SubCategoryAdd = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [categories, setCategories] = useState([])
 
-  const getCategories = () =>{
-    axios.get(`${Constants.BASE_URL}/get-category-list`).then(res=>{
-        setCategories(res.data)
-    })
-  }
+  const getCategories = () => {
+    const token = localStorage.getItem('token');
+    axios.get(`${Constants.BASE_URL}/get-category-list`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(res => {
+      setCategories(res.data);
+    });
+}
+
 
   const handleInput = (e) => {
     if (e.target.name === 'name') {
@@ -38,9 +44,14 @@ const SubCategoryAdd = () => {
     reader.readAsDataURL(file)
   }
 
-  const handleCategoryCreate = () => {
+  const handleSubCategoryCreate = () => {
     setIsLoading(true)
-    axios.post(`${Constants.BASE_URL}/sub-category`, input)
+    const token = localStorage.getItem('token');
+    axios.post(`${Constants.BASE_URL}/sub-category`, input, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => {
         setIsLoading(false)
         Swal.fire({
@@ -59,7 +70,8 @@ const SubCategoryAdd = () => {
           setErrors(errors.response.data.errors)
         }
       })
-  }
+}
+
 
   useEffect(()=>{
     getCategories()
@@ -196,7 +208,7 @@ const SubCategoryAdd = () => {
                   <div className="row justify-content-center">
                     <div className="col-md-4">
                       <div className="d-grid mt-4">
-                        <button onClick={handleCategoryCreate} className={"btn theme-button"}
+                        <button onClick={handleSubCategoryCreate} className={"btn theme-button"}
                           dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Sub Category...' : 'Add sub Category' }}
                         />
                       </div>

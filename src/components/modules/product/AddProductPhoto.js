@@ -17,14 +17,19 @@ const AddProductPhoto = () => {
 
   const handlePhotoUpload = () => {
     setIsLoading(true)
+    const token = localStorage.getItem('token');
     axios.post(`${Constants.BASE_URL}/product-photo-upload/${params.id}`, {photos}, {
-      onUploadProgress: (ProgressEvent) => {
-        const progress = Math.round(
-          (ProgressEvent.loaded * 100) / ProgressEvent.total
-        )
-        setProgress(progress)
-      }
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        onUploadProgress: (ProgressEvent) => {
+            const progress = Math.round(
+                (ProgressEvent.loaded * 100) / ProgressEvent.total
+            )
+            setProgress(progress)
+        }
     })
+
       .then(res => {
         setIsLoading(false)
         Swal.fire({

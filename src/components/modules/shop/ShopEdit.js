@@ -17,12 +17,15 @@ const ShopEdit = () => {
     const [areas, setAreas] = useState([]);
 
     const getShop = () => {
-      axios.get(`${Constants.BASE_URL}/shop/${params.id}`).then(res => {
-        setInput(res.data.data)
-        getDistrict(res.data.data.division_id)
-        getAreas(res.data.data.district_id)
-      })
-    }
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/shop/${params.id}`, { headers: { 'Authorization': `Bearer ${token}` } })
+             .then(res => {
+                setInput(res.data.data)
+                getDistrict(res.data.data.division_id)
+                getAreas(res.data.data.district_id)
+             })
+      }
+  
 
     const getDivisions = () => {
         axios.get(`${Constants.BASE_URL}/divisions`).then(res => {
@@ -68,8 +71,13 @@ const ShopEdit = () => {
 
     const handleShopUpdate = () => {
         setIsLoading(true);
+        const token = localStorage.getItem('token');
         axios
-            .put(`${Constants.BASE_URL}/shop/${params.id}`, input)
+            .put(`${Constants.BASE_URL}/shop/${params.id}`, input, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             .then((res) => {
                 setIsLoading(false);
                 Swal.fire({
@@ -91,6 +99,7 @@ const ShopEdit = () => {
                 }
             });
     };
+    
     useEffect(() => {
         getDivisions()
         getShop()
