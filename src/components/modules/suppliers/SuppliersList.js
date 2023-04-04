@@ -20,7 +20,7 @@ function SuppliersList() {
     });
 
     const [itemsCountsPerPage, setItemsCountPerPage] = useState(0);
-    const [toltalCountsPerPage, setTotlaCountPerPage] = useState(1);
+    const [toltalCountsPerPage, setTotalCountPerPage] = useState(1);
     const [startFrom, setStartFrom] = useState(1);
     const [activePage, setActivePage] = useState(1);
 
@@ -40,18 +40,23 @@ function SuppliersList() {
     };
 
     const getSuppliers = (pageNumber = 1) => {
-        setIsLoading(true)
-        axios
-            .get(`${Constants.BASE_URL}/supplier?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
-            .then((res) => {
-                setSuppliers(res.data.data);
-                setItemsCountPerPage(res.data.meta.per_page);
-                setStartFrom(res.data.meta.from);
-                setTotlaCountPerPage(res.data.meta.total);
-                setActivePage(res.data.meta.current_page);
-                setIsLoading(false)
-            });
-    };
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/supplier?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then((res) => {
+          setSuppliers(res.data.data);
+          setItemsCountPerPage(res.data.meta.per_page);
+          setStartFrom(res.data.meta.from);
+          setTotalCountPerPage(res.data.meta.total);
+          setActivePage(res.data.meta.current_page);
+          setIsLoading(false);
+        });
+      };
+      
 
     const handlePhotoModal = (photo) => {
         setModalPhoto(photo);
@@ -63,29 +68,35 @@ function SuppliersList() {
     };
     const handleSupplierDelete = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You want to delete the Supplier!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, DELETE IT!'
+          title: 'Are you sure?',
+          text: "You want to delete the Supplier!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, DELETE IT!'
         }).then((result) => {
-            if (result.isConfirmed) {
-                axios.delete(`${Constants.BASE_URL}/supplier/${id}`).then(res => {
-                    getSuppliers()
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: res.data.cls,
-                        title: res.data.msg,
-                        showConfirmButton: false,
-                        toast:true,
-                        timer: 1500
-                      })
-                })
-            }
-        })
-    };
+          if (result.isConfirmed) {
+            const token = localStorage.getItem('token');
+            axios.delete(`${Constants.BASE_URL}/supplier/${id}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            }).then(res => {
+              getSuppliers();
+              Swal.fire({
+                position: 'top-end',
+                icon: res.data.cls,
+                title: res.data.msg,
+                showConfirmButton: false,
+                toast:true,
+                timer: 1500
+              });
+            });
+          }
+        });
+      };
+      
 
     useEffect(() => {
         getSuppliers();
