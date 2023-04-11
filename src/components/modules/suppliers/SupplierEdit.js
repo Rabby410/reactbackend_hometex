@@ -17,12 +17,16 @@ const SupplierEdit = () => {
     const [areas, setAreas] = useState([]);
 
     const getSupplier = () => {
-      axios.get(`${Constants.BASE_URL}/supplier/${params.id}`).then(res => {
-        setInput(res.data.data)
-        getDistrict(res.data.data.division_id)
-        getAreas(res.data.data.district_id)
-      })
-    }
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/supplier/${params.id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then(res => {
+          setInput(res.data.data)
+          getDistrict(res.data.data.division_id)
+          getAreas(res.data.data.district_id)
+        })
+      }
+      
 
     const getDivisions = () => {
         axios.get(`${Constants.BASE_URL}/divisions`).then(res => {
@@ -66,31 +70,38 @@ const SupplierEdit = () => {
         reader.readAsDataURL(file);
     };
 
-    const handleSupplierUpdate = () => {
-        setIsLoading(true);
-        axios
-            .put(`${Constants.BASE_URL}/supplier/${params.id}`, input)
-            .then((res) => {
-                setIsLoading(false);
-                Swal.fire({
-                    position: "top-end",
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                });
-                if(res.data.flag == undefined){
-                  navigate("/suppliers");
-                }
-            })
-            .catch((errors) => {
-                setIsLoading(false);
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors);
-                }
+    const token = localStorage.getItem('token');
+
+const handleSupplierUpdate = () => {
+    setIsLoading(true);
+    axios
+        .put(`${Constants.BASE_URL}/supplier/${params.id}`, input, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((res) => {
+            setIsLoading(false);
+            Swal.fire({
+                position: "top-end",
+                icon: res.data.cls,
+                title: res.data.msg,
+                showConfirmButton: false,
+                toast: true,
+                timer: 1500,
             });
-    };
+            if(res.data.flag === undefined){
+              navigate("/suppliers");
+            }
+        })
+        .catch((errors) => {
+            setIsLoading(false);
+            if (errors.response.status === 422) {
+                setErrors(errors.response.data.errors);
+            }
+        });
+};
+
     useEffect(() => {
         getDivisions()
         getSupplier()

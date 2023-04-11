@@ -7,8 +7,8 @@ const CardHeader = (props) => {
     <div className="d-flex justify-content-between align-items-center">
                 <h4 className="text-theme">{props.title}</h4>
                 <button className="btn theme-button">
-                  <Link to={props.link}><i
-                  className={`fa-solid ${props.icon}`}></i>{props.button_text}</Link>
+                  <Link to={props.link} >
+                    <i className={`fa-solid ${props.icon}`}> </i><span className="p-2">{props.button_text}</span></Link>
                 </button>
               </div>
               </>

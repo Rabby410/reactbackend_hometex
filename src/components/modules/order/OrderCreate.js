@@ -9,6 +9,7 @@ import AddCustomer from "../../partoals/modals/AddCustomer";
 import ShowOrderConfirmation from "../../partoals/modals/ShowOrderConfirmation";
 
 const OrderCreate = () => {
+  const navigate = useNavigate();
 
   const [input, setInput] = useState({
     order_by: "id",
@@ -56,6 +57,7 @@ const OrderCreate = () => {
     paid_amount: 0,
     due_amount: 0,
     payment_method_id: 1,
+    trx_id: '',
   });
 
   const [order, setOrder] = useState({})
@@ -74,8 +76,22 @@ const OrderCreate = () => {
         }
       )
       .then((res) => {
+        if(res.data.flag != undefined){
+          Swal.fire({
+            position: 'top-end',
+            icon: res.data.cls,
+            title: res.data.msg,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500
+          });
+          if(res.data.flag != undefined){
+
+            setShowOrderConfirmationModal(false)
+            navigate(`/order/${res.data.order_id}`)
+          }
           setIsLoading(false);
-          // handle success response here
+        }
       })
       .catch((error) => {
           setIsLoading(false);
@@ -235,6 +251,15 @@ const OrderCreate = () => {
     }else if(e.target.name == 'payment_method_id'){
       setOrderSummary(prevState => ({...prevState,
         payment_method_id: e.target.value,
+      }))
+      if(e.target.value == 1 ){
+        setOrderSummary(prevState => ({...prevState,
+          trx_id: '',
+        }))
+      }
+    }else if(e.target.name == 'trx_id'){
+      setOrderSummary(prevState => ({...prevState,
+        trx_id: e.target.value,
       }))
     }
   }

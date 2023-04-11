@@ -20,7 +20,7 @@ function SuppliersList() {
     });
 
     const [itemsCountsPerPage, setItemsCountPerPage] = useState(0);
-    const [toltalCountsPerPage, setTotlaCountPerPage] = useState(1);
+    const [totalCountsPerPage, setTotalCountPerPage] = useState(1);
     const [startFrom, setStartFrom] = useState(1);
     const [activePage, setActivePage] = useState(1);
 
@@ -39,20 +39,26 @@ function SuppliersList() {
         }));
     };
 
-    const getSuppliers = (pageNumber = 1) => {
-        setIsLoading(true)
-        axios
-            .get(`${Constants.BASE_URL}/supplier?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
-            .then((res) => {
-                setSuppliers(res.data.data);
-                setItemsCountPerPage(res.data.meta.per_page);
-                setStartFrom(res.data.meta.from);
-                setTotlaCountPerPage(res.data.meta.total);
-                setActivePage(res.data.meta.current_page);
-                setIsLoading(false)
-            });
-    };
+    const token = localStorage.getItem('token');
 
+    const getSuppliers = (pageNumber = 1) => {
+      setIsLoading(true);
+      axios
+        .get(`${Constants.BASE_URL}/supplier?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setSuppliers(res.data.data);
+          setItemsCountPerPage(res.data.meta.per_page);
+          setStartFrom(res.data.meta.from);
+          setTotalCountPerPage(res.data.meta.total);
+          setActivePage(res.data.meta.current_page);
+          setIsLoading(false);
+        });
+    };
+    
     const handlePhotoModal = (photo) => {
         setModalPhoto(photo);
         setModalPhotoShow(true);
@@ -62,6 +68,7 @@ function SuppliersList() {
         setModalShow(true);
     };
     const handleSupplierDelete = (id) => {
+        const token = localStorage.getItem('token');
         Swal.fire({
             title: 'Are you sure?',
             text: "You want to delete the Supplier!",
@@ -72,7 +79,11 @@ function SuppliersList() {
             confirmButtonText: 'Yes, DELETE IT!'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${Constants.BASE_URL}/supplier/${id}`).then(res => {
+                axios.delete(`${Constants.BASE_URL}/supplier/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }).then(res => {
                     getSuppliers()
                     Swal.fire({
                         position: 'top-end',
@@ -86,6 +97,7 @@ function SuppliersList() {
             }
         })
     };
+    
 
     useEffect(() => {
         getSuppliers();
@@ -261,15 +273,15 @@ function SuppliersList() {
                                 <Pagination
                                     activePage={activePage}
                                     itemsCountPerPage={itemsCountsPerPage}
-                                    totalItemsCount={toltalCountsPerPage}
+                                    totalItemsCount={totalCountsPerPage}
                                     pageRangeDisplayed={5}
                                     onChange={getSuppliers}
                                     firstPageText={"First"}
                                     nextPageText={"Next"}
                                     prevPageText={"Previous"}
                                     lastPageText={"Last"}
-                                    itemclassName={"page-item"}
-                                    linkclassName={"page-link"}
+                                    itemClass={"page-item"}
+                                    linkClass={"page-link"}
                                 />
                             </nav>
                         </div>

@@ -57,33 +57,41 @@ const AddSupplier = () => {
         reader.readAsDataURL(file);
     };
 
-    const handleSupplierCreate = () => {
-        setIsLoading(true);
-        axios
-            .post(`${Constants.BASE_URL}/supplier`, input)
-            .then((res) => {
-                setIsLoading(false);
-                Swal.fire({
-                    position: "top-end",
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast: true,
-                    timer: 1500,
-                });
-                if(res.data.flag){
-                }else{
+    const token = localStorage.getItem('token');
 
-                    navigate("/suppliers");
-                }
-            })
-            .catch((errors) => {
-                setIsLoading(false);
-                if (errors.response.status === 422) {
-                    setErrors(errors.response.data.errors);
-                }
-            });
-    };
+const handleSupplierCreate = () => {
+  setIsLoading(true);
+
+  axios
+    .post(`${Constants.BASE_URL}/supplier`, input, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      setIsLoading(false);
+      Swal.fire({
+        position: "top-end",
+        icon: res.data.cls,
+        title: res.data.msg,
+        showConfirmButton: false,
+        toast: true,
+        timer: 1500,
+      });
+      if (res.data.flag) {
+        // Handle success case
+      } else {
+        navigate("/suppliers");
+      }
+    })
+    .catch((errors) => {
+      setIsLoading(false);
+      if (errors.response.status === 422) {
+        setErrors(errors.response.data.errors);
+      }
+    });
+};
+
     useEffect(() => {
         getDivisions()
     }, []);

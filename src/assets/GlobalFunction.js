@@ -13,6 +13,10 @@ const GlobalFunction = {
             return true
         }
         return false
+    },
+    formatPrice(price)
+    {
+       return new Intl.NumberFormat('us').format(price)+'৳'
     }
 }
 

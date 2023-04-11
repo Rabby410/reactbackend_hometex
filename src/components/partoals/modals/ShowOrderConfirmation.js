@@ -125,6 +125,21 @@ const ShowOrderConfirmation = ({handleOrderPlace, handleOrderSummaryInput, ...pr
                         </select>
                           </th>
                         </tr>
+                        {props.order_summary.payment_method_id != 1 ? 
+                        <tr>
+                        <th colSpan={4} className='text-end text-theme'>Transaction ID</th>
+                        <td className={'align-middle'} style={{ width:'160px' }}>
+                        <input
+                          className="form-control form-control-sm text-end"
+                          type={'text'}
+                          name={'trx_id'}
+                          value={props.order_summary.trx_id}
+                          onChange={handleOrderSummaryInput}                            
+                          />
+                        </td>
+                      </tr> : null  
+                      }
+                        
                     </tbody>
                 </table>
             </div>

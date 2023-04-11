@@ -19,7 +19,7 @@ export default function Login() {
             localStorage.photo = res.data.photo
             localStorage.token = res.data.token
             localStorage.role = res.data.role
-            // localStorage.branch = JSON.stringify(res.data.branch)
+            localStorage.branch = JSON.stringify(res.data.branch)
             setIsLoading(false)
             window.location.reload()
         }).catch(errors =>
@@ -73,8 +73,8 @@ export default function Login() {
                 onChange={handleInput} 
                 >
                     <option>Select User Type</option>
-                    <option value={1}>Admin</option>
-                    <option value={2}>sales Manager</option>
+                    {/* <option value={1}>Admin</option> */}
+                    <option value={2}>Admin Manager</option>
                 </select>
             <p className={'login-error-msg'}><small>{errors.user_type != undefined ? errors.user_type[0]: null}</small></p>
             </label>

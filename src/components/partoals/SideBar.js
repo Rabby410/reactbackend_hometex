@@ -22,13 +22,14 @@ export default function SideBar() {
                         <div className="collapse" id="products" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
                                 <Link className="nav-link" to="/products">Products List</Link>
-                                {
+                                {/* {
                                     GlobalFunction.isAdmin() &&
-                                    <>
+                                    <> */}
                                       <Link className="nav-link" to="/product/create">Add Product</Link>
-                                        <Link className="nav-link" to="/product/trash">Trash Products</Link>
-                                    </>
-                                }
+                                      <Link className="nav-link" to="/generate-bar-code">Barcode Generator</Link>
+                                        {/* <Link className="nav-link" to="/product/trash">Trash Products</Link> */}
+                                    {/* </>
+                                } */}
                             </nav>
                         </div>
                         {/* {

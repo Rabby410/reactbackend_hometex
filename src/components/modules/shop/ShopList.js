@@ -40,18 +40,24 @@ const handleInput = (e) => {
 };
 
 const getShops = (pageNumber = 1) => {
-    setIsLoading(true)
+    const token = localStorage.getItem('token');
+    setIsLoading(true);
     axios
-        .get(`${Constants.BASE_URL}/shop?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`)
+        .get(`${Constants.BASE_URL}/shop?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        })
         .then((res) => {
             setShops(res.data.data);
             setItemsCountPerPage(res.data.meta.per_page);
             setStartFrom(res.data.meta.from);
             setTotlaCountPerPage(res.data.meta.total);
             setActivePage(res.data.meta.current_page);
-            setIsLoading(false)
+            setIsLoading(false);
         });
 };
+
 
 const handlePhotoModal = (photo) => {
     setModalPhoto(photo);
@@ -273,8 +279,8 @@ useEffect(() => {
                             nextPageText={"Next"}
                             prevPageText={"Previous"}
                             lastPageText={"Last"}
-                            itemclassName={"page-item"}
-                            linkclassName={"page-link"}
+                            itemClass={"page-item"}
+                            linkClass={"page-link"}
                         />
                     </nav>
                 </div>

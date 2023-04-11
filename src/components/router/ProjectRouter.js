@@ -26,6 +26,8 @@ import AddSalesManger from "../modules/salesManager/AddSalesManger";
 import SalesManagerList from "../modules/salesManager/SalesManagerList";
 import OrderCreate from "../modules/order/OrderCreate";
 import OrderList from "../modules/order/OrderList";
+import OrderDetails from "../modules/order/OrderDetails";
+import BarCode from "../modules/bar_code/BarCode";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -127,6 +129,14 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/orders/create",
         element: <OrderCreate/>,
+      },
+      {
+        path: "/order/:id",
+        element: <OrderDetails/>,
+      },
+      {
+        path: "/generate-bar-code",
+        element: <BarCode/>,
       },
       {
         path: "/error-500",

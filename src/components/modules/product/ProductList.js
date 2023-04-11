@@ -276,8 +276,8 @@ const ProductList = () => {
                             nextPageText={"Next"}
                             prevPageText={"Previous"}
                             lastPageText={"Last"}
-                            itemclassName={"page-item"}
-                            linkclassName={"page-link"}
+                            itemClass={"page-item"}
+                            linkClass={"page-link"}
                         />
                     </nav>
                 </div>
