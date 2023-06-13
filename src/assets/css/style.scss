@@ -203,3 +203,20 @@ margin-top: 5px;
     text-decoration: line-through;
     font-size: 12px;
 }
+.report-card{
+    @include transition;
+    box-shadow: 0 0 5px silver;
+    &:hover{
+        transform: scale(1.05);
+        cursor: pointer;
+    }
+    svg{
+        color: $theme-color;
+    }
+    h6, h4{
+        font-weight: 100;
+    }
+    h4{
+        color: $theme-color;
+    }
+}

@@ -5,11 +5,14 @@ import Swal from 'sweetalert2'
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { click } from "@testing-library/user-event/dist/click";
+import { EditorState, ContentState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
 
 const AddProduct = () => {
     const navigate = useNavigate();
-    const [input, setInput] = useState({status: 1})
+    const [input, setInput] = useState({ status: 1 })
     const [attribute_input, setAttribute_input] = useState({})
     const [specification_input, setSpecification_input] = useState({})
     const [errors, setErrors] = useState([])
@@ -24,44 +27,51 @@ const AddProduct = () => {
     const [attributeFieldId, setAttributeFieldId] = useState(1)
     const [specificationFiled, setSpecificationFiled] = useState([])
     const [specificationFiledId, setSpecificationFiledId] = useState(1)
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+    const onEditorStateChange = (newEditorState) => {
+        setEditorState(newEditorState);
+        // You can also update the form input value if needed
+        handleInput({ target: { name: 'description', value: newEditorState.getCurrentContent().getPlainText() } });
+    };
 
     const handleSpecificationFieldRemove = (id) => {
         setSpecificationFiled(oldValues => {
             return oldValues.filter(specificationFiled => specificationFiled !== id)
         })
         setSpecification_input(current => {
-            const copy = {...current};
+            const copy = { ...current };
             delete copy[id];
             return copy;
         })
-        setSpecificationFiledId(specificationFiledId-1)
+        setSpecificationFiledId(specificationFiledId - 1)
     }
     const handleSpecificationFields = (id) => {
-        setSpecificationFiledId(specificationFiledId+1)
+        setSpecificationFiledId(specificationFiledId + 1)
         setSpecificationFiled(prevState => [...prevState, specificationFiledId])
     }
 
     const handleAttributeFieldsRemove = (id) => {
-      setAttributeField(oldValues => {
-          return oldValues.filter(attributeFiled => attributeFiled !== id)
-      })
+        setAttributeField(oldValues => {
+            return oldValues.filter(attributeFiled => attributeFiled !== id)
+        })
         setAttribute_input(current => {
-            const copy = {...current};
+            const copy = { ...current };
             delete copy[id];
             return copy;
         })
-        setAttributeFieldId(attributeFieldId-1)
+        setAttributeFieldId(attributeFieldId - 1)
     }
     const handleAttributeFields = (id) => {
-        if (attributes.length >= attributeFieldId){
-            setAttributeFieldId(attributeFieldId+1)
+        if (attributes.length >= attributeFieldId) {
+            setAttributeFieldId(attributeFieldId + 1)
             setAttributeField(prevState => [...prevState, attributeFieldId])
         }
     }
     const handleSpecificationInput = (e, id) => {
         setSpecification_input(prevState => ({
             ...prevState,
-            [id]:{
+            [id]: {
                 ...prevState[id], [e.target.name]: e.target.value
             }
         }))
@@ -69,7 +79,7 @@ const AddProduct = () => {
     const handleAttributeInput = (e, id) => {
         setAttribute_input(prevState => ({
             ...prevState,
-            [id]:{
+            [id]: {
                 ...prevState[id], [e.target.name]: e.target.value
             }
         }))
@@ -77,41 +87,47 @@ const AddProduct = () => {
     const getAttributes = () => {
         const token = localStorage.getItem('token');
         axios.get(`${Constants.BASE_URL}/get-attribute-list`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         }).then(res => {
-          setAttributes(res.data)
+            setAttributes(res.data)
         })
-      }
-      
-      const getSuppliers = () => {
+    }
+
+    const getSuppliers = () => {
         const token = localStorage.getItem('token');
         axios.get(`${Constants.BASE_URL}/get-supplier-list`, {
-          headers: { 
-            'Authorization': `Bearer ${token}`
-          }
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         }).then(res => {
-          setSuppliers(res.data)
+            setSuppliers(res.data)
         })
-      }
-      
+    }
+
     const getCountries = () => {
-        axios.get(`${Constants.BASE_URL}/get-country-list`).then(res => {
+        const token = localStorage.getItem('token');
+        axios.get(`${Constants.BASE_URL}/get-country-list`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(res => {
             setCountries(res.data)
         })
     }
+
     const getCategories = () => {
         const token = localStorage.getItem('token');
         axios.get(`${Constants.BASE_URL}/get-category-list`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         }).then(res => {
-          setCategories(res.data);
+            setCategories(res.data);
         });
-      }
-      const getBrands = () => {
+    }
+    const getBrands = () => {
         const token = localStorage.getItem('token');
         axios.get(`${Constants.BASE_URL}/get-brand-list`, {
             headers: {
@@ -121,7 +137,7 @@ const AddProduct = () => {
             setBrands(res.data);
         });
     }
-    
+
 
     const getSubCategories = (category_id) => {
         const token = localStorage.getItem('token');
@@ -133,14 +149,14 @@ const AddProduct = () => {
             setSubCategories(res.data);
         });
     }
-    
+
 
     const handleInput = (e) => {
         if (e.target.name == 'name') {
             let slug = e.target.value
             slug = slug.toLowerCase()
             slug = slug.replaceAll(' ', '-')
-            setInput(prevState => ({...prevState, slug: slug}))
+            setInput(prevState => ({ ...prevState, slug: slug }))
         } else if (e.target.name == 'category_id') {
             let category_id = parseInt(e.target.value);
             if (!Number.isNaN(category_id)) {
@@ -148,14 +164,14 @@ const AddProduct = () => {
             }
         }
 
-        setInput(prevState => ({...prevState, [e.target.name]: e.target.value}))
+        setInput(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
     }
 
     const handlePhoto = (e) => {
         let file = e.target.files[0]
         let reader = new FileReader()
         reader.onloadend = () => {
-            setInput(prevState => ({...prevState, photo: reader.result}))
+            setInput(prevState => ({ ...prevState, photo: reader.result }))
         }
         reader.readAsDataURL(file)
     }
@@ -176,8 +192,8 @@ const AddProduct = () => {
                 toast: true,
                 timer: 1500
             })
-            if(res.data.product_id != undefined){
-                navigate('/product/photo/'+res.data.product_id)
+            if (res.data.product_id != undefined) {
+                navigate('/product/photo/' + res.data.product_id)
             }
         }).catch(errors => {
             setIsLoading(false);
@@ -186,7 +202,7 @@ const AddProduct = () => {
             }
         })
     }
-    
+
 
 
     useEffect(() => {
@@ -197,18 +213,18 @@ const AddProduct = () => {
         getAttributes()
     }, []);
 
-    useEffect(()=>{
-        setInput(prevState => ({...prevState, attributes: attribute_input}))
+    useEffect(() => {
+        setInput(prevState => ({ ...prevState, attributes: attribute_input }))
     }, [attribute_input])
 
-    useEffect(()=>{
-        setInput(prevState => ({...prevState, specifications: specification_input}))
+    useEffect(() => {
+        setInput(prevState => ({ ...prevState, specifications: specification_input }))
     }, [specification_input])
 
 
     return (
         <>
-            <Breadcrumb title={'Add Product'}/>
+            <Breadcrumb title={'Add Product'} />
             <div className="row">
                 <div className="col-md-12">
                     <div className="card">
@@ -348,7 +364,7 @@ const AddProduct = () => {
                                             <option>Select Product Supplier</option>
                                             {suppliers.map((supplier, index) => (
                                                 <option value={supplier.id}
-                                                        key={index}>{supplier.name} - {supplier.phone}</option>
+                                                    key={index}>{supplier.name} - {supplier.phone}</option>
                                             ))}
                                         </select>
                                         <p className={'login-error-msg'}>
@@ -380,7 +396,7 @@ const AddProduct = () => {
                                             <h5>Select Product Attribute</h5>
                                         </div>
                                         <div className="card-body">
-                                            {attributeFiled.map((id, ind)=>(
+                                            {attributeFiled.map((id, ind) => (
                                                 <div key={ind} className="row my-2 align-items-baseline">
                                                     <div className="col-md-5">
                                                         <label className={'w-100 mt-4'}>
@@ -389,11 +405,11 @@ const AddProduct = () => {
                                                                 className='form-select mt-2'
                                                                 name={'attribute_id'}
                                                                 value={attribute_input[id] != undefined ? attribute_input[id].attribute_id : null}
-                                                                onChange={(e)=>handleAttributeInput(e, id)}
+                                                                onChange={(e) => handleAttributeInput(e, id)}
                                                                 placeholder={'Select product attribute'}
                                                             >
                                                                 <option>Select Attribute</option>
-                                                                {attributes.map((value, index)=>(
+                                                                {attributes.map((value, index) => (
                                                                     <option value={value.id}>{value.name}</option>
                                                                 ))}
                                                             </select>
@@ -408,15 +424,15 @@ const AddProduct = () => {
                                                                 className={'form-select mt-2'}
                                                                 name={'value_id'}
                                                                 value={attribute_input[id] != undefined ? attribute_input[id].value_id : null}
-                                                                onChange={(e)=>handleAttributeInput(e, id)}
+                                                                onChange={(e) => handleAttributeInput(e, id)}
                                                                 placeholder={'Select product attribute value'}
                                                             >
                                                                 <option>Select Attribute Value</option>
-                                                                {attributes.map((value, index)=>(
+                                                                {attributes.map((value, index) => (
                                                                     <>
-                                                                        {attribute_input[id] != undefined && value.id == attribute_input[id].attribute_id ? value.value.map((atr_value, value_ind)=>(
+                                                                        {attribute_input[id] != undefined && value.id == attribute_input[id].attribute_id ? value.value.map((atr_value, value_ind) => (
                                                                             <option value={atr_value.id}>{atr_value.name}</option>
-                                                                        )):null}
+                                                                        )) : null}
                                                                     </>
                                                                 ))}
                                                             </select>
@@ -425,10 +441,10 @@ const AddProduct = () => {
                                                         </label>
                                                     </div>
                                                     <div className="col-md-2">
-                                                        {attributeFiled.length -1 == ind ?
-                                                        <button className={'btn btn-danger'} onClick={()=>handleAttributeFieldsRemove(id)}>
-                                                            <i className="fa-solid fa-minus"/>
-                                                        </button>:null
+                                                        {attributeFiled.length - 1 == ind ?
+                                                            <button className={'btn btn-danger'} onClick={() => handleAttributeFieldsRemove(id)}>
+                                                                <i className="fa-solid fa-minus" />
+                                                            </button> : null
                                                         }
                                                     </div>
                                                 </div>
@@ -437,7 +453,7 @@ const AddProduct = () => {
                                             <div className="row">
                                                 <div className="col-md-12 text-center">
                                                     <button className={'btn btn-success'} onClick={handleAttributeFields}>
-                                                        <i className="fa-solid fa-plus"/>
+                                                        <i className="fa-solid fa-plus" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -450,7 +466,7 @@ const AddProduct = () => {
                                             <h5>Product Specifications</h5>
                                         </div>
                                         <div className="card-body">
-                                            {specificationFiled.map((id, ind)=>(
+                                            {specificationFiled.map((id, ind) => (
                                                 <div key={ind} className="row my-2 align-items-baseline">
                                                     <div className="col-md-5">
                                                         <label className={'w-100 mt-4'}>
@@ -460,7 +476,7 @@ const AddProduct = () => {
                                                                 type={'text'}
                                                                 name={'name'}
                                                                 value={specification_input[id] != undefined ? specification_input[id].name : null}
-                                                                onChange={(e)=>handleSpecificationInput(e, id)}
+                                                                onChange={(e) => handleSpecificationInput(e, id)}
                                                                 placeholder={'Enter Product Specification Name'}
                                                             />
                                                             <p className={'login-error-msg'}>
@@ -475,7 +491,7 @@ const AddProduct = () => {
                                                                 type={'text'}
                                                                 name={'value'}
                                                                 value={specification_input[id] != undefined ? specification_input[id].value : null}
-                                                                onChange={(e)=>handleSpecificationInput(e, id)}
+                                                                onChange={(e) => handleSpecificationInput(e, id)}
                                                                 placeholder={'Enter Product Specification Name'}
                                                             />
                                                             <p className={'login-error-msg'}>
@@ -483,9 +499,9 @@ const AddProduct = () => {
                                                         </label>
                                                     </div>
                                                     <div className="col-md-2">
-                                                        {specificationFiled.length -1 == ind ?
-                                                            <button className={'btn btn-danger'} onClick={()=>handleSpecificationFieldRemove(id)}>
-                                                                <i className="fa-solid fa-minus"/>
+                                                        {specificationFiled.length - 1 == ind ?
+                                                            <button className={'btn btn-danger'} onClick={() => handleSpecificationFieldRemove(id)}>
+                                                                <i className="fa-solid fa-minus" />
                                                             </button> : null
                                                         }
 
@@ -496,7 +512,7 @@ const AddProduct = () => {
                                             <div className="row">
                                                 <div className="col-md-12 text-center">
                                                     <button className={'btn btn-success'} onClick={handleSpecificationFields}>
-                                                        <i className="fa-solid fa-plus"/>
+                                                        <i className="fa-solid fa-plus" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -639,16 +655,18 @@ const AddProduct = () => {
                                 <div className="col-md-12">
                                     <label className={'w-100 mt-4'}>
                                         <p>Description</p>
-                                        <textarea
-                                            className={errors.description != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
-                                            name={'description'}
-                                            value={input.description}
-                                            onChange={handleInput}
-                                            placeholder={'Enter product description'}
+                                        <Editor
+                                            editorState={editorState}
+                                            onEditorStateChange={onEditorStateChange}
+                                            toolbarClassName={errors.description !== undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
+                                            wrapperClassName="wrapperClassName"
+                                            editorClassName="editorClassName"
+                                            placeholder="Enter product description"
                                         />
-                                        <p className={'login-error-msg'}>
-                                            <small>{errors.description != undefined ? errors.description[0] : null}</small>
+                                        <p className="login-error-msg">
+                                            <small>{errors.description !== undefined ? errors.description[0] : null}</small>
                                         </p>
+
                                     </label>
                                 </div>
 
@@ -657,7 +675,7 @@ const AddProduct = () => {
                                         <div className="col-md-4">
                                             <div className="d-grid mt-4">
                                                 <button className={'btn theme-button'} onClick={handleProductCreate}
-                                                        dangerouslySetInnerHTML={{__html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : 'Add Product'}}/>
+                                                    dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : 'Add Product' }} />
                                             </div>
                                         </div>
                                     </div>

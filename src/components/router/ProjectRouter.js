@@ -28,6 +28,7 @@ import OrderCreate from "../modules/order/OrderCreate";
 import OrderList from "../modules/order/OrderList";
 import OrderDetails from "../modules/order/OrderDetails";
 import BarCode from "../modules/bar_code/BarCode";
+import Report from "../modules/report/Report";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -137,6 +138,10 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/generate-bar-code",
         element: <BarCode/>,
+      },
+      {
+        path: "/reports",
+        element: <Report/>,
       },
       {
         path: "/error-500",

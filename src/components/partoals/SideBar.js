@@ -13,6 +13,20 @@ export default function SideBar() {
                             <div className="sb-nav-link-icon"><i className="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </Link>
+                        {/* Report start */}
+                        <div className="sb-sidenav-menu-heading">Reports</div>
+                        <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#report" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
+                            Report
+                            <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
+                        </Link>
+                        <div className="collapse" id="report" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav className="sb-sidenav-menu-nested nav">
+                                <Link className="nav-link" to="/reports">Report List</Link>
+                                {/* <Link className="nav-link" to="/orders/create">Create Order</Link> */}
+                            </nav>
+                        </div>
+                        {/* Report end */}
                         <div className="sb-sidenav-menu-heading">Product</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#products" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
@@ -114,7 +128,7 @@ export default function SideBar() {
                         <div className="sb-sidenav-menu-heading">Pos System</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#order" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
-                            Orders
+                            Sales
                             <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
                         </Link>
                         <div className="collapse" id="order" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">

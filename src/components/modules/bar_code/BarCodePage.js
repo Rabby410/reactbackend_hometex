@@ -11,6 +11,7 @@ const BarCodePage = React.forwardRef((props, ref) => {
                 {props.products.map((product, index) => (
                     <div className="bar-code-items" key={index}>
                         <p><strong>{product?.name}</strong></p>
+                        <p><small>{product?.brand}</small></p>
                         <p>Price:
                             {product?.sell_price?.discount != 0 ? GlobalFunction.formatPrice(product?.sell_price?.price) : ''}
                             <span className={product?.sell_price?.discount != 0 ? 'deleted ms-2' : ''}>{product?.price}</span></p>

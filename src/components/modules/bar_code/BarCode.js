@@ -89,6 +89,7 @@ const BarCode = () => {
                                 link={'/products'}
                                 icon={'fa-list'}
                                 button_text={'product List'}
+                                hide={true}
                             />
                         </div>
                         
