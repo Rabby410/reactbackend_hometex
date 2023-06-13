@@ -20,7 +20,7 @@ const ShopList = () => {
 });
 
 const [itemsCountsPerPage, setItemsCountPerPage] = useState(0);
-const [toltalCountsPerPage, setTotlaCountPerPage] = useState(1);
+const [totalCountsPerPage, setTotalCountPerPage] = useState(1);
 const [startFrom, setStartFrom] = useState(1);
 const [activePage, setActivePage] = useState(1);
 
@@ -40,6 +40,7 @@ const handleInput = (e) => {
 };
 
 const getShops = (pageNumber = 1) => {
+<<<<<<< HEAD
     const token = localStorage.getItem('token');
     setIsLoading(true);
     axios
@@ -57,6 +58,25 @@ const getShops = (pageNumber = 1) => {
             setIsLoading(false);
         });
 };
+=======
+    setIsLoading(true);
+    const token = localStorage.getItem('token');
+    axios.get(`${Constants.BASE_URL}/shop?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then((res) => {
+      setShops(res.data.data);
+      setItemsCountPerPage(res.data.meta.per_page);
+      setStartFrom(res.data.meta.from);
+      setTotalCountPerPage(res.data.meta.total);
+      setActivePage(res.data.meta.current_page);
+      setIsLoading(false);
+    });
+  };
+  
+>>>>>>> 2456c28b3ea85fde856c0dac3064623ae33b3b99
 
 
 const handlePhotoModal = (photo) => {
@@ -272,7 +292,7 @@ useEffect(() => {
                         <Pagination
                             activePage={activePage}
                             itemsCountPerPage={itemsCountsPerPage}
-                            totalItemsCount={toltalCountsPerPage}
+                            totalItemsCount={totalCountsPerPage}
                             pageRangeDisplayed={5}
                             onChange={getShops}
                             firstPageText={"First"}
