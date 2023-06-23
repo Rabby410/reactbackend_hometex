@@ -557,6 +557,21 @@ const AddProduct = () => {
                                                             <small>{errors.price != undefined ? errors.price[0] : null}</small></p>
                                                     </label>
                                                 </div>
+                                                <div className="col-md-12">
+                                                    <label className={'w-100 mt-4'}>
+                                                        <p>Price Formula</p>
+                                                        <input
+                                                            className={errors.priceF != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
+                                                            type={'text'}
+                                                            name={'priceF'}
+                                                            value={input.priceF}
+                                                            onChange={handleInput}
+                                                            placeholder={'Enter Product price Formula'}
+                                                        />
+                                                        <p className={'login-error-msg'}>
+                                                            <small>{errors.priceF != undefined ? errors.priceF[0] : null}</small></p>
+                                                    </label>
+                                                </div>
                                                 <div className="col-md-6">
                                                     <label className={'w-100 mt-4'}>
                                                         <p>Discount %</p>
