@@ -29,6 +29,9 @@ import OrderList from "../modules/order/OrderList";
 import OrderDetails from "../modules/order/OrderDetails";
 import BarCode from "../modules/bar_code/BarCode";
 import Report from "../modules/report/Report";
+import PriceFormulaList from "../modules/priceFormula/PriceFormulaList";
+import AddPriceFormula from "../modules/priceFormula/AddPriceFormula";
+import PriceFormulaEdit from "../modules/priceFormula/PriceFormulaEdit";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -142,6 +145,18 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/reports",
         element: <Report/>,
+      },
+      {
+        path: "/price_formula",
+        element: <PriceFormulaList/>,
+      },
+      {
+        path: "/price_formula/create",
+        element: <AddPriceFormula/>,
+      },
+      {
+        path: "/price_formula/edit/:id",
+        element: <PriceFormulaEdit/>,
       },
       {
         path: "/error-500",

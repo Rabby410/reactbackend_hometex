@@ -46,6 +46,20 @@ export default function SideBar() {
                                 } */}
                             </nav>
                         </div>
+                        
+                        {/* Price Formula */}
+                        <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#priceFormula" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
+                            Price Formula
+                            <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
+                        </Link>
+                        <div className="collapse" id="priceFormula" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav className="sb-sidenav-menu-nested nav">
+                                <Link className="nav-link" to="/price_formula">Price Formula List</Link>
+                                <Link className="nav-link" to="/price_formula/create">Add Price Formula</Link>
+                            </nav>
+                        </div>
+                        {/* Price Formula End */}
                         {/* {
                             GlobalFunction.isAdmin() &&
 
