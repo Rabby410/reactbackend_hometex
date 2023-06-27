@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 
-const AddPriceFormula = () => {
+const AddPriceFormulaVariables = () => {
   const navigate = useNavigate();
   const [input, setInput] = useState({ status: 1 });
   const [errors, setErrors] = useState([]);
@@ -15,14 +15,14 @@ const AddPriceFormula = () => {
     setInput(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
   }
 
-  const handlePriceFormulaCreate = () => {
+  const handlePriceFormulaVariableCreate = () => {
     const token = localStorage.getItem("token");
     setIsLoading(true);
 
     if (token) {
       const config = {
         method: "post",
-        url: `${Constants.BASE_URL}/price_formula`,
+        url: `${Constants.BASE_URL}/price_formula_variables`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,13 +52,13 @@ const AddPriceFormula = () => {
   };
   return (
     <>
-      <Breadcrumb title={"Add Price Formula"} />
+      <Breadcrumb title={"Add Price Formula Variables"} />
       <div className="row">
         <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <CardHeader
-                title={"Add Price Formula"}
+                title={"Add Price Formula Variables"}
                 link={"/price_formula"}
                 icon={"fa-list"}
                 button_text={"List"}
@@ -75,23 +75,23 @@ const AddPriceFormula = () => {
                       name={'name'}
                       value={input.name}
                       onChange={handleInput}
-                      placeholder={'Enter Price formula name'}
+                      placeholder={'Enter Price Formula Variables name'}
                     />
                     <p className={'login-error-msg'}><small>{errors.name != undefined ? errors.name[0] : null}</small></p>
                   </label>
                 </div>
                 <div className="col-md-6">
                   <label className="w-100 mt-4">
-                    <p>Formula</p>
+                    <p>Short Name (Length = len)</p>
                     <input
-                      className={errors.formula != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
+                      className={errors.short_name != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
                       type={'text'}
-                      name={'formula'}
-                      value={input.formula}
+                      name={'short_name'}
+                      value={input.short_name}
                       onChange={handleInput}
-                      placeholder={'Enter Price formula'}
+                      placeholder={'Enter Price Formula Variables short_name'}
                     />
-                    <p className={'login-error-msg'}><small>{errors.formula != undefined ? errors.formula[0] : null}</small></p>
+                    <p className={'login-error-msg'}><small>{errors.short_name != undefined ? errors.short_name[0] : null}</small></p>
                   </label>
                 </div>
                 <div className="col-md-6">
@@ -109,25 +109,12 @@ const AddPriceFormula = () => {
                     <p className={'login-error-msg'}><small>{errors.status != undefined ? errors.status[0] : null}</small></p>
                   </label>
                 </div>
-                <div className="col-md-6">
-                  <label className="w-100 mt-4">
-                    <p>Description</p>
-                    <textarea
-                      className={errors.serial != undefined ? 'form-control mt-2 is-invalid' : 'form-control mt-2'}
-                      name={'description'}
-                      value={input.description}
-                      onChange={handleInput}
-                      placeholder={'Enter Price formula description'}
-                    ></textarea>
-                    <p className={'login-error-msg'}><small>{errors.description != undefined ? errors.description[0] : null}</small></p>
-                  </label>
-                </div>
                 <div className="col-md-12">
                   <div className="row justify-content-center">
                     <div className="col-md-4">
                       <div className="d-grid mt-4">
-                        <button onClick={handlePriceFormulaCreate} className={"btn theme-button"}
-                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Price formula...' : 'Add Price formula' }}
+                        <button onClick={handlePriceFormulaVariableCreate} className={"btn theme-button"}
+                          dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Add Price Formula Variables...' : 'Add Price Formula Variables' }}
                         />
                       </div>
                     </div>
@@ -142,4 +129,4 @@ const AddPriceFormula = () => {
   );
 };
 
-export default AddPriceFormula;
+export default AddPriceFormulaVariables;

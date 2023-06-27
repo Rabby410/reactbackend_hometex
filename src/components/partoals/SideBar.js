@@ -55,6 +55,8 @@ export default function SideBar() {
                         </Link>
                         <div className="collapse" id="priceFormula" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
+                                <Link className="nav-link" to="/price_formula_variable">Price Formula Variables List</Link>
+                                <Link className="nav-link" to="/price_formula_variable/create">Add Price Formula Variable</Link>
                                 <Link className="nav-link" to="/price_formula">Price Formula List</Link>
                                 <Link className="nav-link" to="/price_formula/create">Add Price Formula</Link>
                             </nav>
