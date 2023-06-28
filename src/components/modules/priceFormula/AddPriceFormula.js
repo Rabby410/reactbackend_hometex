@@ -15,41 +15,43 @@ const AddPriceFormula = () => {
     setInput(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
   }
 
-  const handlePriceFormulaCreate = () => {
-    const token = localStorage.getItem("token");
+  
+  const handlePriceFormulaCreate = () => { 
+    let token = localStorage.getItem('token');
     setIsLoading(true);
-
     if (token) {
-      const config = {
-        method: "post",
-        url: `${Constants.BASE_URL}/price_formula`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: input,
-      };
-
-      axios(config)
-        .then((response) => {
-          setIsLoading(false);
-          Swal.fire({
-            position: "top-end",
-            icon: response.data.cls,
-            title: response.data.msg,
-            showConfirmButton: false,
-            toast: true,
-            timer: 1500,
-          });
-          navigate("/price_formula");
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          if (error.response.status === 422) {
-            setErrors(error.response.data.errors);
-          }
-        });
+        const config = {
+            method: 'post',
+            url: `${Constants.BASE_URL}/priceFormula`,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            },
+            data: input // assuming input is defined elsewhere
+        };
+                
+        axios(config)
+            .then(function (response) {
+                setIsLoading(false);
+                Swal.fire({
+                    position: "top-end",
+                    icon: response.data.cls,
+                    title: response.data.msg,
+                    showConfirmButton: false,
+                    toast: true,
+                    timer: 1500,
+                });
+                if (response.data.flag === undefined) {
+                  navigate('/brand');
+                }
+            })
+            .catch((error) => {
+                setIsLoading(false);
+                if (error.response.status === 422) {
+                    setErrors(error.response.data.errors);
+                }
+            });
     }
-  };
+}
   return (
     <>
       <Breadcrumb title={"Add Price Formula"} />
