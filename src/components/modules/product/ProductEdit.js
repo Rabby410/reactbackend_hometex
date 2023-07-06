@@ -9,7 +9,7 @@ import { EditorState, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-const AddProduct = () => {
+const ProductEdit = () => {
   const navigate = useNavigate();
   const [input, setInput] = useState({ status: 1 });
   const [attribute_input, setAttribute_input] = useState({});
@@ -1007,4 +1007,4 @@ const AddProduct = () => {
     </>
   );
 };
-export default AddProduct;
+export default ProductEdit;

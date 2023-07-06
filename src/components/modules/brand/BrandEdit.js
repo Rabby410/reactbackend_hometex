@@ -14,13 +14,6 @@ const BrandEdit = () => {
     const [errors, setErrors] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [brand, setBrand] = useState([])
-
-    // const getBrand = () => {
-    //     axios.get(`${Constants.BASE_URL}/brand/${params.id}`).then(res => {
-    //         setInput(res.data.data)
-    //     })
-    // }
-
     const getBrand = () => {
         const token = localStorage.getItem('token');
         const config = {
@@ -95,29 +88,6 @@ const BrandEdit = () => {
                 });
         }
     }
-
-    // const handleBrandUpdate = () => {
-    //     setIsLoading(true)
-    //     axios.put(`${Constants.BASE_URL}/brand/${params.id}`, input)
-    //         .then(res => {
-    //             setIsLoading(false)
-    //             Swal.fire({
-    //                 position: 'top-end',
-    //                 icon: res.data.cls,
-    //                 title: res.data.msg,
-    //                 showConfirmButton: false,
-    //                 toast: true,
-    //                 timer: 1500
-    //             })
-    //             navigate('/brand')
-    //         })
-    //         .catch(errors => {
-    //             setIsLoading(false)
-    //             if (errors.res.status === 422) {
-    //                 setErrors(errors.res.data.errors)
-    //             }
-    //         })
-    // }
 
     useEffect(() => {
         getBrand()

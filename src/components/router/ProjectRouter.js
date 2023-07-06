@@ -32,9 +32,7 @@ import Report from "../modules/report/Report";
 import PriceFormulaList from "../modules/priceFormula/PriceFormulaList";
 import AddPriceFormula from "../modules/priceFormula/AddPriceFormula";
 import PriceFormulaEdit from "../modules/priceFormula/PriceFormulaEdit";
-import PriceFormulaVariablesList from "../modules/priceFormula/PriceFormulaVariablesList";
-import PriceFormulaVariablesEdit from "../modules/priceFormula/PriceFormulaVariablesEdit";
-import AddPriceFormulaVariables from "../modules/priceFormula/AddPriceFormulaVariables";
+import ProductEdit from "../modules/product/ProductEdit";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -110,6 +108,10 @@ const ProjectRouter = createBrowserRouter([
         element: <AddProductPhoto/>,
       },
       {
+        path: "/product/edit/:id",
+        element: <ProductEdit/>,
+      },
+      {
         path: "/shop/edit/:id",
         element: <ShopEdit/>,
       },
@@ -160,18 +162,6 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/price_formula/edit/:id",
         element: <PriceFormulaEdit/>,
-      },
-      {
-        path: "/price_formula_variable",
-        element: <PriceFormulaVariablesList/>,
-      },
-      {
-        path: "/price_formula_variable/create",
-        element: <AddPriceFormulaVariables/>,
-      },
-      {
-        path: "/price_formula_variable/edit/:id",
-        element: <PriceFormulaVariablesEdit/>,
       },
       {
         path: "/error-500",

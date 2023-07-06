@@ -34,7 +34,7 @@ const PriceFormulaList = () => {
 
   const getPriceFormulas = (pageNumber = 1) => {
     const token = localStorage.getItem("token");
-    const url = `${Constants.BASE_URL}/priceFormula?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`;
+    const url = `${Constants.BASE_URL}/formula?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`;
 
     const config = {
       method: "get",
