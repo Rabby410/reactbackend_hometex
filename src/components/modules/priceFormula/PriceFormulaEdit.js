@@ -15,6 +15,7 @@ const PriceFormulaEdit = () => {
     const [errors, setErrors] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [formula, setformula] = useState([])
+
     const getFormula = () => {
         const token = localStorage.getItem('token');
         const config = {
@@ -42,6 +43,41 @@ const PriceFormulaEdit = () => {
           [e.target.name]: e.target.value,
         }));
       };
+
+      const handleformulaUpdate = () => { 
+        let token = localStorage.getItem('token');
+        setIsLoading(true);
+        if (token) {
+            const config = {
+                method: 'put',
+                url: `${Constants.BASE_URL}/formula/${params.id}`,
+                headers: { 
+                    'Authorization': `Bearer ${token}`
+                },
+                data: input // assuming input is defined elsewhere
+            };
+                    
+            axios(config)
+                .then(function (res) {
+                    setIsLoading(false);
+                    Swal.fire({
+                        position: "top-end",
+                        icon: res.data.cls,
+                        title: res.data.msg,
+                        showConfirmButton: false,
+                        toast: true,
+                        timer: 1500,
+                    });
+                      navigate('/brand');
+                })
+                .catch((error) => {
+                    setIsLoading(false);
+                    if (error.res.status === 422) {
+                        setErrors(error.res.data.errors);
+                    }
+                });
+        }
+    }
 
     useEffect(() => {
         getFormula()
