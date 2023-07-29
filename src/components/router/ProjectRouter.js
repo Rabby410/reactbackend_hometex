@@ -33,6 +33,7 @@ import PriceFormulaList from "../modules/priceFormula/PriceFormulaList";
 import AddPriceFormula from "../modules/priceFormula/AddPriceFormula";
 import PriceFormulaEdit from "../modules/priceFormula/PriceFormulaEdit";
 import ProductEdit from "../modules/product/ProductEdit";
+import CsvProduct from "../modules/product/CsvProduct";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -110,6 +111,10 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/product/edit/:id",
         element: <ProductEdit/>,
+      },
+      {
+        path: "/product/csv",
+        element: <CsvProduct/>,
       },
       {
         path: "/shop/edit/:id",

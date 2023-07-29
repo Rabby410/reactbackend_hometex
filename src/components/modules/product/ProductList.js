@@ -4,25 +4,18 @@ import CardHeader from "../../partoals/miniComponents/CardHeader";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Constants from "../../../Constants";
-import Pagination from "react-js-pagination";
-import { Link } from "react-router-dom";
 import Loader from "../../partoals/miniComponents/Loader";
 import NoDataFound from "../../partoals/miniComponents/NoDataFound";
+import { Link } from "react-router-dom";
 
 const ProductList = () => {
   const [input, setInput] = useState({
     order_by: "id",
-    per_page: 10,
     direction: "desc",
     search: "",
   });
 
-  const [itemsCountsPerPage, setItemsCountPerPage] = useState(0);
-  const [totalCountsPerPage, setTotalCountPerPage] = useState(1);
-  const [startFrom, setStartFrom] = useState(1);
-  const [activePage, setActivePage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-
   const [products, setProducts] = useState([]);
 
   const handleInput = (e) => {
@@ -32,12 +25,12 @@ const ProductList = () => {
     }));
   };
 
-  const getProducts = (pageNumber = 1) => {
+  const getProducts = () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
     axios
       .get(
-        `${Constants.BASE_URL}/product?page=${pageNumber}&search=${input.search}&order_by=${input.order_by}&per_page=${input.per_page}&direction=${input.direction}`,
+        `${Constants.BASE_URL}/product?page=1&search=${input.search}&order_by=${input.order_by}&direction=${input.direction}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,10 +39,6 @@ const ProductList = () => {
       )
       .then((res) => {
         setProducts(res.data.data);
-        setItemsCountPerPage(res.data.meta.per_page);
-        setStartFrom(res.data.meta.from);
-        setTotalCountPerPage(res.data.meta.total);
-        setActivePage(res.data.meta.current_page);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -106,6 +95,12 @@ const ProductList = () => {
                 link={"/product/create"}
                 icon={"fa-add"}
                 button_text={"Add"}
+              /><br/>
+              <CardHeader
+                // title={"Product CSV"}
+                link={"/product/csv"}
+                icon={"fa-file-csv"}
+                button_text={"Create CSV"}
               />
             </div>
             <div className="search-area mb-4 mx-3">
@@ -155,21 +150,7 @@ const ProductList = () => {
                     </select>
                   </label>
                 </div>
-                <div className="col-md-2">
-                  <label className={"w-100"}>
-                    <p>Per Page</p>
-                    <select
-                      className="form-select form-control-sm"
-                      name={"per_page"}
-                      value={input.per_page}
-                      onChange={handleInput}
-                    >
-                      <option value={10}>10</option>
-                      <option value={25}>25</option>
-                      <option value={100}>100</option>
-                    </select>
-                  </label>
-                </div>
+                
                 <div className="col-md-2">
                   <div className="d-grid mt-4">
                     <button
@@ -210,7 +191,6 @@ const ProductList = () => {
                       {Object.keys(products).length > 0 ? (
                         products.map((product, number) => (
                           <tr key={number}>
-                            <td>{startFrom + number}</td>
                             <td>
                               <p className={"text-theme"}>
                                 Name: {product.name}
@@ -344,23 +324,6 @@ const ProductList = () => {
                   </table>
                 </div>
               )}
-            </div>
-            <div className="card-footer">
-              <nav className={"pagination-sm"}>
-                <Pagination
-                  activePage={activePage}
-                  itemsCountPerPage={itemsCountsPerPage}
-                  totalItemsCount={totalCountsPerPage}
-                  pageRangeDisplayed={5}
-                  onChange={getProducts}
-                  firstPageText={"First"}
-                  nextPageText={"Next"}
-                  prevPageText={"Previous"}
-                  lastPageText={"Last"}
-                  itemClass={"page-item"}
-                  linkClass={"page-link"}
-                />
-              </nav>
             </div>
           </div>
         </div>
