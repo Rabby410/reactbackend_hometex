@@ -6,13 +6,13 @@ import Swal from "sweetalert2";
 import Constants from "../../../Constants";
 import Loader from "../../partoals/miniComponents/Loader";
 import NoDataFound from "../../partoals/miniComponents/NoDataFound";
-import { saveAs } from "file-saver";
 import Papa from "papaparse";
 
 function CsvProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [checkedProducts, setCheckedProducts] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
 
   const getProducts = () => {
     setIsLoading(true);
@@ -39,53 +39,33 @@ function CsvProduct() {
     getProducts();
   }, []);
 
-  const exportCSV = () => {
+  const exportProductIds = () => {
     if (checkedProducts.length === 0) {
       Swal.fire("Error", "No products selected.", "error");
       return;
     }
 
-    const selectedProducts = products.filter((product) =>
-      checkedProducts.includes(product.id)
-    );
+    // Create a list of selected product IDs
+    const selectedProductIds = checkedProducts;
 
-    const csvData = selectedProducts.map((product) => ({
-      id: product.id,
-      title: product.name,
-      description: product.description,
-      availability: "in stock",
-      condition: "new",
-      price: product.sell_price.price,
-      link: product.link,
-      image_link: product.primary_photo,
-      brand: product.brand,
-    }));
+    // Send the selected product IDs to the Laravel site
+    const formData = new FormData();
+    formData.append("selectedProductIds", JSON.stringify(selectedProductIds));
 
-    const csv = Papa.unparse(csvData, {
-      header: true,
-    });
-
-    // Create a Blob from the CSV data
-    const blob = new Blob([csv], { type: "text/csv" });
-
-    // Get the current date in the format "YYYY-MM-DD"
-    const currentDate = new Date().toISOString().slice(0, 10);
-
-    // Create the file name with the current date
-    const fileName = `catalog_products_${currentDate}.csv`;
-
-    // Create a temporary anchor element to trigger the download
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName;
-
-    // Append the anchor to the DOM and trigger the download
-    document.body.appendChild(link);
-    link.click();
-
-    // Clean up by removing the anchor element after the download
-    URL.revokeObjectURL(link.href);
-    document.body.removeChild(link);
+    axios
+      .post(`${Constants.BASE_URL}/save-csv`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        Swal.fire("Success", "Selected product IDs sent to Laravel.", "success");
+      })
+      .catch((error) => {
+        console.log(error);
+        Swal.fire("Error", "Failed to send selected product IDs to Laravel.", "error");
+      });
   };
 
   return (
@@ -163,16 +143,16 @@ function CsvProduct() {
                             <td>in stock</td>
                             <td>new</td>
                             <td>{product.sell_price.price}</td>
-                            <td>{product.brand}</td>
+                            <td>{product.id}</td>
                             <td>{product.primary_photo}</td>
-                            <td>{product.brand}</td>                           
+                            <td>{product.brand}</td>
                             <td>
                               <img
                                 src={product.primary_photo}
                                 alt={product.name}
                                 className={"img-thumbnail table-image"}
                               />
-                            </td>                           
+                            </td>
                           </tr>
                         ))
                       ) : (
@@ -186,10 +166,10 @@ function CsvProduct() {
             <div className="card-footer">
               <button
                 className="btn btn-primary"
-                onClick={exportCSV}
+                onClick={exportProductIds}
                 disabled={checkedProducts.length === 0}
               >
-                Export CSV
+                Export Product CSV and send to Facebook & Instagram
               </button>
             </div>
           </div>
