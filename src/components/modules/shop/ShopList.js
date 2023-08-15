@@ -68,34 +68,44 @@ const handleDetailsModal = (shop) => {
     setModalShow(true);
 };
 const handleShopDelete = (id) => {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You want to delete the shop!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, DELETE IT!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const token = localStorage.getItem('token');
-            axios.delete(`${Constants.BASE_URL}/shop/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then(res => {
-                getShops()
-                Swal.fire({
-                    position: 'top-end',
-                    icon: res.data.cls,
-                    title: res.data.msg,
-                    showConfirmButton: false,
-                    toast:true,
-                    timer: 1500
-                  })
-            })
-        }
-    })
+    if (id === 3 || id === 4 || id === 1) {
+        // Show a message or some notification indicating that deletion is not allowed
+        Swal.fire({
+            title: 'Deletion Not Allowed',
+            text: 'Deletion is not allowed for this record.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+    } else {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to delete the shop!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, DELETE IT!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const token = localStorage.getItem('token');
+                axios.delete(`${Constants.BASE_URL}/shop/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }).then(res => {
+                    getShops();
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: res.data.cls,
+                        title: res.data.msg,
+                        showConfirmButton: false,
+                        toast: true,
+                        timer: 1500
+                    });
+                });
+            }
+        });
+    }
 };
 
 
