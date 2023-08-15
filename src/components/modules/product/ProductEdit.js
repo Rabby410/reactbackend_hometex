@@ -3,14 +3,13 @@ import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { EditorState, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-const AddProduct = () => {
-  const params = useParams()
+const ProductEdit = () => {
   const navigate = useNavigate();
   const [input, setInput] = useState({ status: 1 });
   const [attribute_input, setAttribute_input] = useState({});
@@ -28,27 +27,6 @@ const AddProduct = () => {
   const [specificationFiled, setSpecificationFiled] = useState([]);
   const [specificationFiledId, setSpecificationFiledId] = useState(1);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [product, setProduct] = useState([])
-
-  const getProduct = () => {
-    const token = localStorage.getItem('token');
-    const config = {
-      method: 'get',
-      maxBodyLength: Infinity,
-      url: `${Constants.BASE_URL}/product/${params.id}`,
-      headers: { 
-        'Authorization': `Bearer ${token}`
-      }
-    };
-  
-    axios.request(config)
-      .then((response) => {
-        setInput(response.data.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
 
   const onEditorStateChange = (newEditorState) => {
     setEditorState(newEditorState);
@@ -230,7 +208,7 @@ const AddProduct = () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
     axios
-      .put(`${Constants.BASE_URL}/product`, input, {
+      .post(`${Constants.BASE_URL}/product`, input, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -258,7 +236,6 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    // getProduct();
     getCategories();
     getBrands();
     getCountries();
@@ -279,14 +256,14 @@ const AddProduct = () => {
 
   return (
     <>
-      <Breadcrumb title={"Edit Product"} />
+      <Breadcrumb title={"Add Product"} />
       <div className="row">
         <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <CardHeader
-                title={"Edit Product"}
-                link={"/products"}
+                title={"Add Product"}
+                link={"/product"}
                 icon={"fa-list"}
                 button_text={"List"}
               />
@@ -744,17 +721,27 @@ const AddProduct = () => {
                           <label className={"w-100 mt-4"}>
                             <p>Product Sale Price</p>
                             <input
-                              className={
-                                errors.price !== undefined
-                                  ? "form-control mt-2 is-invalid"
-                                  : "form-control mt-2"
-                              }
-                              type="number"
-                              name="price"
-                              value={input.price}
-                              onChange={handleInput}
-                              placeholder="Enter Product Price"
+                              className="form-check-input"
+                              type="checkbox"
+                              name="usePrice"
+                              checked={input.usePrice}
+                              onChange={handleCheckbox}
                             />
+                            <span>Use Product Sale Price</span>
+                            {input.usePrice && (
+                              <input
+                                className={
+                                  errors.price !== undefined
+                                    ? "form-control mt-2 is-invalid"
+                                    : "form-control mt-2"
+                                }
+                                type="number"
+                                name="price"
+                                value={input.price}
+                                onChange={handleInput}
+                                placeholder="Enter Product Price"
+                              />
+                            )}
                             <p className={"login-error-msg"}>
                               <small>
                                 {errors.price !== undefined
@@ -965,98 +952,6 @@ const AddProduct = () => {
                             </p>
                           </label>
                         </div>
-                        <div className="col-md-12">
-                          <label className={"w-100 mt-4"}>
-                            <div className="row">
-                              {/* Featured Product */}
-                              <div className="col-md-4">
-                                <p>Featured Product</p>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isFeatured"
-                                    value="1"
-                                    checked={input.isFeatured === "1"}
-                                    onChange={handleInput}
-                                  />
-                                  <label className="form-check-label">
-                                    Yes
-                                  </label>
-                                </div>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isFeatured"
-                                    value="0"
-                                    checked={input.isFeatured === "0"}
-                                    onChange={handleInput}
-                                  />
-                                  <label className="form-check-label">No</label>
-                                </div>
-                              </div>
-
-                              {/* New Product */}
-                              <div className="col-md-4">
-                                <p>New Product</p>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isNew"
-                                    value="1"
-                                    checked={input.isNew === "1"}
-                                    onChange={handleInput}
-                                  />
-                                  <label className="form-check-label">
-                                    Yes
-                                  </label>
-                                </div>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isNew"
-                                    value="0"
-                                    checked={input.isNew === "0"}
-                                    onChange={handleInput}
-                                  />
-                                  <label className="form-check-label">No</label>
-                                </div>
-                              </div>
-
-                              {/* Trending Product */}
-                              <div className="col-md-4">
-                                <p>Trending Product</p>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isTrending"
-                                    value="1"
-                                    checked={input.isTrending === "1"}
-                                    onChange={handleInput}
-                                  />
-                                  <label className="form-check-label">
-                                    Yes
-                                  </label>
-                                </div>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="isTrending"
-                                    value="0"
-                                    checked={input.isTrending === "0"}
-                                    onChange={handleInput}
-                                  />
-                                  <label className="form-check-label">No</label>
-                                </div>
-                              </div>
-                            </div>
-                          </label>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -1112,4 +1007,4 @@ const AddProduct = () => {
     </>
   );
 };
-export default AddProduct;
+export default ProductEdit;
