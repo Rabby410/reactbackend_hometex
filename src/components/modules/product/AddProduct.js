@@ -18,6 +18,7 @@ const AddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [childSubCategories, setChildSubCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [countries, setCountries] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -176,25 +177,44 @@ const AddProduct = () => {
         setSubCategories(res.data);
       });
   };
+  const getChildSubCategories = (category_id) => {
+    const token = localStorage.getItem("token");
+    axios
+      .get(`${Constants.BASE_URL}/get-child-sub-category-list/${category_id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setChildSubCategories(res.data);
+      });
+  };
 
   const handleInput = (e) => {
-    if (e.target.name == "name") {
+    if (e.target.name === "name") {
       let slug = e.target.value;
       slug = slug.toLowerCase();
       slug = slug.replaceAll(" ", "-");
       setInput((prevState) => ({ ...prevState, slug: slug }));
-    } else if (e.target.name == "category_id") {
+    } else if (e.target.name === "category_id") {
       let category_id = parseInt(e.target.value);
       if (!Number.isNaN(category_id)) {
         getSubCategories(e.target.value);
+        setChildSubCategories([]); // Clear child sub-categories when changing categories
+      }
+    } else if (e.target.name === "sub_category_id") {
+      let sub_category_id = parseInt(e.target.value);
+      if (!Number.isNaN(sub_category_id)) {
+        getChildSubCategories(e.target.value);
       }
     }
-
+  
     setInput((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
+  
 
   const handlePhoto = (e) => {
     let file = e.target.files[0];
@@ -370,6 +390,37 @@ const AddProduct = () => {
                       <small>
                         {errors.sub_category_id != undefined
                           ? errors.sub_category_id[0]
+                          : null}
+                      </small>
+                    </p>
+                  </label>
+                </div>
+                <div className="col-md-6">
+                  <label className={"w-100 mt-4"}>
+                    <p>Select Child Sub Category</p>
+                    <select
+                      className={
+                        errors.child_sub_category_id != undefined
+                          ? "form-select mt-2 is-invalid"
+                          : "form-select mt-2"
+                      }
+                      name={"child_sub_category_id"}
+                      value={input.child_sub_category_id}
+                      onChange={handleInput}
+                      placeholder={"Select product child sub category"}
+                      disabled={input.sub_category_id == undefined}
+                    >
+                      <option>Select Child Sub Category</option>
+                      {childSubCategories.map((child_sub_category, index) => (
+                        <option value={child_sub_category.id} key={index}>
+                          {child_sub_category.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className={"login-error-msg"}>
+                      <small>
+                        {errors.child_sub_category_id != undefined
+                          ? errors.child_sub_category_id[0]
                           : null}
                       </small>
                     </p>

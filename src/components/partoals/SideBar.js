@@ -110,6 +110,17 @@ export default function SideBar() {
                                 <Link className="nav-link" to="/sub-category/create">Add Sub Category</Link>
                             </nav>
                         </div>
+                        <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#child-sub-category" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
+                            Child-Sub-Category
+                            <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
+                        </Link>
+                        <div className="collapse" id="child-sub-category" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav className="sb-sidenav-menu-nested nav">
+                                <Link className="nav-link" to="/child-sub-category">Child Sub Category List</Link>
+                                <Link className="nav-link" to="/child-sub-category/create">Add Child Sub Category</Link>
+                            </nav>
+                        </div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#brand" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
                             Brands

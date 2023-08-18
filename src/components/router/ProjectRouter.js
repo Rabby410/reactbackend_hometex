@@ -34,6 +34,9 @@ import AddPriceFormula from "../modules/priceFormula/AddPriceFormula";
 import PriceFormulaEdit from "../modules/priceFormula/PriceFormulaEdit";
 import ProductEdit from "../modules/product/ProductEdit";
 import CsvProduct from "../modules/product/CsvProduct";
+import ChildSubCategoryList from "../modules/childSubCategory/ChildSubCategoryList";
+import ChildSubCategoryEdit from "../modules/childSubCategory/ChildSubCategoryEdit";
+import ChildSubCategoryAdd from "../modules/childSubCategory/ChildSubCategoryAdd";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -67,6 +70,18 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/sub-category/edit/:id",
         element: <SubCategoryEdit/>,
+      },
+      {
+        path: "/child-sub-category/create",
+        element: <ChildSubCategoryAdd/>,
+      },
+      {
+        path: "/child-sub-category",
+        element: <ChildSubCategoryList/>,
+      },
+      {
+        path: "/child-sub-category/edit/:id",
+        element: <ChildSubCategoryEdit/>,
       },
       {
         path: "/brand/create",
