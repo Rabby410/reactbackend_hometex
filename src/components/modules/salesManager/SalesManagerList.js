@@ -105,7 +105,7 @@ const SalesManagerList = () => {
                 <div className="card-header">
                     <CardHeader
                         title={"Sales Managers list"}
-                        link={"/sales_manager/create"}
+                        link={"/employee/create"}
                         icon={"fa-add"}
                         button_text={"Add"}
                     />

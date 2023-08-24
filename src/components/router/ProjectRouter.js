@@ -144,11 +144,11 @@ const ProjectRouter = createBrowserRouter([
         element: <ShopList/>,
       },
       {
-        path: "/sales-manager/create",
+        path: "/employee/create",
         element: <AddSalesManger/>,
       },
       {
-        path: "/sales-manager",
+        path: "/employee",
         element: <SalesManagerList/>,
       },
       {

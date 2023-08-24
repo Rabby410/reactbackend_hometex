@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom'
 import GlobalFunction from '../../assets/GlobalFunction'
 
 export default function SideBar() {
+    const {hasAccessToProduct,hasAccessToSale} = GlobalFunction;
+    const productExist = hasAccessToProduct();
+    const saleExist = hasAccessToSale();
+    const hasType = localStorage.employee_type;
+    
     return (
         <div id="layoutSidenav_nav">
             <nav className="sb-sidenav accordion bg-theme-basic sb-sidenav-dark" id="sidenavAccordion">
@@ -14,6 +19,9 @@ export default function SideBar() {
                             Dashboard
                         </Link>
                         {/* Report start */}
+                        {
+                                    (!productExist && !saleExist)  &&
+                                    <>
                         <div className="sb-sidenav-menu-heading">Reports</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#report" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
@@ -26,7 +34,11 @@ export default function SideBar() {
                                 {/* <Link className="nav-link" to="/orders/create">Create Order</Link> */}
                             </nav>
                         </div>
+                        </>}
                         {/* Report end */}
+                        {
+                                    ((productExist && hasType !== "4") || (hasType !== "4"))  &&
+                                    <>
                         <div className="sb-sidenav-menu-heading">Product</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#products" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
@@ -36,16 +48,14 @@ export default function SideBar() {
                         <div className="collapse" id="products" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
                                 <Link className="nav-link" to="/products">Products List</Link>
-                                {/* {
-                                    GlobalFunction.isAdmin() &&
-                                    <> */}
+                                
                                       <Link className="nav-link" to="/product/create">Add Product</Link>
                                       <Link className="nav-link" to="/generate-bar-code">Barcode Generator</Link>
                                         {/* <Link className="nav-link" to="/product/trash">Trash Products</Link> */}
-                                    {/* </>
-                                } */}
                             </nav>
                         </div>
+                                    </>
+                                }
                         
                         {/* Price Formula */}
                         {/* <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#priceFormula" aria-expanded="false" aria-controls="collapseLayouts">
@@ -64,6 +74,9 @@ export default function SideBar() {
                             GlobalFunction.isAdmin() &&
 
                             <> */}
+                            {
+                                    (!productExist && !saleExist)  &&
+                                    <>
                             <div className="sb-sidenav-menu-heading">Shops</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#shop" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
@@ -78,13 +91,13 @@ export default function SideBar() {
                         </div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#sales_manager" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
-                            Sales Manager
+                            Employee
                             <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
                         </Link>
                         <div className="collapse" id="sales_manager" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
-                                <Link className="nav-link" to="/sales-manager">Sales Manager List</Link>
-                                <Link className="nav-link" to="/sales-manager/create">Add Sales Manager</Link>
+                                <Link className="nav-link" to="/employee">Employee List</Link>
+                                <Link className="nav-link" to="/employee/create">Add Employee</Link>
                             </nav>
                         </div>
                         <div className="sb-sidenav-menu-heading">Management</div>
@@ -147,9 +160,14 @@ export default function SideBar() {
                             <div className="sb-nav-link-icon"><i className="fas fa-table"></i></div>
                             Product Attributes
                         </Link>
+                        </>}
                             {/* </>
                         } */}
                         {/* POS start */}
+                        {
+                                    ((saleExist && hasType !== "3") || (hasType !== "3"))  &&
+                                    <>
+                        
                         <div className="sb-sidenav-menu-heading">Pos System</div>
                         <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#order" aria-expanded="false" aria-controls="collapseLayouts">
                             <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
@@ -164,6 +182,7 @@ export default function SideBar() {
                         </div>
                         {/* POS end */}
                         
+                        </>}
                     </div>
                 </div>
                 <div className="sb-sidenav-footer bg-theme text-silver">
