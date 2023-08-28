@@ -37,7 +37,26 @@ const GlobalFunction = {
     formatPrice(price) {
       return new Intl.NumberFormat("us").format(price) + "৳";
     },
-  };
-  
-  export default GlobalFunction;
-  
+  initSessionTimeout() {
+    let sessionTimeout;
+
+    const resetTimeout = () => {
+      clearTimeout(sessionTimeout);
+      sessionTimeout = setTimeout(() => {
+        this.logOut();
+      }, 130000); // 30 seconds in milliseconds
+    };
+
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
+    events.forEach(event => {
+      document.addEventListener(event, resetTimeout);
+    });
+
+    resetTimeout();
+  },
+};
+
+export default GlobalFunction;
+
+// Initialize the session timeout when the page loads
+GlobalFunction.initSessionTimeout();

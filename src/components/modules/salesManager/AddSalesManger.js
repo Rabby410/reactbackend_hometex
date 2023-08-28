@@ -347,9 +347,9 @@ const AddSalesManger = () => {
                               Choose Type
                             </option>
                             <option value={1}>Manager</option>
-                            <option value={2}>Cashier</option>
+                            <option value={2}>General Employee</option>
                             <option value={3}>Product Uploader</option>
-                            <option value={4}>General Employee</option>
+                            <option value={4}>Cashier</option>
                           </select>
                         </label>
 

@@ -103,9 +103,63 @@ const BarCode = () => {
 
                         <div className="card-body">
                             <div className="row align-items-baseline">
-                                {/* ... */}
+                            <div className="col-md-3">
+                                    <label className="w-100 mt-4 mt-md-0">
+                                        <p>Select Product Category</p>
+                                        <select
+                                            className={'form-select mt-2'}
+                                            name={'category_id'}
+                                            value={input.category_id}
+                                            onChange={handleInput}
+                                            placeholder={"Select Product Category"}
+                                        >
+                                            <option>Select Category</option>
+                                            {categories.map((category, index) => (
+                                                <option value={category.id} key={index}>{category.name}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
+                                <div className="col-md-3">
+                                    <label className="w-100 mt-4 mt-md-0">
+                                        <p>Select Product Sub Category</p>
+                                        <select
+                                            className={'form-select mt-2'}
+                                            name={'sub_category_id'}
+                                            value={input.sub_category_id}
+                                            onChange={handleInput}
+                                            placeholder={"Select Product Sub Category"}
+                                            disabled={input.category_id == undefined}
+                                        >
+                                            <option>Select Sub Category</option>
+                                            {subCategories.map((sub_category, index) => (
+                                                <option value={sub_category.id} key={index}>{sub_category.name}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="w-100 mt-4 mt-md-0">
+                                        <p>Product Name</p>
+                                        <input
+                                            className={'form-control mt-2'}
+                                            type={'search'}
+                                            name={'name'}
+                                            value={input.name}
+                                            onChange={handleInput}
+                                            placeholder={'Enter product name'}
+                                        />
+                                    </label>
+                                </div>
+                                <div className="col-md-2 ">
+                                    <div className="d-grid mt-4">
+                                        <button onClick={handleProductSearch} className={"btn theme-button"}
+                                            dangerouslySetInnerHTML={{ __html: isLoading ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...' : 'Search' }}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                            <div className="row align-items-baseline">
+                            <div className="row ">
                                 <div className="col-md-3">
                                     <label className="w-100 mt-4 mt-md-0">
                                         <p>Page Width</p>
