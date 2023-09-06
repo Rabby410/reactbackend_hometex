@@ -37,6 +37,7 @@ import CsvProduct from "../modules/product/CsvProduct";
 import ChildSubCategoryList from "../modules/childSubCategory/ChildSubCategoryList";
 import ChildSubCategoryEdit from "../modules/childSubCategory/ChildSubCategoryEdit";
 import ChildSubCategoryAdd from "../modules/childSubCategory/ChildSubCategoryAdd";
+import ProductDetails from "../modules/product/ProductDetails";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -126,6 +127,10 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/product/edit/:id",
         element: <ProductEdit/>,
+      },
+      {
+        path: "/product/:id",
+        element: <ProductDetails/>,
       },
       {
         path: "/product/csv",

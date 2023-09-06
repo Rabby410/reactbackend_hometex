@@ -1,0 +1,247 @@
+import React, { useEffect, useState } from "react";
+import Breadcrumb from "../../partoals/Breadcrumb";
+import CardHeader from "../../partoals/miniComponents/CardHeader";
+import axios from "axios";
+import { Link, useParams } from "react-router-dom";
+import Constants from "../../../Constants";
+import GlobalFunction from "../../../assets/GlobalFunction";
+
+const ProductDetails = () => {
+  const params = useParams([]);
+  const [product, setProduct] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getProduct = () => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+    axios
+      .get(`${Constants.BASE_URL}/product/${params.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setProduct(res.data.data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        // handle error here, e.g. set an error state or display an error message
+      });
+  };
+
+  useEffect(() => {
+    getProduct();
+  }, []);
+
+  return (
+    <>
+      <Breadcrumb title={"Product Details"} />
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card">
+            <div className="card-header">
+              <CardHeader
+                title={"Product Details"}
+                link={"/products"}
+                icon={"fa-list"}
+                button_text={"List"}
+              />
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="card h-100">
+                    <div className="card-header">
+                      <h5>Basic Information</h5>
+                    </div>
+                    <div className="card-body">
+                      <table
+                        className={
+                          "my-table table-sm product-table table table-hover table-striped table-bordered"
+                        }
+                      >
+                        <tbody>
+                          <tr>
+                            <th>Title</th>
+                            <td>{product.name}</td>
+                          </tr>
+                          <tr>
+                            <th>Slug</th>
+                            <td>{product.slug}</td>
+                          </tr>
+                          <tr>
+                            <th>SKU</th>
+                            <td>{product.sku}</td>
+                          </tr>
+                          <tr>
+                            <th>status</th>
+                            <td>{product.status}</td>
+                          </tr>
+                          <tr>
+                            <th>Category</th>
+                            <td>
+                              <Link to={"/category"}>
+                                {product?.category?.name}
+                              </Link>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Sub Category</th>
+                            <td>
+                              <Link to={"/sub-category"}>
+                                {product?.sub_category?.name}
+                              </Link>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Child Sub Category</th>
+                            <td>
+                              <Link to={"/child-sub-category"}>
+                                {product?.child_sub_category?.name}
+                              </Link>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Brand</th>
+                            <td>
+                              <Link to={"/brand"}>{product?.brand}</Link>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Origin</th>
+                            <td>{product.country}</td>
+                          </tr>
+                          <tr>
+                            <th>Supplier</th>
+                            <td>
+                              <Link to={"/suppliers"}>{product.supplier}</Link>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Created By</th>
+                            <td>{product.created_by}</td>
+                          </tr>
+                          <tr>
+                            <th>Updated By</th>
+                            <td>{product.updated_BY}</td>
+                          </tr>
+                          <tr>
+                            <th>Creayed At</th>
+                            <td>{product.created_at}</td>
+                          </tr>
+                          <tr>
+                            <th>updated At</th>
+                            <td>{product.updated_at}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="card h-100">
+                    <div className="card-header">
+                      <h5>Price & Stock</h5>
+                    </div>
+                    <div className="card-body">
+                      <table
+                        className={
+                          "my-table table-sm product-table table table-hover table-striped table-bordered"
+                        }
+                      >
+                        <tbody>
+                          <tr>
+                            <th>Cost</th>
+                            <td>{product.cost}</td>
+                          </tr>
+                          <tr>
+                            <th>Original sale Price</th>
+                            <td>{product.price}</td>
+                          </tr>
+                          <tr>
+                            <th>Sale Price</th>
+                            <td>
+                              {GlobalFunction.formatPrice(
+                                product?.sell_price?.price,
+                                product?.sell_price?.symbol
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Discont</th>
+                            <td>
+                              {GlobalFunction.formatPrice(
+                                product?.sell_price?.discount,
+                                product?.sell_price?.symbol
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Discount Percent</th>
+                            <td>{product.discount_percent}</td>
+                          </tr>
+                          <tr>
+                            <th>Discount Fixed</th>
+                            <td>{product.discount_fixed}</td>
+                          </tr>
+                          <tr>
+                            <th>Discount Start</th>
+                            <td>{product.discount_start}</td>
+                          </tr>
+                          <tr>
+                            <th>Discount End</th>
+                            <td>{product.discount_end}</td>
+                          </tr>
+                          <tr>
+                            <th>Discount Remaining Days</th>
+                            <td>{product.discount_remaining_days} days</td>
+                          </tr>
+                          <tr>
+                            <th>Product Stock</th>
+                            <td>{product.stock}</td>
+                          </tr>
+                          <tr>
+                            <th>Profit</th>
+                            <td>
+                              {GlobalFunction.formatPrice(product.profit)}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>Profit Percentage</th>
+                            <td>{product.profit_percentage}%</td>
+                          </tr>
+                          <tr>
+                            <th>Is Featured|New|Trending</th>
+                            <td>
+                              {product.isFeatured === 1 ? "Yes" : "No"} |{" "}
+                              {product.isNew === 1 ? "Yes" : "No"} |{" "}
+                              {product.isTrending === 1 ? "Yes" : "No"}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            </div>
+          </div>
+        {/* </div>
+        <div className="row">
+        {product.photos.map((photo, index) => (
+          <div className="col-md-3" key={index}>
+            <div className="card">
+              <img src={photo} alt={`Photo ${index}`} className="card-img-top" />
+            </div>
+          </div>
+        ))}
+      </div>
+      </div> */}
+    </>
+  );
+};
+
+export default ProductDetails;

@@ -34,25 +34,25 @@ const GlobalFunction = {
       }
       return false;
     },
-    formatPrice(price) {
-      return new Intl.NumberFormat("us").format(price) + "৳";
+    formatPrice(price, symbol = '৳') {
+      return new Intl.NumberFormat("us").format(price) + symbol;
     },
   initSessionTimeout() {
     let sessionTimeout;
 
-    const resetTimeout = () => {
-      clearTimeout(sessionTimeout);
-      sessionTimeout = setTimeout(() => {
-        this.logOut();
-      }, 130000); // 30 seconds in milliseconds
-    };
+    // const resetTimeout = () => {
+    //   clearTimeout(sessionTimeout);
+    //   sessionTimeout = setTimeout(() => {
+    //     this.logOut();
+    //   }, 130000); // 30 seconds in milliseconds
+    // };
 
-    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
-    events.forEach(event => {
-      document.addEventListener(event, resetTimeout);
-    });
+    // const events = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
+    // events.forEach(event => {
+    //   document.addEventListener(event, resetTimeout);
+    // });
 
-    resetTimeout();
+    // resetTimeout();
   },
 };
 

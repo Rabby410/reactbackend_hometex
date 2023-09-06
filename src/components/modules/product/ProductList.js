@@ -17,6 +17,8 @@ const ProductList = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
+  const [startFrom, setStartFrom] = useState(1);
+  const [productColumns, setProductColumns] = useState([]);
 
   const handleInput = (e) => {
     setInput((prevState) => ({
@@ -40,6 +42,23 @@ const ProductList = () => {
       .then((res) => {
         setProducts(res.data.data);
         setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        // handle error here, e.g. set an error state or display an error message
+      });
+  };
+
+  const getProductColumns = () => {
+    const token = localStorage.getItem("token");
+    axios
+      .get(`${Constants.BASE_URL}/get-product-columns`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setProductColumns(res.data);
       })
       .catch((error) => {
         console.log(error);
@@ -82,6 +101,7 @@ const ProductList = () => {
 
   useEffect(() => {
     getProducts();
+    getProductColumns();
   }, []);
   return (
     <>
@@ -95,7 +115,8 @@ const ProductList = () => {
                 link={"/product/create"}
                 icon={"fa-add"}
                 button_text={"Add"}
-              /><br/>
+              />
+              <br />
               <CardHeader
                 // title={"Product CSV"}
                 link={"/product/csv"}
@@ -128,11 +149,11 @@ const ProductList = () => {
                       value={input.order_by}
                       onChange={handleInput}
                     >
-                      <option value={"name"}>Name</option>
-                      <option value={"serial"}>Serial</option>
-                      <option value={"status"}>Status</option>
-                      <option value={"created_at"}>Created At</option>
-                      <option value={"updated_at"}>Updated At</option>
+                      {productColumns.map((column, j) => (
+                        <option key={j} value={column.id}>
+                          {column.name}
+                        </option>
+                      ))}
                     </select>
                   </label>
                 </div>
@@ -150,7 +171,7 @@ const ProductList = () => {
                     </select>
                   </label>
                 </div>
-                
+
                 <div className="col-md-2">
                   <div className="d-grid mt-4">
                     <button
@@ -191,6 +212,7 @@ const ProductList = () => {
                       {Object.keys(products).length > 0 ? (
                         products.map((product, number) => (
                           <tr key={number}>
+                            <td>{startFrom + number}</td>
                             <td>
                               <p className={"text-theme"}>
                                 Name: {product.name}
@@ -225,11 +247,6 @@ const ProductList = () => {
                               <p className={"text-theme"}>
                                 Price: {product.price}
                               </p>
-                              {product.price_formula && (
-                                <p className="text-theme">
-                                  Price Formula: {product.price_formula}
-                                </p>
-                              )}
                               <p className={"text-success"}>
                                 Discount : {product.discount_percent} +{" "}
                                 {product.discount_fixed}
@@ -295,9 +312,11 @@ const ProductList = () => {
                             </td>
                             <td>
                               <div className={"w-40"}>
+                                <Link to={`/product/${product.id}`}>
                                 <button className={"btn btn-sm btn-info"}>
                                   <i className="fa-solid fa-eye"></i>
                                 </button>
+                                </Link>
                                 <Link to={`/product/edit/${product.id}`}>
                                   <button
                                     className={"btn btn-sm my-1 btn-warning"}
