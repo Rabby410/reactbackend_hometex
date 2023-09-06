@@ -53,7 +53,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Total Sales</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.total_sales}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -68,45 +68,13 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Total Purchase</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.total_purchase}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className='col-md-3'>
-                                                <div className='card report-card'>
-                                                    <div className='card-body'>
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="flex-shrink-0">
-                                                                <i className="fa-solid fa-rotate-left fa-2x"></i>
-                                                            </div>
-                                                            <div className="flex-grow-1 ms-3">
-                                                                <h6>Sales Return</h6>
-                                                                <h4>12,258</h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-3'>
-                                                <div className='card report-card'>
-                                                    <div className='card-body'>
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="flex-shrink-0">
-                                                                <i className="fa-solid fa-rotate-left fa-flip-horizontal fa-2x"></i>
-                                                            </div>
-                                                            <div className="flex-grow-1 ms-3">
-                                                                <h6>Purchase Return</h6>
-                                                                <h4>12,258</h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/*  */}
-
-                                            <div className='col-md-3 mt-4'>
                                                 <div className='card report-card'>
                                                     <div className='card-body'>
                                                         <div className="d-flex align-items-center">
@@ -115,13 +83,13 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Today's Sale</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.total_sales_today}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className='col-md-3 mt-4'>
+                                            <div className='col-md-3'>
                                                 <div className='card report-card'>
                                                     <div className='card-body'>
                                                         <div className="d-flex align-items-center">
@@ -130,37 +98,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Today's Purchase</h6>
-                                                                <h4>12,258</h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-3 mt-4'>
-                                                <div className='card report-card'>
-                                                    <div className='card-body'>
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="flex-shrink-0">
-                                                                <i className="fa-solid fa-right-left fa-2x"></i>
-                                                            </div>
-                                                            <div className="flex-grow-1 ms-3">
-                                                                <h6>Today's Sales Return</h6>
-                                                                <h4>12,258</h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-3 mt-4'>
-                                                <div className='card report-card'>
-                                                    <div className='card-body'>
-                                                        <div className="d-flex align-items-center">
-                                                            <div className="flex-shrink-0">
-                                                                <i className="fa-solid fa-arrow-right-arrow-left fa-2x"></i>
-                                                            </div>
-                                                            <div className="flex-grow-1 ms-3">
-                                                                <h6>Today's Purchase Return</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.total_purchase_today}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -185,7 +123,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Total Product</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.total_product}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -200,7 +138,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Total Stock</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.total_stock}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -215,7 +153,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Total Low Stock</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.low_stock}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -230,7 +168,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Total Stock Value (Buy)</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.buy_value}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -245,7 +183,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Total Stock Value (Sale Without Discount)</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.sale_value}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -260,7 +198,7 @@ const Report = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-3">
                                                                 <h6>Possible Profit</h6>
-                                                                <h4>12,258</h4>
+                                                                <h4>{report.possible_profit}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
