@@ -313,9 +313,9 @@ const ProductList = () => {
                             <td>
                               <div className={"w-40"}>
                                 <Link to={`/product/${product.id}`}>
-                                <button className={"btn btn-sm btn-info"}>
-                                  <i className="fa-solid fa-eye"></i>
-                                </button>
+                                  <button className={"btn btn-sm btn-info"}>
+                                    <i className="fa-solid fa-eye"></i>
+                                  </button>
                                 </Link>
                                 <Link to={`/product/edit/${product.id}`}>
                                   <button

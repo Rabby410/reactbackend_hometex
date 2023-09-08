@@ -8,6 +8,7 @@ import axios from "axios";
 import { EditorState, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import Select from 'react-select';
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -20,7 +21,11 @@ const AddProduct = () => {
   const [subCategories, setSubCategories] = useState([]);
   const [childSubCategories, setChildSubCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [addProductData, setAddProductData] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]);
+  const [allChildSubcategories, setAllChildSubcategories] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [shops, setShops] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [attributes, setAttributes] = useState([]);
   const [attributeFiled, setAttributeField] = useState([]);
@@ -101,92 +106,24 @@ const AddProduct = () => {
       },
     }));
   };
-  const getAttributes = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-attribute-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setAttributes(res.data);
-      });
-  };
 
-  const getSuppliers = () => {
+  const getAddProductData = () => {
     const token = localStorage.getItem("token");
     axios
-      .get(`${Constants.BASE_URL}/get-supplier-list`, {
+      .get(`${Constants.BASE_URL}/get-add-product-data`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        setSuppliers(res.data);
-      });
-  };
-
-  const getCountries = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-country-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setCountries(res.data);
-      });
-  };
-
-  const getCategories = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-category-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setCategories(res.data);
-      });
-  };
-  const getBrands = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-brand-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setBrands(res.data);
-      });
-  };
-
-  const getSubCategories = (category_id) => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-sub-category-list/${category_id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setSubCategories(res.data);
-      });
-  };
-  const getChildSubCategories = (category_id) => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-child-sub-category-list/${category_id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setChildSubCategories(res.data);
+        setCategories(res.data.categories)
+        setBrands(res.data.brands)
+        setCountries(res.data.countries)
+        setSuppliers(res.data.providers)
+        setAttributes(res.data.attributes)
+        setAllSubcategories(res.data.sub_categories)
+        setAllChildSubcategories(res.data.child_sub_categories)
+        setShops(res.data.shops)
       });
   };
 
@@ -199,22 +136,27 @@ const AddProduct = () => {
     } else if (e.target.name === "category_id") {
       let category_id = parseInt(e.target.value);
       if (!Number.isNaN(category_id)) {
-        getSubCategories(e.target.value);
+        let sub_category = allSubcategories.filter((item,index)=>{
+          return item.category_id == category_id
+        })
+        setSubCategories(sub_category);
         setChildSubCategories([]); // Clear child sub-categories when changing categories
       }
     } else if (e.target.name === "sub_category_id") {
       let sub_category_id = parseInt(e.target.value);
       if (!Number.isNaN(sub_category_id)) {
-        getChildSubCategories(e.target.value);
+        let child_sub_category_id = allChildSubcategories.filter((item,index)=>{
+          return item.sub_category_id == sub_category_id
+        })
+        setChildSubCategories(child_sub_category_id);
       }
     }
-  
+
     setInput((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
-  
 
   const handlePhoto = (e) => {
     let file = e.target.files[0];
@@ -256,11 +198,10 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    getCategories();
-    getBrands();
-    getCountries();
-    getSuppliers();
-    getAttributes();
+  //  if(params.id){
+  //   getProduct(params.id)
+  //  }
+    getAddProductData();
   }, []);
 
   useEffect(() => {
@@ -273,6 +214,15 @@ const AddProduct = () => {
       specifications: specification_input,
     }));
   }, [specification_input]);
+
+ 
+  const handleMulipleSelect = (e) => {
+    let value = []
+    for (const item of e) {
+      value.push(item.value)
+    }
+    setInput(prevState => ({...prevState, shop_ids: value}))
+  }
 
   return (
     <>
@@ -290,6 +240,23 @@ const AddProduct = () => {
             </div>
             <div className="card-body">
               <div className="row">
+                <div className="col-md-12">
+                  <label className={"w-100 mt-4"}>
+                    <p>Select Shop</p>
+                    <Select 
+                    isMulti
+                    options={shops}
+                    onChange={handleMulipleSelect}
+                    name={'shop_id[]'}
+                    placeholder={"Select Shop"}
+                    />
+                    <p className={"login-error-msg"}>
+                      <small>
+                        {errors.shop_id != undefined ? errors.shop_id[0] : null}
+                      </small>
+                    </p>
+                  </label>
+                </div>
                 <div className="col-md-6">
                   <label className={"w-100 mt-4"}>
                     <p>Name</p>
