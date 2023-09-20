@@ -5,10 +5,10 @@ import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { EditorState, ContentState } from "draft-js";
+import { EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import Select from 'react-select';
+import Select from "react-select";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -33,10 +33,23 @@ const AddProduct = () => {
   const [specificationFiled, setSpecificationFiled] = useState([]);
   const [specificationFiledId, setSpecificationFiledId] = useState(1);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [selectedShops, setSelectedShops] = useState([]);
+  const [quantities, setQuantities] = useState({});
+  const [totalStock, setTotalStock] = useState(0);
+
+  // Define shop_quantities variable
+  const shop_quantities = selectedShops.map((shop) => ({
+    shop_id: shop.value,
+    quantity: quantities[shop.value] || 0,
+  }));
+
+  useEffect(() => {
+    const newTotalStock = Object.values(quantities).reduce((acc, currentQuantity) => acc + currentQuantity, 0);
+    setTotalStock(newTotalStock);
+  }, [quantities]);
 
   const onEditorStateChange = (newEditorState) => {
     setEditorState(newEditorState);
-    // You can also update the form input value if needed
     handleInput({
       target: {
         name: "description",
@@ -44,7 +57,7 @@ const AddProduct = () => {
       },
     });
   };
-  // Define the handleCheckbox function
+
   const handleCheckbox = (event) => {
     const { name, checked } = event.target;
     setInput((prevState) => ({
@@ -54,11 +67,7 @@ const AddProduct = () => {
   };
 
   const handleSpecificationFieldRemove = (id) => {
-    setSpecificationFiled((oldValues) => {
-      return oldValues.filter(
-        (specificationFiled) => specificationFiled !== id
-      );
-    });
+    setSpecificationFiled((oldValues) => oldValues.filter((specificationFiled) => specificationFiled !== id));
     setSpecification_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -66,15 +75,14 @@ const AddProduct = () => {
     });
     setSpecificationFiledId(specificationFiledId - 1);
   };
+
   const handleSpecificationFields = (id) => {
     setSpecificationFiledId(specificationFiledId + 1);
     setSpecificationFiled((prevState) => [...prevState, specificationFiledId]);
   };
 
   const handleAttributeFieldsRemove = (id) => {
-    setAttributeField((oldValues) => {
-      return oldValues.filter((attributeFiled) => attributeFiled !== id);
-    });
+    setAttributeField((oldValues) => oldValues.filter((attributeFiled) => attributeFiled !== id));
     setAttribute_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -82,12 +90,14 @@ const AddProduct = () => {
     });
     setAttributeFieldId(attributeFieldId - 1);
   };
+
   const handleAttributeFields = (id) => {
     if (attributes.length >= attributeFieldId) {
       setAttributeFieldId(attributeFieldId + 1);
       setAttributeField((prevState) => [...prevState, attributeFieldId]);
     }
   };
+
   const handleSpecificationInput = (e, id) => {
     setSpecification_input((prevState) => ({
       ...prevState,
@@ -97,6 +107,7 @@ const AddProduct = () => {
       },
     }));
   };
+
   const handleAttributeInput = (e, id) => {
     setAttribute_input((prevState) => ({
       ...prevState,
@@ -116,15 +127,25 @@ const AddProduct = () => {
         },
       })
       .then((res) => {
-        setCategories(res.data.categories)
-        setBrands(res.data.brands)
-        setCountries(res.data.countries)
-        setSuppliers(res.data.providers)
-        setAttributes(res.data.attributes)
-        setAllSubcategories(res.data.sub_categories)
-        setAllChildSubcategories(res.data.child_sub_categories)
-        setShops(res.data.shops)
+        setCategories(res.data.categories);
+        setBrands(res.data.brands);
+        setCountries(res.data.countries);
+        setSuppliers(res.data.providers);
+        setAttributes(res.data.attributes);
+        setAllSubcategories(res.data.sub_categories);
+        setAllChildSubcategories(res.data.child_sub_categories);
+        setShops(res.data.shops);
       });
+  };
+
+  const shopIds = shop_quantities.map((item) => item.shop_id);
+
+  const calculateTotalStock = (shopQuantities) => {
+    let totalStock = 0;
+    shopQuantities.forEach((shop) => {
+      totalStock += parseInt(shop.quantity, 10);
+    });
+    return totalStock;
   };
 
   const handleInput = (e) => {
@@ -136,18 +157,20 @@ const AddProduct = () => {
     } else if (e.target.name === "category_id") {
       let category_id = parseInt(e.target.value);
       if (!Number.isNaN(category_id)) {
-        let sub_category = allSubcategories.filter((item,index)=>{
-          return item.category_id == category_id
-        })
+        let sub_category = allSubcategories.filter((item, index) => {
+          return item.category_id == category_id;
+        });
         setSubCategories(sub_category);
-        setChildSubCategories([]); // Clear child sub-categories when changing categories
+        setChildSubCategories([]); 
       }
     } else if (e.target.name === "sub_category_id") {
       let sub_category_id = parseInt(e.target.value);
       if (!Number.isNaN(sub_category_id)) {
-        let child_sub_category_id = allChildSubcategories.filter((item,index)=>{
-          return item.sub_category_id == sub_category_id
-        })
+        let child_sub_category_id = allChildSubcategories.filter(
+          (item, index) => {
+            return item.sub_category_id == sub_category_id;
+          }
+        );
         setChildSubCategories(child_sub_category_id);
       }
     }
@@ -166,11 +189,21 @@ const AddProduct = () => {
     };
     reader.readAsDataURL(file);
   };
+
   const handleProductCreate = () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
+
+    // Use the shop_quantities variable
+    const payload = {
+      ...input,
+      shop_quantities: shop_quantities,
+      stock: totalStock,
+      shop_ids: shopIds,
+    };
+
     axios
-      .post(`${Constants.BASE_URL}/product`, input, {
+      .post(`${Constants.BASE_URL}/product`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -198,9 +231,6 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-  //  if(params.id){
-  //   getProduct(params.id)
-  //  }
     getAddProductData();
   }, []);
 
@@ -215,14 +245,32 @@ const AddProduct = () => {
     }));
   }, [specification_input]);
 
- 
   const handleMulipleSelect = (e) => {
-    let value = []
+    let value = [];
     for (const item of e) {
-      value.push(item.value)
+      value.push(item.value);
     }
-    setInput(prevState => ({...prevState, shop_ids: value}))
-  }
+    setInput((prevState) => ({ ...prevState, shop_ids: value }));
+  };
+
+  useEffect(() => {
+    let total = 0;
+    for (const shop of selectedShops) {
+      const quantity = quantities[shop.value] || 0;
+      total += quantity;
+    }
+    setTotalStock(total);
+  }, [selectedShops, quantities]);
+
+  const handleShopSelect = (selectedOptions) => {
+    setSelectedShops(selectedOptions);
+  };
+
+  const handleQuantityChange = (event, shopId) => {
+    const newQuantities = { ...quantities };
+    newQuantities[shopId] = parseInt(event.target.value, 10) || 0;
+    setQuantities(newQuantities);
+  };
 
   return (
     <>
@@ -241,22 +289,33 @@ const AddProduct = () => {
             <div className="card-body">
               <div className="row">
                 <div className="col-md-12">
-                  <label className={"w-100 mt-4"}>
-                    <p>Select Shop</p>
-                    <Select 
-                    isMulti
-                    options={shops}
-                    onChange={handleMulipleSelect}
-                    name={'shop_id[]'}
-                    placeholder={"Select Shop"}
+                  <label className="w-100 mt-4">
+                    <p>Select Shop(s)</p>
+                    <Select
+                      isMulti
+                      options={shops}
+                      onChange={handleShopSelect}
+                      placeholder="Select Shop(s)"
+                      value={selectedShops}
                     />
-                    <p className={"login-error-msg"}>
-                      <small>
-                        {errors.shop_id != undefined ? errors.shop_id[0] : null}
-                      </small>
-                    </p>
                   </label>
                 </div>
+
+                {selectedShops.map((shop) => (
+                  <div className="col-md-6" key={shop.value}>
+                    <label className="w-100 mt-4">
+                      <p>Product Stock for {shop.label}</p>
+                      <input
+                        className="form-control mt-2"
+                        type="number"
+                        name={`stock_${shop.value}`}
+                        value={quantities[shop.value] || ""}
+                        onChange={(e) => handleQuantityChange(e, shop.value)}
+                        placeholder={`Enter Product Stock for ${shop.label}`}
+                      />
+                    </label>
+                  </div>
+                ))}
                 <div className="col-md-6">
                   <label className={"w-100 mt-4"}>
                     <p>Name</p>
@@ -915,27 +974,17 @@ const AddProduct = () => {
                           </label>
                         </div>
                         <div className="col-md-6">
-                          <label className={"w-100 mt-4"}>
-                            <p>Prouct Stock</p>
+                          <label className="w-100 mt-4">
+                            <p>Total Product Stock</p>
                             <input
-                              className={
-                                errors.stock != undefined
-                                  ? "form-control mt-2 is-invalid"
-                                  : "form-control mt-2"
-                              }
-                              type={"number"}
-                              name={"stock"}
-                              value={input.stock}
-                              onChange={handleInput}
-                              placeholder={"Enter Product Stock"}
+                              className="form-control mt-2"
+                              type="number"
+                              name="total_stock"
+                              value={totalStock}
+                              readOnly
+                              onChange={(e) => setTotalStock(e.target.value)}
+                              placeholder="Total Product Stock"
                             />
-                            <p className={"login-error-msg"}>
-                              <small>
-                                {errors.stock != undefined
-                                  ? errors.stock[0]
-                                  : null}
-                              </small>
-                            </p>
                           </label>
                         </div>
                         <div className="col-md-6">
