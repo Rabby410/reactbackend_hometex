@@ -8,15 +8,10 @@ import BarCodePage from './BarCodePage';
 
 const BarCode = () => {
     const componentRef = useRef();
-    const [pageSize, setPageSize] = useState({
-        width: 595, // Default width for A4
-        height: 842, // Default height for A4
-    });
-    const [columnCount, setColumnCount] = useState(3); // Default column count
+    const [columnCount, setColumnCount] = useState(1); // Default column count
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
         documentTitle: 'Bar Codes',
-        pageStyle: `@page { size: ${pageSize.width || 595}px ${pageSize.height || 842}px; margin: 0; }`,
     });
     const [input, setInput] = useState({
         name: '',
@@ -87,6 +82,14 @@ const BarCode = () => {
 
     return (
         <>
+         <style>
+                {`
+                @page {
+                    size: auto; /* This will let the printer determine the page size */
+                    margin: 0;
+                }
+                `}
+            </style>
             <Breadcrumb title={'Generate or Create Barcode'} />
             <div className="row">
                 <div className="col-md-12">
@@ -103,7 +106,7 @@ const BarCode = () => {
 
                         <div className="card-body">
                             <div className="row align-items-baseline">
-                            <div className="col-md-3">
+                                <div className="col-md-3">
                                     <label className="w-100 mt-4 mt-md-0">
                                         <p>Select Product Category</p>
                                         <select
@@ -162,32 +165,6 @@ const BarCode = () => {
                             <div className="row ">
                                 <div className="col-md-3">
                                     <label className="w-100 mt-4 mt-md-0">
-                                        <p>Page Width</p>
-                                        <input
-                                            className={'form-control mt-2'}
-                                            type={'number'}
-                                            name={'page_width'}
-                                            value={pageSize.width}
-                                            onChange={(e) => setPageSize({ ...pageSize, width: parseInt(e.target.value) })}
-                                            placeholder={'Enter page width'}
-                                        />
-                                    </label>
-                                </div>
-                                <div className="col-md-3">
-                                    <label className="w-100 mt-4 mt-md-0">
-                                        <p>Page Height</p>
-                                        <input
-                                            className={'form-control mt-2'}
-                                            type={'number'}
-                                            name={'page_height'}
-                                            value={pageSize.height}
-                                            onChange={(e) => setPageSize({ ...pageSize, height: parseInt(e.target.value) })}
-                                            placeholder={'Enter page height'}
-                                        />
-                                    </label>
-                                </div>
-                                <div className="col-md-3">
-                                    <label className="w-100 mt-4 mt-md-0">
                                         <p>Column Count</p>
                                         <input
                                             className={'form-control mt-2'}
@@ -210,7 +187,6 @@ const BarCode = () => {
                             <div className="bar-code-area-wraper">
                                 <BarCodePage
                                     products={products}
-                                    paperSize={pageSize}
                                     columnCount={columnCount}
                                     rowCount={Math.ceil(products.length / columnCount)}
                                     ref={componentRef}
