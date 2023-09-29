@@ -3,16 +3,12 @@ import axios from 'axios';
 import Breadcrumb from '../../partoals/Breadcrumb';
 import Constants from '../../../Constants';
 import CardHeader from '../../partoals/miniComponents/CardHeader';
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from 'react-to-print'; // Import the hook
 import BarCodePage from './BarCodePage';
 
 const BarCode = () => {
     const componentRef = useRef();
-    const [columnCount, setColumnCount] = useState(1); // Default column count
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-        documentTitle: 'Bar Codes',
-    });
+    const [columnCount, setColumnCount] = useState(1);
     const [input, setInput] = useState({
         name: '',
         sub_category_id: '',
@@ -80,12 +76,18 @@ const BarCode = () => {
         getCategories();
     }, []);
 
+    // Define the print function
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current, // Use the ref to target the component to print
+        documentTitle: 'Bar Codes',
+    });
+
     return (
         <>
-         <style>
+            <style>
                 {`
                 @page {
-                    size: auto; /* This will let the printer determine the page size */
+                    size: auto;
                     margin: 0;
                 }
                 `}
