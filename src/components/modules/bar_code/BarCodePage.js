@@ -2,16 +2,14 @@ import React from 'react';
 import Barcode from 'react-barcode';
 import GlobalFunction from '../../../assets/GlobalFunction';
 
-const BarCodePage = React.forwardRef((props, ref) => {
-    const truncateText = (text, maxLength) => {
-        if (text.length > maxLength) {
-            return text.substring(0, maxLength) + '...';
-        }
-        return text;
-    };
+const TruncateText = (text, maxLength) => {
+    if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+    }
+    return text;
+};
 
-   // Function to render attributes as a single string on the same line
-   const renderAttributes = (product) => {
+const RenderAttributes = ({ product }) => {
     if (product.attributes && product.attributes.length > 0) {
         const attributeString = product.attributes.map((attribute) => (
             `${attribute.name}: ${attribute.values.name}`
@@ -25,16 +23,17 @@ const BarCodePage = React.forwardRef((props, ref) => {
     return null;
 };
 
-
+const BarCodePage = React.forwardRef((props, ref) => {
+    const { products, columnCount, printing } = props;
 
     const pages = [];
-    for (let i = 0; i < props.products.length; i += props.columnCount) {
-        const pageProducts = props.products.slice(i, i + props.columnCount);
+    for (let i = 0; i < products.length; i += columnCount) {
+        const pageProducts = products.slice(i, i + columnCount);
         pages.push(pageProducts);
     }
 
     return (
-        <div className="print-page">
+        <div className="print-page" style={{ width: '55mm', height: '25mm' }}>
             {pages.map((page, pageIndex) => (
                 <div key={pageIndex} className="" ref={ref}>
                     {page.map((product, index) => (
@@ -42,7 +41,7 @@ const BarCodePage = React.forwardRef((props, ref) => {
                             key={index}
                             className="bar-code-item"
                             style={{
-                                flex: `1 0 ${100 / props.columnCount}%`,
+                                flex: `1 0 ${100 / columnCount}%`,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -51,14 +50,14 @@ const BarCodePage = React.forwardRef((props, ref) => {
                             <p>
                                 <small>{product?.brand}</small>
                             </p>
-                            <div className="barcode" style={props.printing ? { width: '55mm', height: '25mm' } : {}}>
+                            <div className="barcode" style={{ textAlign: 'center' }}> {/* Center-align barcode */}
                                 <Barcode value={product.sku} width={1} height={50} fontSize={10} />
                             </div>
                             <p>
-                                <strong>{truncateText(product?.name, 20)}</strong>
+                                <strong>{TruncateText(product?.name, 20)}</strong>
                             </p>
                             {/* Display attributes and their values */}
-                            {renderAttributes(product)}
+                            {RenderAttributes({ product })}
                             <p>
                                 Price:
                                 {product?.sell_price?.discount !== 0
@@ -68,9 +67,6 @@ const BarCodePage = React.forwardRef((props, ref) => {
                                     {product?.price}
                                 </span>
                             </p>
-                            {/* <p>
-                                SKU: {truncateText(product?.sku, 10)}
-                            </p> */}
                         </div>
                     ))}
                 </div>

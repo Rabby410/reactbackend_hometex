@@ -78,7 +78,7 @@ const BarCode = () => {
 
     // Define the print function
     const handlePrint = useReactToPrint({
-        content: () => componentRef.current, // Use the ref to target the component to print
+        content: () => componentRef.current,
         documentTitle: 'Bar Codes',
     });
 
@@ -190,6 +190,7 @@ const BarCode = () => {
                                 <BarCodePage
                                     products={products}
                                     columnCount={columnCount}
+                                    printing={true}
                                     rowCount={Math.ceil(products.length / columnCount)}
                                     ref={componentRef}
                                 />
@@ -197,7 +198,7 @@ const BarCode = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>0420310067273
         </>
     );
 }
