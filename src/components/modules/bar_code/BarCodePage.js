@@ -45,13 +45,15 @@ const BarCodePage = React.forwardRef((props, ref) => {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
+                                fontSize: '9px',
+                                margin: "0px"
                             }}
                         >
                             <p>
-                                <small>{product?.brand}</small>
+                                <small style={{fontSize:"12px"}}>{product?.brand}</small>
                             </p>
-                            <div className="barcode" style={{ textAlign: 'center' }}> {/* Center-align barcode */}
-                                <Barcode value={product.sku} width={1} height={50} fontSize={10} />
+                            <div className="barcode" style={{ textAlign: 'center', format: "CODE128" }}>
+                                <Barcode value={product.sku} width={1} height={20} fontSize={9} margin={2} />
                             </div>
                             <p>
                                 <strong>{TruncateText(product?.name, 20)}</strong>
