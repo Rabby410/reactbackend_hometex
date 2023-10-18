@@ -3,23 +3,29 @@ import Breadcrumb from "../../partoals/Breadcrumb";
 import Constants from "../../../Constants";
 import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
-import { useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { EditorState, ContentState } from "draft-js";
+import { EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import Select from "react-select";
 
 const ProductEdit = () => {
   const navigate = useNavigate();
-  const [input, setInput] = useState({ status: 1 });
+  const params = useParams()
   const [attribute_input, setAttribute_input] = useState({});
   const [specification_input, setSpecification_input] = useState({});
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
+  const [childSubCategories, setChildSubCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [addProductData, setAddProductData] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]);
+  const [allChildSubcategories, setAllChildSubcategories] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [shops, setShops] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [attributes, setAttributes] = useState([]);
   const [attributeFiled, setAttributeField] = useState([]);
@@ -27,10 +33,87 @@ const ProductEdit = () => {
   const [specificationFiled, setSpecificationFiled] = useState([]);
   const [specificationFiledId, setSpecificationFiledId] = useState(1);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [selectedShops, setSelectedShops] = useState([]);
+  const [quantities, setQuantities] = useState({});
+  const [totalStock, setTotalStock] = useState(0);
+  const [product, setProduct] = useState([])
+  const [input, setInput] = useState({
+    name : "",
+    sku : "",
+    slug : "",
+    cost : "",
+    price : "",
+    price_formula : "",
+    field_limit : "",
+    stock : "",
+    isFeatured : "",
+    isNew : "",
+    isTrending : "",
+    discount_fixed : "",
+    discount_percent : "",
+    status : "",
+    discount_start : "",
+    discount_end : "",
+    description : "",
+    brand_id : "",
+    country_id : "",
+    sub_category_id : "",
+    child_sub_category_id : "",
+    supplier_id : "",
+    created_by_id : "",
+    updated_by_id : "",
+    category_id : "",
+    status: 1
+  });
+
+    const getProduct = () => {
+        const token = localStorage.getItem('token');
+        const config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${Constants.BASE_URL}/product/${params.id}`,
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            }
+        };
+    
+        axios.request(config)
+            .then((response) => {
+                setInput(response.data.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+    useEffect(() => {
+      getProduct()
+  }, [])
+
+  
+  useEffect(() => {
+    // Fetch the product data from your API or wherever it's stored
+    const productData = { /* Replace with your product data */ };
+
+    // Set the state with the product data
+    setInput({
+      category_id : product.category_id,
+      // Set other fields here...
+    });
+  }, []);
+
+  // Define shop_quantities variable
+  const shop_quantities = selectedShops.map((shop) => ({
+    shop_id: shop.value,
+    quantity: quantities[shop.value] || 0,
+  }));
+
+  useEffect(() => {
+    const newTotalStock = Object.values(quantities).reduce((acc, currentQuantity) => acc + currentQuantity, 0);
+    setTotalStock(newTotalStock);
+  }, [quantities]);
 
   const onEditorStateChange = (newEditorState) => {
     setEditorState(newEditorState);
-    // You can also update the form input value if needed
     handleInput({
       target: {
         name: "description",
@@ -38,7 +121,7 @@ const ProductEdit = () => {
       },
     });
   };
-  // Define the handleCheckbox function
+
   const handleCheckbox = (event) => {
     const { name, checked } = event.target;
     setInput((prevState) => ({
@@ -48,11 +131,7 @@ const ProductEdit = () => {
   };
 
   const handleSpecificationFieldRemove = (id) => {
-    setSpecificationFiled((oldValues) => {
-      return oldValues.filter(
-        (specificationFiled) => specificationFiled !== id
-      );
-    });
+    setSpecificationFiled((oldValues) => oldValues.filter((specificationFiled) => specificationFiled !== id));
     setSpecification_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -60,15 +139,14 @@ const ProductEdit = () => {
     });
     setSpecificationFiledId(specificationFiledId - 1);
   };
+
   const handleSpecificationFields = (id) => {
     setSpecificationFiledId(specificationFiledId + 1);
     setSpecificationFiled((prevState) => [...prevState, specificationFiledId]);
   };
 
   const handleAttributeFieldsRemove = (id) => {
-    setAttributeField((oldValues) => {
-      return oldValues.filter((attributeFiled) => attributeFiled !== id);
-    });
+    setAttributeField((oldValues) => oldValues.filter((attributeFiled) => attributeFiled !== id));
     setAttribute_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -76,12 +154,14 @@ const ProductEdit = () => {
     });
     setAttributeFieldId(attributeFieldId - 1);
   };
+
   const handleAttributeFields = (id) => {
     if (attributes.length >= attributeFieldId) {
       setAttributeFieldId(attributeFieldId + 1);
       setAttributeField((prevState) => [...prevState, attributeFieldId]);
     }
   };
+
   const handleSpecificationInput = (e, id) => {
     setSpecification_input((prevState) => ({
       ...prevState,
@@ -91,6 +171,7 @@ const ProductEdit = () => {
       },
     }));
   };
+
   const handleAttributeInput = (e, id) => {
     setAttribute_input((prevState) => ({
       ...prevState,
@@ -100,93 +181,61 @@ const ProductEdit = () => {
       },
     }));
   };
-  const getAttributes = () => {
+
+  const getAddProductData = () => {
     const token = localStorage.getItem("token");
     axios
-      .get(`${Constants.BASE_URL}/get-attribute-list`, {
+      .get(`${Constants.BASE_URL}/get-add-product-data`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        setAttributes(res.data);
+        setCategories(res.data.categories);
+        setBrands(res.data.brands);
+        setCountries(res.data.countries);
+        setSuppliers(res.data.providers);
+        setAttributes(res.data.attributes);
+        setAllSubcategories(res.data.sub_categories);
+        setAllChildSubcategories(res.data.child_sub_categories);
+        setShops(res.data.shops);
       });
   };
 
-  const getSuppliers = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-supplier-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setSuppliers(res.data);
-      });
-  };
+  const shopIds = shop_quantities.map((item) => item.shop_id);
 
-  const getCountries = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-country-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setCountries(res.data);
-      });
-  };
-
-  const getCategories = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-category-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setCategories(res.data);
-      });
-  };
-  const getBrands = () => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-brand-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setBrands(res.data);
-      });
-  };
-
-  const getSubCategories = (category_id) => {
-    const token = localStorage.getItem("token");
-    axios
-      .get(`${Constants.BASE_URL}/get-sub-category-list/${category_id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setSubCategories(res.data);
-      });
+  const calculateTotalStock = (shopQuantities) => {
+    let totalStock = 0;
+    shopQuantities.forEach((shop) => {
+      totalStock += parseInt(shop.quantity, 10);
+    });
+    return totalStock;
   };
 
   const handleInput = (e) => {
-    if (e.target.name == "name") {
+    if (e.target.name === "name") {
       let slug = e.target.value;
       slug = slug.toLowerCase();
       slug = slug.replaceAll(" ", "-");
       setInput((prevState) => ({ ...prevState, slug: slug }));
-    } else if (e.target.name == "category_id") {
+    } else if (e.target.name === "category_id") {
       let category_id = parseInt(e.target.value);
       if (!Number.isNaN(category_id)) {
-        getSubCategories(e.target.value);
+        let sub_category = allSubcategories.filter((item, index) => {
+          return item.category_id == category_id;
+        });
+        setSubCategories(sub_category);
+        setChildSubCategories([]); 
+      }
+    } else if (e.target.name === "sub_category_id") {
+      let sub_category_id = parseInt(e.target.value);
+      if (!Number.isNaN(sub_category_id)) {
+        let child_sub_category_id = allChildSubcategories.filter(
+          (item, index) => {
+            return item.sub_category_id == sub_category_id;
+          }
+        );
+        setChildSubCategories(child_sub_category_id);
       }
     }
 
@@ -194,6 +243,7 @@ const ProductEdit = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+    setInput(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
   };
 
   const handlePhoto = (e) => {
@@ -204,11 +254,21 @@ const ProductEdit = () => {
     };
     reader.readAsDataURL(file);
   };
-  const handleProductCreate = () => {
+
+  const handleProductUpdate = () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
+
+    // Use the shop_quantities variable
+    const payload = {
+      ...input,
+      shop_quantities: shop_quantities,
+      stock: totalStock,
+      shop_ids: shopIds,
+    };
+
     axios
-      .post(`${Constants.BASE_URL}/product`, input, {
+      .put(`${Constants.BASE_URL}/product`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -236,11 +296,7 @@ const ProductEdit = () => {
   };
 
   useEffect(() => {
-    getCategories();
-    getBrands();
-    getCountries();
-    getSuppliers();
-    getAttributes();
+    getAddProductData();
   }, []);
 
   useEffect(() => {
@@ -254,6 +310,33 @@ const ProductEdit = () => {
     }));
   }, [specification_input]);
 
+  const handleMulipleSelect = (e) => {
+    let value = [];
+    for (const item of e) {
+      value.push(item.value);
+    }
+    setInput((prevState) => ({ ...prevState, shop_ids: value }));
+  };
+
+  useEffect(() => {
+    let total = 0;
+    for (const shop of selectedShops) {
+      const quantity = quantities[shop.value] || 0;
+      total += quantity;
+    }
+    setTotalStock(total);
+  }, [selectedShops, quantities]);
+
+  const handleShopSelect = (selectedOptions) => {
+    setSelectedShops(selectedOptions);
+  };
+
+  const handleQuantityChange = (event, shopId) => {
+    const newQuantities = { ...quantities };
+    newQuantities[shopId] = parseInt(event.target.value, 10) || 0;
+    setQuantities(newQuantities);
+  };
+
   return (
     <>
       <Breadcrumb title={"Add Product"} />
@@ -263,13 +346,41 @@ const ProductEdit = () => {
             <div className="card-header">
               <CardHeader
                 title={"Add Product"}
-                link={"/product"}
+                link={"/products"}
                 icon={"fa-list"}
                 button_text={"List"}
               />
             </div>
             <div className="card-body">
               <div className="row">
+                <div className="col-md-12">
+                  <label className="w-100 mt-4">
+                    <p>Select Shop(s)</p>
+                    <Select
+                      isMulti
+                      options={shops}
+                      onChange={handleShopSelect}
+                      placeholder="Select Shop(s)"
+                      value={selectedShops}
+                    />
+                  </label>
+                </div>
+
+                {selectedShops.map((shop) => (
+                  <div className="col-md-6" key={shop.value}>
+                    <label className="w-100 mt-4">
+                      <p>Product Stock for {shop.label}</p>
+                      <input
+                        className="form-control mt-2"
+                        type="number"
+                        name={`stock_${shop.value}`}
+                        value={quantities[shop.value] || ""}
+                        onChange={(e) => handleQuantityChange(e, shop.value)}
+                        placeholder={`Enter Product Stock for ${shop.label}`}
+                      />
+                    </label>
+                  </div>
+                ))}
                 <div className="col-md-6">
                   <label className={"w-100 mt-4"}>
                     <p>Name</p>
@@ -370,6 +481,37 @@ const ProductEdit = () => {
                       <small>
                         {errors.sub_category_id != undefined
                           ? errors.sub_category_id[0]
+                          : null}
+                      </small>
+                    </p>
+                  </label>
+                </div>
+                <div className="col-md-6">
+                  <label className={"w-100 mt-4"}>
+                    <p>Select Child Sub Category</p>
+                    <select
+                      className={
+                        errors.child_sub_category_id != undefined
+                          ? "form-select mt-2 is-invalid"
+                          : "form-select mt-2"
+                      }
+                      name={"child_sub_category_id"}
+                      value={input.child_sub_category_id}
+                      onChange={handleInput}
+                      placeholder={"Select product child sub category"}
+                      disabled={input.sub_category_id == undefined}
+                    >
+                      <option>Select Child Sub Category</option>
+                      {childSubCategories.map((child_sub_category, index) => (
+                        <option value={child_sub_category.id} key={index}>
+                          {child_sub_category.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className={"login-error-msg"}>
+                      <small>
+                        {errors.child_sub_category_id != undefined
+                          ? errors.child_sub_category_id[0]
                           : null}
                       </small>
                     </p>
@@ -721,27 +863,17 @@ const ProductEdit = () => {
                           <label className={"w-100 mt-4"}>
                             <p>Product Sale Price</p>
                             <input
-                              className="form-check-input"
-                              type="checkbox"
-                              name="usePrice"
-                              checked={input.usePrice}
-                              onChange={handleCheckbox}
+                              className={
+                                errors.price !== undefined
+                                  ? "form-control mt-2 is-invalid"
+                                  : "form-control mt-2"
+                              }
+                              type="number"
+                              name="price"
+                              value={input.price}
+                              onChange={handleInput}
+                              placeholder="Enter Product Price"
                             />
-                            <span>Use Product Sale Price</span>
-                            {input.usePrice && (
-                              <input
-                                className={
-                                  errors.price !== undefined
-                                    ? "form-control mt-2 is-invalid"
-                                    : "form-control mt-2"
-                                }
-                                type="number"
-                                name="price"
-                                value={input.price}
-                                onChange={handleInput}
-                                placeholder="Enter Product Price"
-                              />
-                            )}
                             <p className={"login-error-msg"}>
                               <small>
                                 {errors.price !== undefined
@@ -907,27 +1039,17 @@ const ProductEdit = () => {
                           </label>
                         </div>
                         <div className="col-md-6">
-                          <label className={"w-100 mt-4"}>
-                            <p>Prouct Stock</p>
+                          <label className="w-100 mt-4">
+                            <p>Total Product Stock</p>
                             <input
-                              className={
-                                errors.stock != undefined
-                                  ? "form-control mt-2 is-invalid"
-                                  : "form-control mt-2"
-                              }
-                              type={"number"}
-                              name={"stock"}
-                              value={input.stock}
-                              onChange={handleInput}
-                              placeholder={"Enter Product Stock"}
+                              className="form-control mt-2"
+                              type="number"
+                              name="total_stock"
+                              value={totalStock}
+                              readOnly
+                              onChange={(e) => setTotalStock(e.target.value)}
+                              placeholder="Total Product Stock"
                             />
-                            <p className={"login-error-msg"}>
-                              <small>
-                                {errors.stock != undefined
-                                  ? errors.stock[0]
-                                  : null}
-                              </small>
-                            </p>
                           </label>
                         </div>
                         <div className="col-md-6">
@@ -950,6 +1072,98 @@ const ProductEdit = () => {
                                 {errors.sku != undefined ? errors.sku[0] : null}
                               </small>
                             </p>
+                          </label>
+                        </div>
+                        <div className="col-md-12">
+                          <label className={"w-100 mt-4"}>
+                            <div className="row">
+                              {/* Featured Product */}
+                              <div className="col-md-4">
+                                <p>Featured Product</p>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isFeatured"
+                                    value="1"
+                                    checked={input.isFeatured === "1"}
+                                    onChange={handleInput}
+                                  />
+                                  <label className="form-check-label">
+                                    Yes
+                                  </label>
+                                </div>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isFeatured"
+                                    value="0"
+                                    checked={input.isFeatured === "0"}
+                                    onChange={handleInput}
+                                  />
+                                  <label className="form-check-label">No</label>
+                                </div>
+                              </div>
+
+                              {/* New Product */}
+                              <div className="col-md-4">
+                                <p>New Product</p>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isNew"
+                                    value="1"
+                                    checked={input.isNew === "1"}
+                                    onChange={handleInput}
+                                  />
+                                  <label className="form-check-label">
+                                    Yes
+                                  </label>
+                                </div>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isNew"
+                                    value="0"
+                                    checked={input.isNew === "0"}
+                                    onChange={handleInput}
+                                  />
+                                  <label className="form-check-label">No</label>
+                                </div>
+                              </div>
+
+                              {/* Trending Product */}
+                              <div className="col-md-4">
+                                <p>Trending Product</p>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isTrending"
+                                    value="1"
+                                    checked={input.isTrending === "1"}
+                                    onChange={handleInput}
+                                  />
+                                  <label className="form-check-label">
+                                    Yes
+                                  </label>
+                                </div>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="isTrending"
+                                    value="0"
+                                    checked={input.isTrending === "0"}
+                                    onChange={handleInput}
+                                  />
+                                  <label className="form-check-label">No</label>
+                                </div>
+                              </div>
+                            </div>
                           </label>
                         </div>
                       </div>
@@ -988,7 +1202,7 @@ const ProductEdit = () => {
                       <div className="d-grid mt-4">
                         <button
                           className={"btn theme-button"}
-                          onClick={handleProductCreate}
+                          onClick={handleProductUpdate}
                           dangerouslySetInnerHTML={{
                             __html: isLoading
                               ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...'

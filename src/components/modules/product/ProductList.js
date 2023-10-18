@@ -332,6 +332,16 @@ const ProductList = () => {
                                 >
                                   <i className="fa-solid fa-trash"></i>
                                 </button>
+                                {/* <button
+                                  className={"btn btn-sm btn-primary my-1"}
+                                >
+                                  <i class="fa-solid fa-clone"></i>
+                                </button>
+                                <button
+                                  className={"btn btn-sm btn-outline-dark"}
+                                >
+                                  <i class="fa-solid fa-barcode"></i>
+                                </button> */}
                               </div>
                             </td>
                           </tr>

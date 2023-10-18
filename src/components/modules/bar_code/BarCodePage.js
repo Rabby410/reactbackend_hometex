@@ -11,9 +11,12 @@ const TruncateText = (text, maxLength) => {
 
 const RenderAttributes = ({ product }) => {
     if (product.attributes && product.attributes.length > 0) {
-        const attributeString = product.attributes.map((attribute) => (
-            `${attribute.name}: ${attribute.values.name}`
-        )).join('  '); // Join attributes with double spaces
+        const attributeString = product.attributes.map((attribute) => {
+            if (attribute && attribute.values) {
+                return `${attribute.name}: ${attribute.values.name}`;
+            }
+            return '';
+        }).join('  '); // Join attributes with double spaces
         return (
             <p>
                 {attributeString}
@@ -22,6 +25,7 @@ const RenderAttributes = ({ product }) => {
     }
     return null;
 };
+
 
 const BarCodePage = React.forwardRef((props, ref) => {
     const { products, columnCount, printing } = props;
@@ -59,7 +63,7 @@ const BarCodePage = React.forwardRef((props, ref) => {
                                 <strong>{TruncateText(product?.name, 20)}</strong>
                             </p>
                             {/* Display attributes and their values */}
-                            {RenderAttributes({ product })}
+                            {product.attributes && product.attributes.length > 0 && RenderAttributes({ product })}
                             <p>
                                 Price:
                                 {product?.sell_price?.discount !== 0
