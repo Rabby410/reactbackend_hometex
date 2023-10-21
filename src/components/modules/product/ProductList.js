@@ -19,6 +19,7 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [startFrom, setStartFrom] = useState(1);
   const [productColumns, setProductColumns] = useState([]);
+  const [duplicateMessage, setDuplicateMessage] = useState("");
 
   const handleInput = (e) => {
     setInput((prevState) => ({
@@ -63,6 +64,36 @@ const ProductList = () => {
       .catch((error) => {
         console.log(error);
         // handle error here, e.g. set an error state or display an error message
+      });
+  };
+  const handleDuplicateProduct = (id) => {
+    const token = localStorage.getItem("token");
+    axios
+      .post(`${Constants.BASE_URL}/product/${id}/duplicate`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setDuplicateMessage(response.data.msg);
+        Swal.fire({
+          position: "top-end",
+          icon: response.data.cls,
+          title: response.data.msg,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
+      })
+      .catch((error) => {
+        setDuplicateMessage("Error duplicating product: " + error.message);
+        Swal.fire({
+          position: "top-end",
+          title: error.message,
+          showConfirmButton: false,
+          toast: true,
+          timer: 1500,
+        });
       });
   };
 
@@ -207,7 +238,6 @@ const ProductList = () => {
                         <th>Action</th>
                       </tr>
                     </thead>
-
                     <tbody>
                       {Object.keys(products).length > 0 ? (
                         products.map((product, number) => (
@@ -274,19 +304,19 @@ const ProductList = () => {
                             </td>
                             <td>
                               <p className={"text-theme"}>
-                                Category: {product.category}
+                                Category: {product.category?.name}
                               </p>
                               <p className={"text-success"}>
-                                Sub Category : {product.sub_category}
+                                Sub Category : {product.sub_category?.name}
                               </p>
                               <p className={"text-theme"}>
-                                Brand: {product.brand}
+                                Brand: {product.brand?.name}
                               </p>
                               <p className={"text-success"}>
-                                Origin : {product.country}
+                                Origin : {product.country?.name}
                               </p>
                               <p className={"text-theme"}>
-                                Supplier: {product.supplier}
+                                Supplier: {product.supplier?.name}
                               </p>
                             </td>
                             <td>
@@ -332,12 +362,16 @@ const ProductList = () => {
                                 >
                                   <i className="fa-solid fa-trash"></i>
                                 </button>
-                                {/* <button
+                                <button
                                   className={"btn btn-sm btn-primary my-1"}
+                                  onClick={() =>
+                                    handleDuplicateProduct(product.id)
+                                  }
                                 >
                                   <i class="fa-solid fa-clone"></i>
                                 </button>
-                                <button
+                                {/* {duplicateMessage && <p>{duplicateMessage}</p>} */}
+                                {/* <button
                                   className={"btn btn-sm btn-outline-dark"}
                                 >
                                   <i class="fa-solid fa-barcode"></i>

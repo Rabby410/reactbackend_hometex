@@ -5,14 +5,14 @@ import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { EditorState } from "draft-js";
+import { EditorState, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Select from "react-select";
 
 const ProductEdit = () => {
   const navigate = useNavigate();
-  const params = useParams()
+  const params = useParams();
   const [attribute_input, setAttribute_input] = useState({});
   const [specification_input, setSpecification_input] = useState({});
   const [errors, setErrors] = useState([]);
@@ -36,69 +36,64 @@ const ProductEdit = () => {
   const [selectedShops, setSelectedShops] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [totalStock, setTotalStock] = useState(0);
-  const [product, setProduct] = useState([])
-  const [input, setInput] = useState({
-    name : "",
-    sku : "",
-    slug : "",
-    cost : "",
-    price : "",
-    price_formula : "",
-    field_limit : "",
-    stock : "",
-    isFeatured : "",
-    isNew : "",
-    isTrending : "",
-    discount_fixed : "",
-    discount_percent : "",
-    status : "",
-    discount_start : "",
-    discount_end : "",
-    description : "",
-    brand_id : "",
-    country_id : "",
-    sub_category_id : "",
-    child_sub_category_id : "",
-    supplier_id : "",
-    created_by_id : "",
-    updated_by_id : "",
-    category_id : "",
-    status: 1
-  });
+  const [product, setProduct] = useState([]);
+  const [input, setInput] = useState({});
 
-    const getProduct = () => {
-        const token = localStorage.getItem('token');
-        const config = {
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: `${Constants.BASE_URL}/product/${params.id}`,
-            headers: { 
-                'Authorization': `Bearer ${token}`
-            }
-        };
-    
-        axios.request(config)
-            .then((response) => {
-                setInput(response.data.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-    useEffect(() => {
-      getProduct()
-  }, [])
+  const getProduct = () => {
+    const token = localStorage.getItem("token");
+    const config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${Constants.BASE_URL}/product/${params.id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
 
-  
+    axios
+      .request(config)
+      .then((response) => {
+        const description = EditorState.createWithContent(
+          ContentState.createFromText(response.data.data.description)
+        );
+        const costValue = response.data.data.cost.replace(/[৳,]/g, "");
+        const priceValue = response.data.data.price.replace(/[৳,]/g, "");
+        const shopData = response.data.data.shops;
+        const shopQuantities = {};
+        shopData.forEach((shop) => {
+          shopQuantities[shop.shop_id] = shop.shop_quantity;
+        });
+        // setInput(response.data.data);
+        setInput({
+          shops: shopData,
+          name: response.data.data.name,
+          slug: response.data.data.slug,
+          category_id: response.data.data.category?.id,
+          sub_category_id: response.data.data.sub_category?.id,
+          child_sub_category_id: response.data.data.child_sub_category?.id,
+          country_id: response.data.data.country?.id,
+          brand_id: response.data.data.brand?.id,
+          supplier_id: response.data.data.supplier?.id,
+          description: description,
+          cost: costValue ? Number(costValue) : null,
+          price: priceValue ? Number(priceValue) : null,
+          isFeatured: response.data.data.isFeatured === 1,
+          isNew: response.data.data.isNew === 1,
+          isTrending: response.data.data.isTrending === 1,
+          stock: response.data.data.stock,
+          sku: response.data.data.sku,
+          price_formula: response.data.data.price_formula,
+          field_limit: response.data.data.field_limit,
+        });
+        // Set the quantities for each shop in the state
+        setQuantities(shopQuantities);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   useEffect(() => {
-    // Fetch the product data from your API or wherever it's stored
-    const productData = { /* Replace with your product data */ };
-
-    // Set the state with the product data
-    setInput({
-      category_id : product.category_id,
-      // Set other fields here...
-    });
+    getProduct();
   }, []);
 
   // Define shop_quantities variable
@@ -108,7 +103,10 @@ const ProductEdit = () => {
   }));
 
   useEffect(() => {
-    const newTotalStock = Object.values(quantities).reduce((acc, currentQuantity) => acc + currentQuantity, 0);
+    const newTotalStock = Object.values(quantities).reduce(
+      (acc, currentQuantity) => acc + currentQuantity,
+      0
+    );
     setTotalStock(newTotalStock);
   }, [quantities]);
 
@@ -131,7 +129,9 @@ const ProductEdit = () => {
   };
 
   const handleSpecificationFieldRemove = (id) => {
-    setSpecificationFiled((oldValues) => oldValues.filter((specificationFiled) => specificationFiled !== id));
+    setSpecificationFiled((oldValues) =>
+      oldValues.filter((specificationFiled) => specificationFiled !== id)
+    );
     setSpecification_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -146,7 +146,9 @@ const ProductEdit = () => {
   };
 
   const handleAttributeFieldsRemove = (id) => {
-    setAttributeField((oldValues) => oldValues.filter((attributeFiled) => attributeFiled !== id));
+    setAttributeField((oldValues) =>
+      oldValues.filter((attributeFiled) => attributeFiled !== id)
+    );
     setAttribute_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -225,7 +227,7 @@ const ProductEdit = () => {
           return item.category_id == category_id;
         });
         setSubCategories(sub_category);
-        setChildSubCategories([]); 
+        setChildSubCategories([]);
       }
     } else if (e.target.name === "sub_category_id") {
       let sub_category_id = parseInt(e.target.value);
@@ -243,7 +245,10 @@ const ProductEdit = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-    setInput(prevState => ({ ...prevState, [e.target.name]: e.target.value }))
+    setInput((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handlePhoto = (e) => {
@@ -339,13 +344,13 @@ const ProductEdit = () => {
 
   return (
     <>
-      <Breadcrumb title={"Add Product"} />
+      <Breadcrumb title={"Edit Product"} />
       <div className="row">
         <div className="col-md-12">
           <div className="card">
             <div className="card-header">
               <CardHeader
-                title={"Add Product"}
+                title={"Edit Product"}
                 link={"/products"}
                 icon={"fa-list"}
                 button_text={"List"}
@@ -365,7 +370,6 @@ const ProductEdit = () => {
                     />
                   </label>
                 </div>
-
                 {selectedShops.map((shop) => (
                   <div className="col-md-6" key={shop.value}>
                     <label className="w-100 mt-4">
@@ -468,7 +472,6 @@ const ProductEdit = () => {
                       value={input.sub_category_id}
                       onChange={handleInput}
                       placeholder={"Select product sub category"}
-                      disabled={input.category_id == undefined}
                     >
                       <option>Select Sub Category</option>
                       {subCategories.map((sub_category, index) => (
@@ -499,7 +502,6 @@ const ProductEdit = () => {
                       value={input.child_sub_category_id}
                       onChange={handleInput}
                       placeholder={"Select product child sub category"}
-                      disabled={input.sub_category_id == undefined}
                     >
                       <option>Select Child Sub Category</option>
                       {childSubCategories.map((child_sub_category, index) => (
@@ -886,15 +888,6 @@ const ProductEdit = () => {
                         <div className="col-md-12">
                           <label className="w-100 mt-4">
                             <p>Price Formula</p>
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              name="usePriceFormula"
-                              checked={input.usePriceFormula}
-                              onChange={handleCheckbox}
-                            />
-                            <span>Use Price Formula</span>
-                            {input.usePriceFormula && (
                               <input
                                 className={
                                   errors.price_formula !== undefined
@@ -907,7 +900,6 @@ const ProductEdit = () => {
                                 onChange={handleInput}
                                 placeholder="Enter Product Price Formula"
                               />
-                            )}
                             <p className="login-error-msg">
                               <small>
                                 {errors.price_formula !== undefined
@@ -916,7 +908,6 @@ const ProductEdit = () => {
                               </small>
                             </p>
                           </label>
-                          {input.usePriceFormula && ( // Only show the following section if the checkbox is checked
                             <label className="w-100 mt-4">
                               <p>Field Limits (eg l:100-800;w:300-877)</p>
                               <input
@@ -939,7 +930,6 @@ const ProductEdit = () => {
                                 </small>
                               </p>
                             </label>
-                          )}
                         </div>
 
                         <div className="col-md-6">
