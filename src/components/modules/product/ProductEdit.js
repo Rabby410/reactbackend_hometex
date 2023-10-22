@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { EditorState, ContentState } from "draft-js";
+import { EditorState, ContentState, convertFromHTML, convertToRaw } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Select from "react-select";
@@ -53,9 +53,9 @@ const ProductEdit = () => {
     axios
       .request(config)
       .then((response) => {
-        const description = EditorState.createWithContent(
-          ContentState.createFromText(response.data.data.description)
-        );
+        const contentBlocks = convertFromHTML(response.data.data.description);
+        const contentState = ContentState.createFromBlockArray(contentBlocks);
+        const editorState = EditorState.createWithContent(contentState);
         const costValue = response.data.data.cost.replace(/[৳,]/g, "");
         const priceValue = response.data.data.price.replace(/[৳,]/g, "");
         const shopData = response.data.data.shops;
@@ -70,8 +70,18 @@ const ProductEdit = () => {
             shopIds.add(shop.shop_id);
           }
         });
-
-        const categoryData = response.data.data.category?.id;
+        setEditorState(editorState);
+        const discountPercentValue = parseFloat(response.data.data.discount_percent);
+        const discountFixedValue = parseFloat(response.data.data.discount_fixed);
+        const discountEndDate = new Date(response.data.data.discount_end);
+        const formattedDiscountEnd = discountEndDate.toISOString().slice(0, 16);
+        const discountStartDate = new Date(response.data.data.discount_start);
+        const formattedDiscountStart = discountStartDate.toISOString().slice(0, 16);
+        const categoryData = response.data.data.category ? [response.data.data.category.id] : [];
+        setCategories(categoryData);
+        const subCategoryData = response.data.data.sub_category ? [response.data.data.sub_category.id] : [];
+        setSubCategories(subCategoryData);
+        const productAttributes = response.data.data.attributes ? [response.data.data.attributes.id] : [];
         const shopQuantities = {};
         uniqueShopData.forEach((shop) => {
           shopQuantities[shop.shop_id] = shop.shop_quantity;
@@ -81,21 +91,26 @@ const ProductEdit = () => {
           name: response.data.data.name,
           slug: response.data.data.slug,
           category_id: categoryData,
-          sub_category_id: response.data.data.sub_category?.id,
-          child_sub_category_id: categoryData,
+          sub_category_id: subCategoryData,
+          child_sub_category_id: response.data.data.child_sub_category?.id,
           country_id: response.data.data.country?.id,
           brand_id: response.data.data.brand?.id,
           supplier_id: response.data.data.supplier?.id,
-          description: description,
+          description: editorState,
           cost: costValue ? Number(costValue) : null,
           price: priceValue ? Number(priceValue) : null,
-          isFeatured: response.data.data.isFeatured === 1,
-          isNew: response.data.data.isNew === 1,
-          isTrending: response.data.data.isTrending === 1,
+          isFeatured: response.data.data.isFeatured === 1 ? true : false,
+          isNew: response.data.data.isNew === 1 ? true : false,
+          isTrending: response.data.data.isTrending === 1 ? true : false,
           sku: response.data.data.sku,
+          discount_start: formattedDiscountStart,
+          discount_end: formattedDiscountEnd,
+          discount_fixed: discountFixedValue,
+          discount_percent: discountPercentValue,
           price_formula: response.data.data.price_formula,
           field_limit: response.data.data.field_limit,
         });
+        setAttributes(productAttributes);
         // Set the quantities for each shop in the state
         setQuantities(shopQuantities);
         // Pre-select shops
@@ -111,7 +126,6 @@ const ProductEdit = () => {
   useEffect(() => {
     getProduct();
   }, []);
-  console.log(input, "klm")
 
   // Define shop_quantities variable
   const shop_quantities = selectedShops.map((shop) => ({
@@ -456,7 +470,7 @@ const ProductEdit = () => {
                           : "form-select mt-2"
                       }
                       name={"category_id"}
-                      value={input.category_id}
+                      value={input.category_id || ""}
                       onChange={handleInput}
                       placeholder={"Select product category"}
                     >
@@ -486,7 +500,7 @@ const ProductEdit = () => {
                           : "form-select mt-2"
                       }
                       name={"sub_category_id"}
-                      value={input.sub_category_id}
+                      value={input.sub_category_id || ""}
                       onChange={handleInput}
                       placeholder={"Select product sub category"}
                     >
@@ -960,7 +974,7 @@ const ProductEdit = () => {
                               }
                               type={"number"}
                               name={"discount_percent"}
-                              value={input.discount_percent}
+                              value={input.discount_percent || ""}
                               onChange={handleInput}
                               placeholder={"Enter Product Discount (%)"}
                             />
@@ -984,7 +998,7 @@ const ProductEdit = () => {
                               }
                               type={"number"}
                               name={"discount_fixed"}
-                              value={input.discount_fixed}
+                              value={input.discount_fixed || ""}
                               onChange={handleInput}
                               placeholder={"Enter Product Discount Fixed"}
                             />
@@ -1008,7 +1022,7 @@ const ProductEdit = () => {
                               }
                               type={"datetime-local"}
                               name={"discount_start"}
-                              value={input.discount_start}
+                              value={input.discount_start || ""}
                               onChange={handleInput}
                               placeholder={"Enter Discount Start Date"}
                             />
@@ -1032,7 +1046,7 @@ const ProductEdit = () => {
                               }
                               type={"datetime-local"}
                               name={"discount_end"}
-                              value={input.discount_end}
+                              value={input.discount_end || ""}
                               onChange={handleInput}
                               placeholder={"Enter Discount End Date"}
                             />
@@ -1093,7 +1107,7 @@ const ProductEdit = () => {
                                     type="radio"
                                     name="isFeatured"
                                     value="1"
-                                    checked={input.isFeatured === "1"}
+                                    checked={input.isFeatured === true}
                                     onChange={handleInput}
                                   />
                                   <label className="form-check-label">
@@ -1106,7 +1120,7 @@ const ProductEdit = () => {
                                     type="radio"
                                     name="isFeatured"
                                     value="0"
-                                    checked={input.isFeatured === "0"}
+                                    checked={input.isFeatured === false}
                                     onChange={handleInput}
                                   />
                                   <label className="form-check-label">No</label>
@@ -1122,7 +1136,7 @@ const ProductEdit = () => {
                                     type="radio"
                                     name="isNew"
                                     value="1"
-                                    checked={input.isNew === "1"}
+                                    checked={input.isNew === true}
                                     onChange={handleInput}
                                   />
                                   <label className="form-check-label">
@@ -1135,7 +1149,7 @@ const ProductEdit = () => {
                                     type="radio"
                                     name="isNew"
                                     value="0"
-                                    checked={input.isNew === "0"}
+                                    checked={input.isNew === false}
                                     onChange={handleInput}
                                   />
                                   <label className="form-check-label">No</label>
@@ -1151,7 +1165,7 @@ const ProductEdit = () => {
                                     type="radio"
                                     name="isTrending"
                                     value="1"
-                                    checked={input.isTrending === "1"}
+                                    checked={input.isTrending === true}
                                     onChange={handleInput}
                                   />
                                   <label className="form-check-label">
@@ -1164,7 +1178,7 @@ const ProductEdit = () => {
                                     type="radio"
                                     name="isTrending"
                                     value="0"
-                                    checked={input.isTrending === "0"}
+                                    checked={input.isTrending === false}
                                     onChange={handleInput}
                                   />
                                   <label className="form-check-label">No</label>
