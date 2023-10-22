@@ -77,10 +77,6 @@ const ProductEdit = () => {
         const formattedDiscountEnd = discountEndDate.toISOString().slice(0, 16);
         const discountStartDate = new Date(response.data.data.discount_start);
         const formattedDiscountStart = discountStartDate.toISOString().slice(0, 16);
-        const categoryData = response.data.data.category ? [response.data.data.category.id] : [];
-        setCategories(categoryData);
-        const subCategoryData = response.data.data.sub_category ? [response.data.data.sub_category.id] : [];
-        setSubCategories(subCategoryData);
         const productAttributes = response.data.data.attributes ? [response.data.data.attributes.id] : [];
         const shopQuantities = {};
         uniqueShopData.forEach((shop) => {
@@ -90,8 +86,8 @@ const ProductEdit = () => {
           shops: uniqueShopData,
           name: response.data.data.name,
           slug: response.data.data.slug,
-          category_id: categoryData,
-          sub_category_id: subCategoryData,
+          category_id: response.data.data.category?.id,
+          sub_category_id: response.data.data.sub_category?.id,
           child_sub_category_id: response.data.data.child_sub_category?.id,
           country_id: response.data.data.country?.id,
           brand_id: response.data.data.brand?.id,
@@ -304,13 +300,16 @@ const ProductEdit = () => {
     };
 
     axios
-      .put(`${Constants.BASE_URL}/product`, payload, {
+      .put(`${Constants.BASE_URL}/product/${params.id}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
         setIsLoading(false);
+        if (res.data.product_id !== undefined) {
+          getProduct();
+        }
         Swal.fire({
           position: "top-end",
           icon: res.data.cls,
@@ -1227,7 +1226,7 @@ const ProductEdit = () => {
                           dangerouslySetInnerHTML={{
                             __html: isLoading
                               ? '<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...'
-                              : "Add Product",
+                              : "Update Product",
                           }}
                         />
                       </div>
