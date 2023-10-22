@@ -3,7 +3,7 @@ import axios from 'axios';
 import Constants from '../../../Constants';
 
 export default function Login() {
-    const[input, setInput] = useState({})
+    const[input, setInput] = useState({user_type: 2})
     const[errors, setErrors] = useState([])
     const[isLoading, setIsLoading] = useState(false)
 
@@ -74,8 +74,8 @@ export default function Login() {
                 onChange={handleInput} 
                 >
                     <option>Select User Type</option>
-                    {/* <option value={1}>Admin</option> */}
-                    <option value={2}>Admin Manager</option>
+                    <option value={1} >Admin</option>
+                    <option value={2} >Admin Manager</option>
                 </select>
             <p className={'login-error-msg'}><small>{errors.user_type != undefined ? errors.user_type[0]: null}</small></p>
             </label>

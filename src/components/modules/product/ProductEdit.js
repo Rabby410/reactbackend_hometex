@@ -59,18 +59,30 @@ const ProductEdit = () => {
         const costValue = response.data.data.cost.replace(/[৳,]/g, "");
         const priceValue = response.data.data.price.replace(/[৳,]/g, "");
         const shopData = response.data.data.shops;
-        const shopQuantities = {};
+
+        // Filter out duplicate shops based on shop_id
+        const uniqueShopData = [];
+        const shopIds = new Set();
+
         shopData.forEach((shop) => {
+          if (!shopIds.has(shop.shop_id)) {
+            uniqueShopData.push(shop);
+            shopIds.add(shop.shop_id);
+          }
+        });
+
+        const categoryData = response.data.data.category?.id;
+        const shopQuantities = {};
+        uniqueShopData.forEach((shop) => {
           shopQuantities[shop.shop_id] = shop.shop_quantity;
         });
-        // setInput(response.data.data);
         setInput({
-          shops: shopData,
+          shops: uniqueShopData,
           name: response.data.data.name,
           slug: response.data.data.slug,
-          category_id: response.data.data.category?.id,
+          category_id: categoryData,
           sub_category_id: response.data.data.sub_category?.id,
-          child_sub_category_id: response.data.data.child_sub_category?.id,
+          child_sub_category_id: categoryData,
           country_id: response.data.data.country?.id,
           brand_id: response.data.data.brand?.id,
           supplier_id: response.data.data.supplier?.id,
@@ -80,13 +92,17 @@ const ProductEdit = () => {
           isFeatured: response.data.data.isFeatured === 1,
           isNew: response.data.data.isNew === 1,
           isTrending: response.data.data.isTrending === 1,
-          stock: response.data.data.stock,
           sku: response.data.data.sku,
           price_formula: response.data.data.price_formula,
           field_limit: response.data.data.field_limit,
         });
         // Set the quantities for each shop in the state
         setQuantities(shopQuantities);
+        // Pre-select shops
+        setSelectedShops(uniqueShopData.map((shop) => ({
+          value: shop.shop_id,
+          label: shop.shop_name,
+        })));
       })
       .catch((error) => {
         console.error(error);
@@ -95,6 +111,7 @@ const ProductEdit = () => {
   useEffect(() => {
     getProduct();
   }, []);
+  console.log(input, "klm")
 
   // Define shop_quantities variable
   const shop_quantities = selectedShops.map((shop) => ({
@@ -691,14 +708,14 @@ const ProductEdit = () => {
                                 {attributes.map((value, index) => (
                                   <>
                                     {attribute_input[id] != undefined &&
-                                    value.id == attribute_input[id].attribute_id
+                                      value.id == attribute_input[id].attribute_id
                                       ? value.value.map(
-                                          (atr_value, value_ind) => (
-                                            <option value={atr_value.id}>
-                                              {atr_value.name}
-                                            </option>
-                                          )
+                                        (atr_value, value_ind) => (
+                                          <option value={atr_value.id}>
+                                            {atr_value.name}
+                                          </option>
                                         )
+                                      )
                                       : null}
                                   </>
                                 ))}
@@ -888,18 +905,18 @@ const ProductEdit = () => {
                         <div className="col-md-12">
                           <label className="w-100 mt-4">
                             <p>Price Formula</p>
-                              <input
-                                className={
-                                  errors.price_formula !== undefined
-                                    ? "form-control mt-2 is-invalid"
-                                    : "form-control mt-2"
-                                }
-                                type="text"
-                                name="price_formula"
-                                value={input.price_formula}
-                                onChange={handleInput}
-                                placeholder="Enter Product Price Formula"
-                              />
+                            <input
+                              className={
+                                errors.price_formula !== undefined
+                                  ? "form-control mt-2 is-invalid"
+                                  : "form-control mt-2"
+                              }
+                              type="text"
+                              name="price_formula"
+                              value={input.price_formula}
+                              onChange={handleInput}
+                              placeholder="Enter Product Price Formula"
+                            />
                             <p className="login-error-msg">
                               <small>
                                 {errors.price_formula !== undefined
@@ -908,28 +925,28 @@ const ProductEdit = () => {
                               </small>
                             </p>
                           </label>
-                            <label className="w-100 mt-4">
-                              <p>Field Limits (eg l:100-800;w:300-877)</p>
-                              <input
-                                className={
-                                  errors.field_limit !== undefined
-                                    ? "form-control mt-2 is-invalid"
-                                    : "form-control mt-2"
-                                }
-                                type="text"
-                                name="field_limit"
-                                value={input.field_limit}
-                                onChange={handleInput}
-                                placeholder="l:0-120;w:0-120"
-                              />
-                              <p className="login-error-msg">
-                                <small>
-                                  {errors.field_limit !== undefined
-                                    ? errors.field_limit[0]
-                                    : null}
-                                </small>
-                              </p>
-                            </label>
+                          <label className="w-100 mt-4">
+                            <p>Field Limits (eg l:100-800;w:300-877)</p>
+                            <input
+                              className={
+                                errors.field_limit !== undefined
+                                  ? "form-control mt-2 is-invalid"
+                                  : "form-control mt-2"
+                              }
+                              type="text"
+                              name="field_limit"
+                              value={input.field_limit}
+                              onChange={handleInput}
+                              placeholder="l:0-120;w:0-120"
+                            />
+                            <p className="login-error-msg">
+                              <small>
+                                {errors.field_limit !== undefined
+                                  ? errors.field_limit[0]
+                                  : null}
+                              </small>
+                            </p>
+                          </label>
                         </div>
 
                         <div className="col-md-6">
