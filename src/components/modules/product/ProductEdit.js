@@ -105,6 +105,7 @@ const ProductEdit = () => {
           discount_percent: discountPercentValue,
           price_formula: response.data.data.price_formula,
           field_limit: response.data.data.field_limit,
+          status: response.data.data.status == "Active" ?  1 : 0,
         });
         setAttributes(productAttributes);
         // Set the quantities for each shop in the state

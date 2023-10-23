@@ -69,7 +69,7 @@ const ProductList = () => {
   const handleDuplicateProduct = (id) => {
     const token = localStorage.getItem("token");
     axios
-      .post(`${Constants.BASE_URL}/product/${id}/duplicate`, {
+      .get(`${Constants.BASE_URL}/product/duplicate/${id}`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
