@@ -320,13 +320,8 @@ const ProductEdit = () => {
       return { shop_id: shopId, shop_quantity: quantity };
     });
 
-    shops.forEach((shop) => {
-      if (shopQuantityMap.hasOwnProperty(shop.shop_id)) {
-        shop.shop_quantity = shopQuantityMap[shop.shop_id];
-      }
-    });
     const updatedShopQuantities = updatedInput.shops.map((shop) => {
-      return { shop_id: shop.shop_id, quantity: shop.quantity };
+      return { shop_id: shop.shop_id, quantity: shop.shop_quantity };
     });
 
     // Use the updated 'input' data in the payload
