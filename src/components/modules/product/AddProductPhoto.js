@@ -87,7 +87,7 @@ const AddProductPhoto = () => {
             <div className="card-header">
               <CardHeader
                 title={'Add Product Photo'}
-                link={'/product'}
+                link={'/products'}
                 icon={'fa-list'}
                 button_text={'List'}
               />

@@ -68,14 +68,16 @@ const ProductList = () => {
   };
   const handleDuplicateProduct = (id) => {
     const token = localStorage.getItem("token");
+    
     axios
-      .get(`${Constants.BASE_URL}/product/duplicate/${id}`, null, {
+      .get(`${Constants.BASE_URL}/product/duplicate/@_jkL_qwErtOp~_lis/${id}`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
         setDuplicateMessage(response.data.msg);
+        getProducts();
         Swal.fire({
           position: "top-end",
           icon: response.data.cls,

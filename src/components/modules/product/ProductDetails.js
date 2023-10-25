@@ -105,34 +105,36 @@ const ProductDetails = () => {
                           <tr>
                             <th>Brand</th>
                             <td>
-                              <Link to={"/brand"}>{product?.brand}</Link>
+                              <Link to={"/brand"}>{product?.brand?.name}</Link>
                             </td>
                           </tr>
                           <tr>
                             <th>Origin</th>
-                            <td>{product.country}</td>
+                            <td>{product.country?.name}</td>
                           </tr>
                           <tr>
                             <th>Supplier</th>
                             <td>
-                              <Link to={"/suppliers"}>{product.supplier}</Link>
+                              <Link to={"/suppliers"}>
+                                {product.supplier?.name}
+                              </Link>
                             </td>
                           </tr>
                           <tr>
                             <th>Created By</th>
-                            <td>{product.created_by}</td>
+                            <td>{product?.created_by?.name}</td>
                           </tr>
                           <tr>
                             <th>Updated By</th>
-                            <td>{product.updated_BY}</td>
+                            <td>{product.updated_BY?.name}</td>
                           </tr>
                           <tr>
                             <th>Creayed At</th>
-                            <td>{product.created_at}</td>
+                            <td>{product?.created_at}</td>
                           </tr>
                           <tr>
                             <th>updated At</th>
-                            <td>{product.updated_at}</td>
+                            <td>{product?.updated_at}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -158,6 +160,12 @@ const ProductDetails = () => {
                           <tr>
                             <th>Original sale Price</th>
                             <td>{product.price}</td>
+                          </tr>
+                          <tr>
+                            <th>Price Formula || Field Limit</th>
+                            <td>
+                              {product?.price_formula} || {product?.field_limit}
+                            </td>
                           </tr>
                           <tr>
                             <th>Sale Price</th>
@@ -226,20 +234,45 @@ const ProductDetails = () => {
                 </div>
               </div>
             </div>
-            </div>
-            </div>
           </div>
-        {/* </div>
-        <div className="row">
-        {product.photos.map((photo, index) => (
-          <div className="col-md-3" key={index}>
-            <div className="card">
-              <img src={photo} alt={`Photo ${index}`} className="card-img-top" />
-            </div>
-          </div>
-        ))}
+        </div>
       </div>
-      </div> */}
+      <div class="row justify-content-center align-items-center g-2">
+        <div className="col">
+          <h3 className="text-center">Shops</h3>
+          {product?.shops?.map((shop) => (
+            <div key={shop?.shop_id} className="card mb-3">
+              <div className="card-body col-md-4">
+                <h5 className="card-title">{shop.shop_name}</h5>
+                <p className="card-text">Quantity: {shop.shop_quantity}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="row justify-content-center align-items-center g-2">
+        <div className="col">
+          <h3 className="text-center">Photos</h3>
+          <div className="row">
+            {product?.photos?.map((photo, index) => (
+              <div className="col-md-6" key={index}>
+                <div className="card">
+                  <img
+                    src={photo?.photo}
+                    alt={`Photo ${index}`}
+                    className="card-img-top"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="col m-5 text-center">
+          <h3 className="m-2">Primary Photos</h3>
+          <img src={product?.primary_photo} alt="product.name" />
+        </div>
+      </div>
     </>
   );
 };
