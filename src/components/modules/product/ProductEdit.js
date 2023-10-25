@@ -105,6 +105,7 @@ const ProductEdit = () => {
           discount_percent: discountPercentValue,
           price_formula: response.data.data.price_formula,
           field_limit: response.data.data.field_limit,
+          status: response.data.data.status == "Active" ? 1 : 0,
         });
         setAttributes(productAttributes);
         // Set the quantities for each shop in the state
@@ -287,14 +288,51 @@ const ProductEdit = () => {
     reader.readAsDataURL(file);
   };
 
+  // Update handleShopSelect to set selectedShops
+  const handleShopSelect = (selectedOptions) => {
+    setSelectedShops(selectedOptions);
+  };
+
+  // Update handleQuantityChange to set quantities
+  const handleQuantityChange = (event, shopId) => {
+    const newQuantities = { ...quantities };
+    newQuantities[shopId] = parseInt(event.target.value, 10) || 0;
+    setQuantities(newQuantities);
+  };
+
   const handleProductUpdate = () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
+    // Create a map of shop quantities for easy access
+    const shopQuantityMap = {};
+    shops.forEach((shop) => {
+      shopQuantityMap[shop.shop_id] = shop.shop_quantity;
+    });
 
-    // Use the shop_quantities variable
+    // Update the 'input' data to match the 'shops' data and set shop_quantity equal to quantity
+    const updatedInput = { ...input };
+    updatedInput.shops = selectedShops.map((selectedShop) => {
+      const shopId = selectedShop.value;
+      const quantity = quantities[shopId] || 0;
+      if (shopQuantityMap.hasOwnProperty(shopId)) {
+        shopQuantityMap[shopId] = quantity;
+      }
+      return { shop_id: shopId, shop_quantity: quantity };
+    });
+
+    shops.forEach((shop) => {
+      if (shopQuantityMap.hasOwnProperty(shop.shop_id)) {
+        shop.shop_quantity = shopQuantityMap[shop.shop_id];
+      }
+    });
+    const updatedShopQuantities = updatedInput.shops.map((shop) => {
+      return { shop_id: shop.shop_id, quantity: shop.quantity };
+    });
+
+    // Use the updated 'input' data in the payload
     const payload = {
-      ...input,
-      shop_quantities: shop_quantities,
+      ...updatedInput,
+      shop_quantities: updatedShopQuantities,
       stock: totalStock,
       shop_ids: shopIds,
     };
@@ -361,16 +399,6 @@ const ProductEdit = () => {
     }
     setTotalStock(total);
   }, [selectedShops, quantities]);
-
-  const handleShopSelect = (selectedOptions) => {
-    setSelectedShops(selectedOptions);
-  };
-
-  const handleQuantityChange = (event, shopId) => {
-    const newQuantities = { ...quantities };
-    newQuantities[shopId] = parseInt(event.target.value, 10) || 0;
-    setQuantities(newQuantities);
-  };
 
   return (
     <>
