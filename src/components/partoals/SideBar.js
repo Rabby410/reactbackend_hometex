@@ -43,7 +43,6 @@ export default function SideBar() {
                         <div className="collapse" id="tpfrom" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav className="sb-sidenav-menu-nested nav">
                                 <Link className="nav-link" to="/product/transfer/list">List</Link>
-                                <Link className="nav-link" to="/product/transfer/form/:id">Transfer Form</Link>
                             </nav>
                         </div>
                         </>}

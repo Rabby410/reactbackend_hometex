@@ -7,6 +7,7 @@ import Constants from "../../../Constants";
 import Loader from "../../partoals/miniComponents/Loader";
 import NoDataFound from "../../partoals/miniComponents/NoDataFound";
 import { Link } from "react-router-dom";
+import ProductTransferForm from "./transferProduct/ProductTransferForm";
 
 const ProductList = () => {
   const [input, setInput] = useState({
@@ -68,13 +69,17 @@ const ProductList = () => {
   };
   const handleDuplicateProduct = (id) => {
     const token = localStorage.getItem("token");
-    
+
     axios
-      .get(`${Constants.BASE_URL}/product/duplicate/@_jkL_qwErtOp~_lis/${id}`, null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .get(
+        `${Constants.BASE_URL}/product/duplicate/@_jkL_qwErtOp~_lis/${id}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         setDuplicateMessage(response.data.msg);
         getProducts();
@@ -354,6 +359,17 @@ const ProductList = () => {
                                     className={"btn btn-sm my-1 btn-warning"}
                                   >
                                     <i className="fa-solid fa-pen-to-square"></i>
+                                  </button>
+                                </Link>
+                                <Link
+                                  to={`/product/transfer/form/${product.id}`}
+                                >
+                                  <button 
+                                    className={
+                                      "btn btn-sm btn-outline-success my-1"
+                                    }
+                                  >
+                                    <i className=" fa fa-exchange"></i>
                                   </button>
                                 </Link>
                                 <button

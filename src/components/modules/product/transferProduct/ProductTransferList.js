@@ -9,29 +9,172 @@ import NoDataFound from "../../../partoals/miniComponents/NoDataFound";
 import { Link } from "react-router-dom";
 
 const ProductTransferList = () => {
-    return (
-        <>
-            <Breadcrumb title={"Product Transfer List"} />
-            <div className="row">
-                <div className="col-md-12">
-                    <div className="card">
-                        <div className="card-header">
-                            <CardHeader
-                                title={"Product Transfer list"}
-                                link={"/products"}
-                                icon={"fa-list"}
-                                button_text={"Product List"}
-                            />
-                        </div>
+  const [transferData, setTransferData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-                        <div className="card-body">
+  const getTransferProductData = () => {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
 
-                        </div>
-                    </div>
-                </div>
+    axios
+      .get(`${Constants.BASE_URL}/transfers`, { headers })
+      .then((response) => {
+        setTransferData(response.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getTransferProductData();
+  }, []);
+
+  // Function to approve a transfer
+  const approveTransfer = (transferId) => {
+    const token = localStorage.getItem("token");
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Make a PUT request to approve the transfer
+    axios
+      .put(
+        `${Constants.BASE_URL}/transfers/${transferId}/approve`,
+        {},
+        { headers }
+      )
+      .then((response) => {
+        // Handle success, e.g., show a success message
+        Swal.fire({
+            position: "top-end",
+            icon: response.data.cls,
+            title: response.data.message,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+        getTransferProductData();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  // Function to reject a transfer
+  const rejectTransfer = (transferId) => {
+    const token = localStorage.getItem("token");
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Make a PUT request to reject the transfer
+    axios
+      .put(
+        `${Constants.BASE_URL}/transfers/${transferId}/reject`,
+        {},
+        { headers }
+      )
+      .then((response) => {
+        // Handle success, e.g., show a success message
+        Swal.fire({
+            position: "top-end",
+            icon: response.data.cls,
+            title: response.data.message,
+            showConfirmButton: false,
+            toast: true,
+            timer: 1500,
+          });
+        getTransferProductData();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  return (
+    <>
+      <Breadcrumb title={"Product Transfer List"} />
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card">
+            <div className="card-header">
+              <CardHeader
+                title={"Product Transfer List"}
+                link={"/products"}
+                icon={"fa-list"}
+                button_text={"Product List"}
+              />
             </div>
-        </>
-    )
-}
 
-export default ProductTransferList
+            <div className="card-body">
+              {loading ? (
+                <Loader />
+              ) : transferData.length ? (
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Product ID</th>
+                      <th>From Shop ID</th>
+                      <th>To Shop ID</th>
+                      <th>Quantity</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transferData.map((transfer) => (
+                      <tr key={transfer.id}>
+                        <td>{transfer.product_id}</td>
+                        <td>{transfer.from_shop_id}</td>
+                        <td>{transfer.to_shop_id}</td>
+                        <td>{transfer.quantity}</td>
+                        <td>{transfer.status}</td>
+                        <td>
+                          {transfer.status === "pending" && (
+                            <button
+                              className="btn btn-success mx-2"
+                              onClick={() => approveTransfer(transfer.id)}
+                            >
+                              Approve
+                            </button>
+                          )}
+                          {transfer.status === "pending" && (
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => rejectTransfer(transfer.id)}
+                            >
+                              Reject
+                            </button>
+                          )}
+                          {transfer.status !== "pending" && (
+                            <button className="btn btn-success mx-2" disabled>
+                              Approve
+                            </button>
+                          )}
+                          {transfer.status !== "pending" && (
+                            <button className="btn btn-danger" disabled>
+                              Reject
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <NoDataFound />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ProductTransferList;
