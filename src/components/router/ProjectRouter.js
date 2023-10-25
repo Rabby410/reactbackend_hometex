@@ -38,6 +38,8 @@ import ChildSubCategoryList from "../modules/childSubCategory/ChildSubCategoryLi
 import ChildSubCategoryEdit from "../modules/childSubCategory/ChildSubCategoryEdit";
 import ChildSubCategoryAdd from "../modules/childSubCategory/ChildSubCategoryAdd";
 import ProductDetails from "../modules/product/ProductDetails";
+import ProductTransferList from "../modules/product/transferProduct/ProductTransferList";
+import ProductTransferForm from "../modules/product/transferProduct/ProductTransferForm";
 
 const ProjectRouter = createBrowserRouter([
   {
@@ -127,6 +129,14 @@ const ProjectRouter = createBrowserRouter([
       {
         path: "/product/edit/:id",
         element: <ProductEdit/>,
+      },
+      {
+        path: "/product/transfer/list",
+        element: <ProductTransferList/>,
+      },
+      {
+        path: "/product/transfer/form/:id",
+        element: <ProductTransferForm/>,
       },
       {
         path: "/product/:id",

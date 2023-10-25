@@ -34,6 +34,18 @@ export default function SideBar() {
                                 {/* <Link className="nav-link" to="/orders/create">Create Order</Link> */}
                             </nav>
                         </div>
+                        <div className="sb-sidenav-menu-heading">Transfer Product</div>
+                        <Link className="nav-link collapsed" to="#" data-bs-toggle="collapse" data-bs-target="#tpfrom" aria-expanded="false" aria-controls="collapseLayouts">
+                            <div className="sb-nav-link-icon"><i className="fas fa-columns"></i></div>
+                            Transfer
+                            <div className="sb-sidenav-collapse-arrow"><i className="fas fa-angle-down"></i></div>
+                        </Link>
+                        <div className="collapse" id="tpfrom" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav className="sb-sidenav-menu-nested nav">
+                                <Link className="nav-link" to="/product/transfer/list">List</Link>
+                                <Link className="nav-link" to="/product/transfer/form/:id">Transfer Form</Link>
+                            </nav>
+                        </div>
                         </>}
                         {/* Report end */}
                         {
