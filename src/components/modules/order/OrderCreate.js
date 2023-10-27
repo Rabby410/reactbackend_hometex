@@ -65,10 +65,12 @@ const OrderCreate = () => {
   const handleOrderPlace = () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
+    const shopData = JSON.parse(localStorage.getItem("branch"));
+    const shop_id = shopData.id;
     axios
       .post(
         `${Constants.BASE_URL}/order`,
-        { carts: carts, orderSummary: orderSummary },
+        { carts: carts, orderSummary: orderSummary, shop_id: shop_id },
         {
           headers: {
             Authorization: `Bearer ${token}`,
