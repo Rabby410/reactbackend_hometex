@@ -27,7 +27,7 @@ const leftAlignedTdCellStyle = {
 const PrintInvoice = ({ order }) => {
   const totalOrders = order?.order_details.length;
   const ordersSubtotal = order?.total + order?.discount;
-  const vat = ordersSubtotal * 0.075;
+  const vat = order?.total * 0.075;
 
   let totalQuantity = 0;
   order?.order_details.forEach((product) => {
@@ -129,18 +129,18 @@ const PrintInvoice = ({ order }) => {
               </tr>
               <tr>
                 <td colSpan={4} style={rightAlignedTdCellStyle}>
-                  VAT 7.5%
-                </td>
-                <td style={tdCellStyle}>
-                {GlobalFunction.formatPrice(vat)}
-                </td>
-              </tr>
-              <tr>
-                <td colSpan={4} style={rightAlignedTdCellStyle}>
                   Discount
                 </td>
                 <td style={tdCellStyle}>
                   {GlobalFunction.formatPrice(order?.discount)}
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={4} style={rightAlignedTdCellStyle}>
+                  VAT 7.5%
+                </td>
+                <td style={tdCellStyle}>
+                {GlobalFunction.formatPrice(vat)}
                 </td>
               </tr>
               <tr>
