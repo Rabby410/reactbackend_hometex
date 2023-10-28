@@ -50,7 +50,8 @@ const BarCodePage = React.forwardRef((props, ref) => {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 fontSize: '9px',
-                                margin: "0px"
+                                margin: "0px",
+                                letterSpacing: ".15em"
                             }}
                         >
                             <p>
