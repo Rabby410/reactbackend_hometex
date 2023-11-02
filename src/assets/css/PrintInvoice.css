@@ -1,0 +1,40 @@
+/* Hide non-essential elements */
+@media print {
+    .header,
+    .footer {
+      display: none;
+    }
+  
+    /* Add specific styles for printing here */
+  }
+  
+  /* Adjust font sizes and styles for printing */
+  @media print {
+    body {
+      font-size: 12px;
+      font-family: 'Courier', monospace;
+    }
+  
+    /* Add specific styles for printing here */
+  }
+  
+  /* Control page breaks */
+  @media print {
+    tr {
+      page-break-inside: avoid;
+    }
+  
+    /* Add specific styles for printing here */
+  }
+  
+  /* Set margins and padding for printing */
+  @media print {
+    body {
+      margin: 0;
+      padding: 10px;
+    }
+  
+    /* Add specific styles for printing here */
+  }
+
+  

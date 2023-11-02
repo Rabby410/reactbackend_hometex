@@ -16,6 +16,7 @@ const OrderDetails = () => {
   const params = useParams();
   const [order, setOrder] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTaxType, setSelectedTaxType] = useState("General (7.5%)");
 
   const getOrderDetails = () => {
     setIsLoading(true);
@@ -36,6 +37,9 @@ const OrderDetails = () => {
     getOrderDetails();
   }, []);
 
+  const handleTaxTypeChange = (event) => {
+    setSelectedTaxType(event.target.value);
+  };
   const printInvoice = () => {
     // Open a new window for printing
     const printWindow = window.open("", "_blank");
@@ -46,7 +50,7 @@ const OrderDetails = () => {
 
     // Render the InvoicePage component in the new window
     ReactDOM.render(
-      <PrintInvoice order={order} />,
+      <PrintInvoice order={order} taxType={selectedTaxType} />,
       printWindow.document.body
     );
 
@@ -75,6 +79,15 @@ const OrderDetails = () => {
                 button_text={"List"}
               />
             </div>
+            <div className="tax-type-dropdown text-center my-3">
+                <label>Select Tax Type:</label>
+                <select value={selectedTaxType} onChange={handleTaxTypeChange}>
+                  <option value="0.075">General (7.5%)</option>
+                  <option value="0.050">Marchent (5.0%)</option>
+                  <option value="0.000">Jute Item (0.0%)</option>
+                  {/* Add options for other tax types as needed */}
+                </select>
+              </div>
             <div className="search-area mb-4 mx-3">
               <div className="row">
                 <div className="col-md-6">
