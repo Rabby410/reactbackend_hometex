@@ -249,7 +249,7 @@ const PrintInvoice = ({ order, taxType }) => {
           once. An item must be unworn, unwashed, undamaged and unused [Fairly
           Enough Condition]. No Cash Refund is Applicable.
           <hr />
-          VAT Note: 7.5% VAT on ready-made products. No VAT on jute items.
+          VAT Note: 5% VAT on ready-made products. No VAT on jute items.
           <hr />
           Shop Online: www.hometex.ltd 
           <br/>Queries & Complaints: +8809610963839
