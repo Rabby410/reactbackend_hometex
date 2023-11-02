@@ -251,7 +251,8 @@ const PrintInvoice = ({ order, taxType }) => {
           <hr />
           VAT Note: 7.5% VAT on ready-made products. No VAT on jute items.
           <hr />
-          Shop Online: www.hometex.ltd Queries & Complaints: +8809610963839
+          Shop Online: www.hometex.ltd 
+          <br/>Queries & Complaints: +8809610963839
           <br />
           Suggestions: support@hometex.ltd
         </div>

@@ -198,7 +198,7 @@ const BarCode = () => {
                         </div>
                     </div>
                 </div>
-            </div>0420310067273
+            </div>
         </>
     );
 }

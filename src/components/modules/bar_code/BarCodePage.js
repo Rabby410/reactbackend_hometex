@@ -16,7 +16,7 @@ const RenderAttributes = ({ product }) => {
                 return `${attribute.name}: ${attribute.values.name}`;
             }
             return '';
-        }).join('  '); // Join attributes with double spaces
+        }).join('  ');
         return (
             <p>
                 {attributeString}
@@ -55,7 +55,7 @@ const BarCodePage = React.forwardRef((props, ref) => {
                             }}
                         >
                             <p>
-                                <small style={{fontSize:"12px"}}>{product?.brand}</small>
+                                <b><small style={{ fontSize: "12px" }}>{product?.brand}</small></b>
                             </p>
                             <div className="barcode" style={{ textAlign: 'center', format: "CODE128" }}>
                                 <Barcode value={product.sku} width={1} height={20} fontSize={9} margin={2} />
@@ -65,15 +65,17 @@ const BarCodePage = React.forwardRef((props, ref) => {
                             </p>
                             {/* Display attributes and their values */}
                             {product.attributes && product.attributes.length > 0 && RenderAttributes({ product })}
-                            <p>
-                                Price:
-                                {product?.sell_price?.discount !== 0
-                                    ? GlobalFunction.formatPrice(product?.sell_price?.price)
-                                    : ''}
-                                <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
-                                    {product?.price}
-                                </span>
-                            </p>
+                            <b>
+                                <p>
+                                    Price:
+                                    {product?.sell_price?.discount !== 0
+                                        ? GlobalFunction.formatPrice(product?.sell_price?.price)
+                                        : ''}
+                                    <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
+                                        {product?.price}
+                                    </span>
+                                </p>
+                            </b>
                         </div>
                     ))}
                 </div>

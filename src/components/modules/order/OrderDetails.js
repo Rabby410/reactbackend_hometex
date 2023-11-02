@@ -81,10 +81,11 @@ const OrderDetails = () => {
             </div>
             <div className="tax-type-dropdown text-center my-3">
                 <label>Select Tax Type:</label>
-                <select value={selectedTaxType} onChange={handleTaxTypeChange}>
-                  <option value="0.075">General (7.5%)</option>
-                  <option value="0.050">Marchent (5.0%)</option>
-                  <option value="0.000">Jute Item (0.0%)</option>
+                <select value={selectedTaxType} onChange={handleTaxTypeChange} className="mx-2">
+                  <option selected>Select Vat %</option>
+                  <option value="0.050">Retail Vat (5.0%)</option>
+                  <option value="0.075">Supply Vat (7.5%)</option>
+                  <option value="0.000">Vat Exempt (0.0%)</option>
                   {/* Add options for other tax types as needed */}
                 </select>
               </div>
