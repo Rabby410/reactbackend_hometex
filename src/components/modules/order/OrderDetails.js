@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import Breadcrumb from "../../partoals/Breadcrumb";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import axios from "axios";
-import Swal from "sweetalert2";
 import Constants from "../../../Constants";
-import Pagination from "react-js-pagination";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ReactDOM from "react-dom";
-import Loader from "../../partoals/miniComponents/Loader";
-import NoDataFound from "../../partoals/miniComponents/NoDataFound";
 import GlobalFunction from "../../../assets/GlobalFunction";
 import PrintInvoice from "./PrintInvoice";
+import GiftInvoicePrint from "./GiftInvoicePrint";
 
 const OrderDetails = () => {
   const params = useParams();
@@ -40,15 +37,13 @@ const OrderDetails = () => {
   const handleTaxTypeChange = (event) => {
     setSelectedTaxType(event.target.value);
   };
+
   const printInvoice = () => {
-    // Open a new window for printing
     const printWindow = window.open("", "_blank");
     printWindow.document.open();
     printWindow.document.write(
       "<html><head><title>Print Invoice</title></head><body>"
     );
-
-    // Render the InvoicePage component in the new window
     ReactDOM.render(
       <PrintInvoice order={order} taxType={selectedTaxType} />,
       printWindow.document.body
@@ -57,7 +52,26 @@ const OrderDetails = () => {
     printWindow.document.write("</body></html>");
     printWindow.document.close();
 
-    // Trigger print after content is loaded
+    printWindow.print();
+    printWindow.onafterprint = () => {
+      printWindow.close();
+    };
+  };
+
+  const giftInvoicePrint = () => {
+    const printWindow = window.open("", "_blank");
+    printWindow.document.open();
+    printWindow.document.write(
+      "<html><head><title>Print Gift Invoice</title></head><body>"
+    );
+    ReactDOM.render(
+      <GiftInvoicePrint order={order} taxType={selectedTaxType} />,
+      printWindow.document.body
+    );
+
+    printWindow.document.write("</body></html>");
+    printWindow.document.close();
+    
     printWindow.print();
     printWindow.onafterprint = () => {
       printWindow.close();
@@ -399,6 +413,9 @@ const OrderDetails = () => {
       <div className="text-center no-print">
         <button className="btn btn-primary" onClick={printInvoice}>
           Print Invoice
+        </button>
+        <button className="btn btn-primary mx-2" onClick={giftInvoicePrint}>
+          Gift Invoice
         </button>
       </div>
     </>

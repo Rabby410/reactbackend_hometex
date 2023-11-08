@@ -52,6 +52,10 @@ const PrintInvoice = ({ order, taxType }) => {
                 src="/static/media/hometex-logo.6cb4a390c04e43ae0736.png"
                 alt={"shop Logo"}
                 className="img-fluid"
+                style={{
+                  WebkitFilter: "grayscale(100%);",
+                  filter: "grayscale(100%)",
+                }}
               />
               <h2>Hometex Bangladesh</h2>
             </div>

@@ -16,7 +16,7 @@ const RenderAttributes = ({ product }) => {
                 return `${attribute.name}: ${attribute.values.name}`;
             }
             return '';
-        }).join('  ');
+        }).join('  '); // Join attributes with double spaces
         return (
             <p>
                 {attributeString}
@@ -50,32 +50,31 @@ const BarCodePage = React.forwardRef((props, ref) => {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 fontSize: '9px',
-                                margin: "0px",
-                                letterSpacing: ".15em"
+                                letterSpacing: ".15em",
+                                margin: "0px"
                             }}
                         >
                             <p>
-                                <b><small style={{ fontSize: "12px" }}>{product?.brand}</small></b>
+                                <small style={{fontSize:"12px"}}><b>{product?.brand}</b></small>
                             </p>
                             <div className="barcode" style={{ textAlign: 'center', format: "CODE128" }}>
-                                <Barcode value={product.sku} width={1} height={20} fontSize={9} margin={2} />
+                                <Barcode value={product.sku} width={1} height={12} fontSize={8} margin={0} />
                             </div>
                             <p>
                                 <strong>{TruncateText(product?.name, 20)}</strong>
                             </p>
-                            {/* Display attributes and their values */}
-                            {product.attributes && product.attributes.length > 0 && RenderAttributes({ product })}
-                            <b>
-                                <p>
-                                    Price:
-                                    {product?.sell_price?.discount !== 0
-                                        ? GlobalFunction.formatPrice(product?.sell_price?.price)
-                                        : ''}
-                                    <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
-                                        {product?.price}
-                                    </span>
-                                </p>
-                            </b>
+                            <b>{product.attributes && product.attributes.length > 0 && RenderAttributes({ product })}</b>
+                            <p>
+                                <b>
+                                Price:
+                                {product?.sell_price?.discount !== 0
+                                    ? GlobalFunction.formatPrice(product?.sell_price?.price)
+                                    : ''}
+                                <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
+                                    {product?.price} {" + VAT"}
+                                </span>
+                                </b>
+                            </p>
                         </div>
                     ))}
                 </div>

@@ -3,18 +3,22 @@
 @import "global";
 
 
-#login{
+#login {
     width: 100vw;
     height: 100vh;
     position: relative;
-    .card{
+
+    .card {
         width: 40%;
         @include center;
         box-shadow: 0 0 25px $white;
-        label, h4 {
+
+        label,
+        h4 {
             color: $white;
             position: relative;
-            .login-error-msg{
+
+            .login-error-msg {
                 position: absolute;
                 color: red;
                 text-shadow: 0 0 10px $white;
@@ -22,32 +26,37 @@
         }
     }
 }
-.search-area{
-    lable{
+
+.search-area {
+    lable {
         font-size: 14px;
         color: $theme-color;
-        p{
+
+        p {
             margin-bottom: 5px;
         }
     }
 }
 
-.small-button{
+.small-button {
     border: none;
     background: $theme-color;
     border-radius: 5px;
     padding: 2px 6px 1px 6px;
     color: $white;
     @include transition;
-    &:hover{
+
+    &:hover {
         background: $theme-color-light;
     }
 }
-.value-container-parent{
+
+.value-container-parent {
     width: 312px;
     display: flex;
     flex-wrap: wrap;
-    .value-container{
+
+    .value-container {
         color: $white;
         width: 100px;
         line-height: 30px;
@@ -57,16 +66,19 @@
         cursor: pointer;
         margin: 2px;
         text-align: center;
-        &:hover .value-buttons{
+
+        &:hover .value-buttons {
             display: block;
             @include transition;
         }
-        .value-buttons{
+
+        .value-buttons {
             @include center;
             @include transition;
             width: 100px;
             display: none;
-            button{
+
+            button {
                 line-height: 24px;
                 border: 0;
                 padding: 0 6px 0 6px;
@@ -75,14 +87,16 @@
                 border-radius: 3px;
                 @include transition;
                 margin: 1px;
-                &:hover{
+
+                &:hover {
                     color: black;
                 }
             }
         }
     }
 }
-.photo-upload-container{
+
+.photo-upload-container {
     width: 150px;
     height: 150px;
     border: 1px solid silver;
@@ -90,134 +104,164 @@
     position: relative;
     border-radius: 10px;
     background: $theme-color-light;
-    .icon{
+
+    .icon {
         @include center;
         @include transition;
         color: $white;
         cursor: pointer;
-        .fa-camera{
-            &:hover{
+
+        .fa-camera {
+            &:hover {
                 transform: scale(1.3);
             }
 
         }
     }
 }
-.primary-photo{
+
+.primary-photo {
     border: 2px solid violet;
-    &:after{
+
+    &:after {
         content: 'Primary';
     }
 }
-.preview-photo{
+
+.preview-photo {
     cursor: pointer;
 }
-.order-product-photo{
+
+.order-product-photo {
     width: 75px;
 }
-.details-area{
+
+.details-area {
     position: absolute;
     right: 7px;
     top: 5px;
 }
-.customer-list{
-margin-top: 5px;
-    li{
+
+.customer-list {
+    margin-top: 5px;
+
+    li {
         list-style: none;
         border-bottom: 1px solid silver;
         padding: 3px 0;
         cursor: pointer;
-        &:hover{
+
+        &:hover {
             color: $theme-color;
             background: #9acd3236;
         }
     }
 }
-.quantity-button{
+
+.quantity-button {
     border: none;
     background: $theme-color;
     border-radius: 5px;
     padding: 0 8px;
     color: $white;
     margin: 0 10px;
-    &:disabled{
+
+    &:disabled {
         background: $theme-color-disabled;
     }
 }
-.order-product-container{
+
+.order-product-container {
     background: #f4e8ff;
     border-radius: 5px;
     margin: 5px 0;
     border: 1px solid #e2c9f9;
     box-shadow: 0 0 4px silver;
 }
-.order-details-confirmation{
-    table{
-        th,td{
+
+.order-details-confirmation {
+    table {
+
+        th,
+        td {
             font-size: 14px;
         }
     }
-    h4{
+
+    h4 {
         color: $theme-color;
     }
-    p{
-        strong{
+
+    p {
+        strong {
             color: $theme-color;
         }
-        address{
+
+        address {
             font-size: 14px;
         }
     }
 }
-.table-image{
+
+.table-image {
     width: 50px;
 }
-.sm-table{
-    th, td{
+
+.sm-table {
+
+    th,
+    td {
         font-size: 14px;
     }
 }
-.bar-code-area-wraper{
+
+.bar-code-area-wraper {
     box-shadow: 0 0 10px silver;
-    margin: 25px auto 25px auto;
+    margin: 0px auto 0px auto;
     width: 595px;
     height: 842px;
     text-align: -webkit-center;
 }
-.print-area
-{
-    
-    padding: 5px;
+
+.print-area {
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
-    .bar-code-items{
+    .bar-code-items {
         width: 33.33%;
-        padding: 5px;
+        padding: 0;
         text-align: center;
-        font-size: 14px;
+        font-size: 12px;
         border: 1px solid #e8e8e8;
         height: fit-content;
     }
 }
-.deleted{
+
+.deleted {
     color: red;
     text-decoration: line-through;
     font-size: 12px;
 }
-.report-card{
+
+.report-card {
     @include transition;
     box-shadow: 0 0 5px silver;
-    &:hover{
+
+    &:hover {
         transform: scale(1.05);
         cursor: pointer;
     }
-    svg{
+
+    svg {
         color: $theme-color;
     }
-    h6, h4{
+
+    h6,
+    h4 {
         font-weight: 100;
     }
-    h4{
+
+    h4 {
         color: $theme-color;
     }
 }
