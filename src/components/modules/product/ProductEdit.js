@@ -5,7 +5,12 @@ import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { EditorState, ContentState, convertFromHTML, convertToRaw } from "draft-js";
+import {
+  EditorState,
+  ContentState,
+  convertFromHTML,
+  convertToRaw,
+} from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Select from "react-select";
@@ -71,13 +76,29 @@ const ProductEdit = () => {
           }
         });
         setEditorState(editorState);
-        const discountPercentValue = parseFloat(response.data.data.discount_percent);
-        const discountFixedValue = parseFloat(response.data.data.discount_fixed);
-        const discountEndDate = new Date(response.data.data.discount_end);
-        const formattedDiscountEnd = discountEndDate.toISOString().slice(0, 16);
-        const discountStartDate = new Date(response.data.data.discount_start);
-        const formattedDiscountStart = discountStartDate.toISOString().slice(0, 16);
-        const productAttributes = response.data.data.attributes ? [response.data.data.attributes.id] : [];
+        const discountPercentValue = parseFloat(
+          response.data.data.discount_percent
+        );
+        const discountFixedValue = parseFloat(
+          response.data.data.discount_fixed
+        );
+        const discountEndDate = response.data.data.discount_end
+          ? new Date(response.data.data.discount_end)
+          : null;
+        const formattedDiscountEnd = discountEndDate
+          ? discountEndDate.toISOString().slice(0, 16)
+          : null;
+
+        const discountStartDate = response.data.data.discount_start
+          ? new Date(response.data.data.discount_start)
+          : null;
+        const formattedDiscountStart = discountStartDate
+          ? discountStartDate.toISOString().slice(0, 16)
+          : null;
+
+        const productAttributes = response.data.data.attributes
+          ? [response.data.data.attributes.id]
+          : [];
         const shopQuantities = {};
         uniqueShopData.forEach((shop) => {
           shopQuantities[shop.shop_id] = shop.shop_quantity;
@@ -111,10 +132,12 @@ const ProductEdit = () => {
         // Set the quantities for each shop in the state
         setQuantities(shopQuantities);
         // Pre-select shops
-        setSelectedShops(uniqueShopData.map((shop) => ({
-          value: shop.shop_id,
-          label: shop.shop_name,
-        })));
+        setSelectedShops(
+          uniqueShopData.map((shop) => ({
+            value: shop.shop_id,
+            label: shop.shop_name,
+          }))
+        );
       })
       .catch((error) => {
         console.error(error);
@@ -744,14 +767,14 @@ const ProductEdit = () => {
                                 {attributes.map((value, index) => (
                                   <>
                                     {attribute_input[id] != undefined &&
-                                      value.id == attribute_input[id].attribute_id
+                                    value.id == attribute_input[id].attribute_id
                                       ? value.value.map(
-                                        (atr_value, value_ind) => (
-                                          <option value={atr_value.id}>
-                                            {atr_value.name}
-                                          </option>
+                                          (atr_value, value_ind) => (
+                                            <option value={atr_value.id}>
+                                              {atr_value.name}
+                                            </option>
+                                          )
                                         )
-                                      )
                                       : null}
                                   </>
                                 ))}
