@@ -5,15 +5,9 @@ import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import { Link, redirect, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import {
-  EditorState,
-  ContentState,
-  convertFromHTML,
-  convertToRaw,
-} from "draft-js";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Select from "react-select";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const ProductEdit = () => {
   const navigate = useNavigate();
@@ -37,12 +31,18 @@ const ProductEdit = () => {
   const [attributeFieldId, setAttributeFieldId] = useState(1);
   const [specificationFiled, setSpecificationFiled] = useState([]);
   const [specificationFiledId, setSpecificationFiledId] = useState(1);
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [selectedShops, setSelectedShops] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [totalStock, setTotalStock] = useState(0);
   const [product, setProduct] = useState([]);
   const [input, setInput] = useState({});
+
+  const handleDescriptionChange = (value) => {
+    setInput((prevState) => ({
+      ...prevState,
+      description: value,
+    }));
+  };
 
   const getProduct = () => {
     const token = localStorage.getItem("token");
@@ -58,9 +58,6 @@ const ProductEdit = () => {
     axios
       .request(config)
       .then((response) => {
-        const contentBlocks = convertFromHTML(response.data.data.description);
-        const contentState = ContentState.createFromBlockArray(contentBlocks);
-        const editorState = EditorState.createWithContent(contentState);
         const costValue = response.data.data.cost.replace(/[৳,]/g, "");
         const priceValue = response.data.data.price.replace(/[৳,]/g, "");
         const shopData = response.data.data.shops;
@@ -75,7 +72,6 @@ const ProductEdit = () => {
             shopIds.add(shop.shop_id);
           }
         });
-        setEditorState(editorState);
         const discountPercentValue = parseFloat(
           response.data.data.discount_percent
         );
@@ -113,7 +109,7 @@ const ProductEdit = () => {
           country_id: response.data.data.country?.id,
           brand_id: response.data.data.brand?.id,
           supplier_id: response.data.data.supplier?.id,
-          description: editorState,
+          description: response.data.data.description,
           cost: costValue ? Number(costValue) : null,
           price: priceValue ? Number(priceValue) : null,
           isFeatured: response.data.data.isFeatured === 1 ? true : false,
@@ -160,16 +156,6 @@ const ProductEdit = () => {
     );
     setTotalStock(newTotalStock);
   }, [quantities]);
-
-  const onEditorStateChange = (newEditorState) => {
-    setEditorState(newEditorState);
-    handleInput({
-      target: {
-        name: "description",
-        value: newEditorState.getCurrentContent().getPlainText(),
-      },
-    });
-  };
 
   const handleCheckbox = (event) => {
     const { name, checked } = event.target;
@@ -1240,17 +1226,9 @@ const ProductEdit = () => {
                 <div className="col-md-12">
                   <label className={"w-100 mt-4"}>
                     <p>Description</p>
-                    <Editor
-                      editorState={editorState}
-                      onEditorStateChange={onEditorStateChange}
-                      toolbarClassName={
-                        errors.description !== undefined
-                          ? "form-control mt-2 is-invalid"
-                          : "form-control mt-2"
-                      }
-                      wrapperClassName="wrapperClassName"
-                      editorClassName="editorClassName"
-                      placeholder="Enter product description"
+                    <ReactQuill
+                      value={input.description}
+                      onChange={handleDescriptionChange}
                     />
                     <p className="login-error-msg">
                       <small>

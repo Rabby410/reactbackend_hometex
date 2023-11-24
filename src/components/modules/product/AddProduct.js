@@ -5,10 +5,9 @@ import Swal from "sweetalert2";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { EditorState } from "draft-js";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Select from "react-select";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -21,7 +20,6 @@ const AddProduct = () => {
   const [subCategories, setSubCategories] = useState([]);
   const [childSubCategories, setChildSubCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [addProductData, setAddProductData] = useState([]);
   const [allSubcategories, setAllSubcategories] = useState([]);
   const [allChildSubcategories, setAllChildSubcategories] = useState([]);
   const [countries, setCountries] = useState([]);
@@ -32,11 +30,16 @@ const AddProduct = () => {
   const [attributeFieldId, setAttributeFieldId] = useState(1);
   const [specificationFiled, setSpecificationFiled] = useState([]);
   const [specificationFiledId, setSpecificationFiledId] = useState(1);
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [selectedShops, setSelectedShops] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [totalStock, setTotalStock] = useState(0);
 
+  const handleDescriptionChange = (value) => {
+    setInput((prevState) => ({
+      ...prevState,
+      description: value,
+    }));
+  };
   // Define shop_quantities variable
   const shop_quantities = selectedShops.map((shop) => ({
     shop_id: shop.value,
@@ -44,19 +47,12 @@ const AddProduct = () => {
   }));
 
   useEffect(() => {
-    const newTotalStock = Object.values(quantities).reduce((acc, currentQuantity) => acc + currentQuantity, 0);
+    const newTotalStock = Object.values(quantities).reduce(
+      (acc, currentQuantity) => acc + currentQuantity,
+      0
+    );
     setTotalStock(newTotalStock);
   }, [quantities]);
-
-  const onEditorStateChange = (newEditorState) => {
-    setEditorState(newEditorState);
-    handleInput({
-      target: {
-        name: "description",
-        value: newEditorState.getCurrentContent().getPlainText(),
-      },
-    });
-  };
 
   const handleCheckbox = (event) => {
     const { name, checked } = event.target;
@@ -67,7 +63,9 @@ const AddProduct = () => {
   };
 
   const handleSpecificationFieldRemove = (id) => {
-    setSpecificationFiled((oldValues) => oldValues.filter((specificationFiled) => specificationFiled !== id));
+    setSpecificationFiled((oldValues) =>
+      oldValues.filter((specificationFiled) => specificationFiled !== id)
+    );
     setSpecification_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -82,7 +80,9 @@ const AddProduct = () => {
   };
 
   const handleAttributeFieldsRemove = (id) => {
-    setAttributeField((oldValues) => oldValues.filter((attributeFiled) => attributeFiled !== id));
+    setAttributeField((oldValues) =>
+      oldValues.filter((attributeFiled) => attributeFiled !== id)
+    );
     setAttribute_input((current) => {
       const copy = { ...current };
       delete copy[id];
@@ -161,7 +161,7 @@ const AddProduct = () => {
           return item.category_id == category_id;
         });
         setSubCategories(sub_category);
-        setChildSubCategories([]); 
+        setChildSubCategories([]);
       }
     } else if (e.target.name === "sub_category_id") {
       let sub_category_id = parseInt(e.target.value);
@@ -1109,17 +1109,9 @@ const AddProduct = () => {
                 <div className="col-md-12">
                   <label className={"w-100 mt-4"}>
                     <p>Description</p>
-                    <Editor
-                      editorState={editorState}
-                      onEditorStateChange={onEditorStateChange}
-                      toolbarClassName={
-                        errors.description !== undefined
-                          ? "form-control mt-2 is-invalid"
-                          : "form-control mt-2"
-                      }
-                      wrapperClassName="wrapperClassName"
-                      editorClassName="editorClassName"
-                      placeholder="Enter product description"
+                    <ReactQuill
+                      value={input.description}
+                      onChange={handleDescriptionChange}
                     />
                     <p className="login-error-msg">
                       <small>
