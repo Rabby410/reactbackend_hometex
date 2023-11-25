@@ -109,13 +109,28 @@ const AddProduct = () => {
   };
 
   const handleAttributeInput = (e, id) => {
-    setAttribute_input((prevState) => ({
-      ...prevState,
-      [id]: {
-        ...prevState[id],
-        [e.target.name]: e.target.value,
-      },
-    }));
+    const { name, value } = e.target;
+
+    setAttribute_input((prevState) => {
+      if (name === "attribute_id" || name === "value_id") {
+        return {
+          ...prevState,
+          [id]: {
+            ...prevState[id],
+            [name]: value,
+          },
+        };
+      } else if (name === "math_sign" || name === "number") {
+        return {
+          ...prevState,
+          [id]: {
+            ...prevState[id],
+            [name]: value,
+          },
+        };
+      }
+      return prevState;
+    });
   };
 
   const getAddProductData = () => {
@@ -578,7 +593,7 @@ const AddProduct = () => {
                           key={ind}
                           className="row my-2 align-items-baseline"
                         >
-                          <div className="col-md-5">
+                          <div className="col-md-3">
                             <label className={"w-100 mt-4"}>
                               <p>Select Attribute</p>
                               <select
@@ -606,7 +621,7 @@ const AddProduct = () => {
                               </p>
                             </label>
                           </div>
-                          <div className="col-md-5">
+                          <div className="col-md-3">
                             <label className={"w-100 mt-4"}>
                               <p>Select Attribute Value</p>
                               <select
@@ -645,6 +660,38 @@ const AddProduct = () => {
                               </p>
                             </label>
                           </div>
+                          {/*  */}
+                          <div className="col-md-2">
+                            <label className="w-100 mt-4">
+                              <p>Select Mathematical Sign</p>
+                              <select
+                                className="form-select mt-2"
+                                name="math_sign"
+                                value={attribute_input[id]?.math_sign || ""}
+                                onChange={(e) => handleAttributeInput(e, id)}
+                              >
+                                <option value="">Select Sign</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                                <option value="*">*</option>
+                                <option value="/">/</option>
+                              </select>
+                            </label>
+                          </div>
+
+                          <div className="col-md-2">
+                            <label className="w-100 mt-4">
+                              <p>Enter amount</p>
+                              <input
+                                type="number"
+                                className="form-control mt-2"
+                                name="number"
+                                value={attribute_input[id]?.number || ""}
+                                onChange={(e) => handleAttributeInput(e, id)}
+                              />
+                            </label>
+                          </div>
+                          {/*  */}
                           <div className="col-md-2">
                             {attributeFiled.length - 1 == ind ? (
                               <button
