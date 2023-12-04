@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../partoals/Breadcrumb";
 import CardHeader from "../../partoals/miniComponents/CardHeader";
 import axios from "axios";
@@ -6,7 +8,6 @@ import Swal from "sweetalert2";
 import Constants from "../../../Constants";
 import Loader from "../../partoals/miniComponents/Loader";
 import NoDataFound from "../../partoals/miniComponents/NoDataFound";
-import { Link } from "react-router-dom";
 import ProductTransferForm from "./transferProduct/ProductTransferForm";
 
 const ProductList = () => {
@@ -15,7 +16,7 @@ const ProductList = () => {
     direction: "desc",
     search: "",
   });
-
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [startFrom, setStartFrom] = useState(1);
@@ -141,6 +142,11 @@ const ProductList = () => {
     getProducts();
     getProductColumns();
   }, []);
+
+  const handleGenerateBarcode = (product) => {
+    navigate(`/generate-bar-code`, { state: { productSKU: product?.sku } });
+  };
+
   return (
     <>
       <Breadcrumb title={"Product List"} />
@@ -364,7 +370,7 @@ const ProductList = () => {
                                 <Link
                                   to={`/product/transfer/form/${product.id}`}
                                 >
-                                  <button 
+                                  <button
                                     className={
                                       "btn btn-sm btn-outline-success my-1"
                                     }
@@ -388,12 +394,12 @@ const ProductList = () => {
                                 >
                                   <i class="fa-solid fa-clone"></i>
                                 </button>
-                                {/* {duplicateMessage && <p>{duplicateMessage}</p>} */}
-                                {/* <button
+                                <button
                                   className={"btn btn-sm btn-outline-dark"}
+                                  onClick={() => handleGenerateBarcode(product)}
                                 >
-                                  <i class="fa-solid fa-barcode"></i>
-                                </button> */}
+                                  <i className="fa-solid fa-barcode"></i>
+                                </button>
                               </div>
                             </td>
                           </tr>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Barcode from 'react-barcode';
 import GlobalFunction from '../../../assets/GlobalFunction';
 
@@ -9,26 +9,45 @@ const TruncateText = (text, maxLength) => {
     return text;
 };
 
+const calculatePrice = (sell_price) => {
+    if (sell_price.discount !== 0) {
+        const mainPrice = sell_price.price;
+        const symbol = "+";
+        const number = 5;
+
+        const calculatedPrice = mainPrice + number;
+        return `${calculatedPrice} ${sell_price.symbol}`;
+    }
+
+    return `${sell_price.price} ${sell_price.symbol}`;
+};
+
+
 const RenderAttributes = ({ product }) => {
     if (product.attributes && product.attributes.length > 0) {
-        const attributeString = product.attributes.map((attribute) => {
-            if (attribute && attribute.values) {
-                return `${attribute.name}: ${attribute.values.name}`;
-            }
-            return '';
-        }).join('  '); // Join attributes with double spaces
-        return (
-            <p>
-                {attributeString}
-            </p>
-        );
+        const desiredAttribute = product.attributes.find(attribute => attribute.name === "Measurement:");
+
+        if (desiredAttribute && desiredAttribute.values) {
+            const { name: attributeName, values: { name: attributeValue } } = desiredAttribute;
+
+            return (
+                <p>
+                    {`${attributeName}: ${attributeValue}`}
+                </p>
+            );
+        }
     }
+
     return null;
 };
 
 
-const BarCodePage = React.forwardRef((props, ref) => {
-    const { products, columnCount, printing } = props;
+
+// Inside BarCodePage component
+const BarCodePage = ({ products, columnCount, printing, rowCount, ref, productSKU }) => {
+    const [input, setInput] = useState({
+        name: productSKU || '', // Set the initial value to productSKU
+    });
 
     const pages = [];
     for (let i = 0; i < products.length; i += columnCount) {
@@ -66,13 +85,13 @@ const BarCodePage = React.forwardRef((props, ref) => {
                             <b>{product.attributes && product.attributes.length > 0 && RenderAttributes({ product })}</b>
                             <p>
                                 <b>
-                                Price:
-                                {product?.sell_price?.discount !== 0
-                                    ? GlobalFunction.formatPrice(product?.sell_price?.price)
-                                    : ''}
-                                <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
-                                    {product?.price} {" + VAT"}
-                                </span>
+                                    Price:
+                                    {product?.sell_price?.discount !== 0
+                                        ? GlobalFunction.formatPrice(product?.sell_price?.price)
+                                        : ''}
+                                    <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
+                                        {product?.price} {" + VAT"}
+                                    </span>
                                 </b>
                             </p>
                         </div>
@@ -81,6 +100,7 @@ const BarCodePage = React.forwardRef((props, ref) => {
             ))}
         </div>
     );
-});
+};
 
 export default BarCodePage;
+
