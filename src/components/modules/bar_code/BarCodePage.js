@@ -9,42 +9,9 @@ const TruncateText = (text, maxLength) => {
     return text;
 };
 
-const calculatePrice = (sell_price) => {
-    if (sell_price.discount !== 0) {
-        const mainPrice = sell_price.price;
-        const symbol = "+";
-        const number = 5;
-
-        const calculatedPrice = mainPrice + number;
-        return `${calculatedPrice} ${sell_price.symbol}`;
-    }
-
-    return `${sell_price.price} ${sell_price.symbol}`;
-};
-
-
-const RenderAttributes = ({ product }) => {
-    if (product.attributes && product.attributes.length > 0) {
-        const desiredAttribute = product.attributes.find(attribute => attribute.name === "Measurement:");
-
-        if (desiredAttribute && desiredAttribute.values) {
-            const { name: attributeName, values: { name: attributeValue } } = desiredAttribute;
-
-            return (
-                <p>
-                    {`${attributeName}: ${attributeValue}`}
-                </p>
-            );
-        }
-    }
-
-    return null;
-};
-
-
 
 // Inside BarCodePage component
-const BarCodePage = ({ products, columnCount, printing, rowCount, ref, productSKU }) => {
+const BarCodePage = ({ products, columnCount, printing, rowCount, ref, productSKU, selectedAttribute }) => {
     const [input, setInput] = useState({
         name: productSKU || '', // Set the initial value to productSKU
     });
@@ -54,6 +21,31 @@ const BarCodePage = ({ products, columnCount, printing, rowCount, ref, productSK
         const pageProducts = products.slice(i, i + columnCount);
         pages.push(pageProducts);
     }
+
+    useEffect(() => {
+    }, [selectedAttribute]);
+    // Define a function to get the selected attribute value from product_attributes
+    const getSelectedAttributeValue = (product, selectedAttr) => {
+        console.log("product:", product);
+        console.log("selectedAttr:", selectedAttr);
+      
+        if (!selectedAttr || !selectedAttr.attribute || !selectedAttr.attribute.attributes) {
+          console.log("Returning empty string");
+          return ''; // Return an empty string if selectedAttr or its properties are undefined
+        }
+      
+        const matchingAttribute = product.product_attributes.find(
+          attr => attr.attribute_id === selectedAttr.attribute.attributes.id
+        );
+      
+        if (matchingAttribute) {
+          return `${selectedAttr.attribute.attributes.name} - ${matchingAttribute.attribute_value.name}`;
+        }
+      
+        return '';
+      };
+      
+  
 
     return (
         <div className="print-page" style={{ width: '55mm', height: '25mm' }}>
@@ -74,7 +66,7 @@ const BarCodePage = ({ products, columnCount, printing, rowCount, ref, productSK
                             }}
                         >
                             <p>
-                                <small style={{fontSize:"12px"}}><b>{product?.brand}</b></small>
+                                <small style={{ fontSize: "12px" }}><b>{product?.brand?.name}</b></small>
                             </p>
                             <div className="barcode" style={{ textAlign: 'center', format: "CODE128" }}>
                                 <Barcode value={product.sku} width={1} height={12} fontSize={8} margin={0} />
@@ -82,16 +74,16 @@ const BarCodePage = ({ products, columnCount, printing, rowCount, ref, productSK
                             <p>
                                 <strong>{TruncateText(product?.name, 20)}</strong>
                             </p>
-                            <b>{product.attributes && product.attributes.length > 0 && RenderAttributes({ product })}</b>
+                            {getSelectedAttributeValue(product, selectedAttribute)}
                             <p>
                                 <b>
-                                    Price:
-                                    {product?.sell_price?.discount !== 0
-                                        ? GlobalFunction.formatPrice(product?.sell_price?.price)
-                                        : ''}
-                                    <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
-                                        {product?.price} {" + VAT"}
-                                    </span>
+                                Price:
+                                {product?.sell_price?.discount !== 0
+                                    ? GlobalFunction.formatPrice(product?.sell_price?.price)
+                                    : ''}
+                                <span className={product?.sell_price?.discount !== 0 ? 'deleted ms-2' : ''}>
+                                    {product?.price} {" + VAT"}
+                                </span>
                                 </b>
                             </p>
                         </div>
@@ -103,4 +95,5 @@ const BarCodePage = ({ products, columnCount, printing, rowCount, ref, productSK
 };
 
 export default BarCodePage;
+
 

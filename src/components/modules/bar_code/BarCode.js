@@ -9,6 +9,8 @@ import { useLocation } from "react-router-dom";
 
 const BarCode = () => {
   const location = useLocation();
+  const [selectedAttribute, setSelectedAttribute] = useState(null);
+  const [attributes, setAttributes] = useState([]);
   const productSKU = location?.state?.productSKU;
   const productName = location?.state?.productName;
   const componentRef = useRef();
@@ -28,20 +30,40 @@ const BarCode = () => {
       name: productSKU || "",
     }));
   }, [productSKU]);
+  
+  // Add this useEffect block to set the initial selectedAttribute
+  useEffect(() => {
+    if (products.length > 0) {
+      setAttributes(products[0]?.product_attributes || []);
+      const selectedAttr = products[0]?.product_attributes[0] || null;
+      setSelectedAttribute(selectedAttr);
+    } else {
+      setAttributes([]);
+      setSelectedAttribute(null);
+    }
+  }, [products]);
+  
 
   const handleInput = (e) => {
     if (e.target.name === "category_id") {
-      let category_id = parseInt(e.target.value);
-      if (!Number.isNaN(category_id)) {
-        getSubCategories(e.target.value);
-      }
+        let category_id = parseInt(e.target.value);
+        if (!Number.isNaN(category_id)) {
+            getSubCategories(e.target.value);
+        }
     }
 
     setInput((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
+        ...prevState,
+        [e.target.name]: e.target.value,
     }));
-  };
+    
+    // Find the selected attribute based on the attribute_value_id
+    const selectedAttr = attributes.find(attr => attr.attribute?.id === parseInt(input.attribute_value_id));
+    setSelectedAttribute(selectedAttr);
+
+    setAttributes([]);
+};
+
 
   const handleProductSearch = () => {
     const token = localStorage.getItem("token");
@@ -56,9 +78,27 @@ const BarCode = () => {
       )
       .then((res) => {
         setProducts(res.data.data);
-      });
+  
+        // Set attributes for the first product in the result
+        if (res.data.data.length > 0) {
+          const productAttributes = res.data.data[0]?.product_attributes || [];
+          console.log("Product Attributes:", productAttributes);
+          setAttributes(productAttributes);
+          // Set selected attribute based on the first product's attributes
+          const selectedAttr = productAttributes[0] || null;
+          setSelectedAttribute(selectedAttr);
+        } else {
+          // Reset attributes if no products are found
+          setAttributes([]);
+          setSelectedAttribute(null);
+          console.log("No products found");
+        }
+      })
+      .catch((error) => {
+        // Handle API request errors, e.g., show an error message to the user.
+        console.error("Error fetching data:", error)
+      })
   };
-
   const getCategories = () => {
     const token = localStorage.getItem("token");
     axios
@@ -94,6 +134,8 @@ const BarCode = () => {
     content: () => componentRef.current,
     documentTitle: "Bar Codes",
   });
+  const selectedAttributeObject = attributes.find(attr => attr.id === selectedAttribute);
+console.log(input.attribute_value_id, "aaa")
 
   return (
     <>
@@ -121,7 +163,7 @@ const BarCode = () => {
 
             <div className="card-body">
               <div className="row align-items-baseline">
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <label className="w-100 mt-4 mt-md-0">
                     <p>Select Product Category</p>
                     <select
@@ -140,7 +182,7 @@ const BarCode = () => {
                     </select>
                   </label>
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <label className="w-100 mt-4 mt-md-0">
                     <p>Select Product Sub Category</p>
                     <select
@@ -160,7 +202,33 @@ const BarCode = () => {
                     </select>
                   </label>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-2">
+                  <label className="w-100 mt-4 mt-md-0">
+                    <p>Select Attributes</p>
+                    <select
+                      className={"form-select mt-2"}
+                      name={"attribute_value_id"}
+                      value={input.attribute_value_id}
+                      onChange={(e) => {
+                        handleInput(e);
+                        const selectedAttr = attributes.find(attr => attr.attribute?.id === parseInt(e.target.value));
+                        setSelectedAttribute(input.attribute_value_id);
+                      }}
+                      placeholder={"Select attributes"}
+                    >
+                      <option>Select attributes</option>
+                      {attributes.map((attribute, index) => (
+                        <option value={attribute?.id} key={index}>
+                          {attribute.attributes.name} - {attribute.attribute_value.name}
+                        </option>
+                      ))}
+                    </select>
+
+
+                  </label>
+                </div>
+
+                <div className="col-md-3">
                   <label className="w-100 mt-4 mt-md-0">
                     <p>Product Name</p>
                     <input
@@ -221,7 +289,9 @@ const BarCode = () => {
                   ref={componentRef}
                   productSKU={productSKU}
                   productName={productName}
+                  selectedAttribute={selectedAttributeObject}
                 />
+
               </div>
             </div>
           </div>
