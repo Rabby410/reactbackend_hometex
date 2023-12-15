@@ -12,6 +12,21 @@ const TruncateText = (text, maxLength) => {
 const BarCodePage = React.forwardRef((props, ref) => {
   const { selectedAttribute, products, columnCount, printing } = props;
 
+  const calculatePrice = (basePrice, mathSign, number) => {
+    switch (mathSign) {
+      case "+":
+        return basePrice + number;
+      case "-":
+        return basePrice - number;
+      case "*":
+        return basePrice * number;
+      case "/":
+        return basePrice / number;
+      default:
+        return basePrice;
+    }
+  };
+
   const pages = [];
   for (let i = 0; i < products.length; i += columnCount) {
     const pageProducts = products.slice(i, i + columnCount);
@@ -73,7 +88,11 @@ const BarCodePage = React.forwardRef((props, ref) => {
                       product?.sell_price?.discount !== 0 ? "deleted ms-2" : ""
                     }
                   >
-                    {product?.price} {" + VAT"}
+                    {calculatePrice(
+                    product.price,
+                    selectedAttribute?.attribute_math_sign,
+                    selectedAttribute?.attribute_number
+                  )} {" + VAT"}
                   </span>
                 </b>
               </p>
