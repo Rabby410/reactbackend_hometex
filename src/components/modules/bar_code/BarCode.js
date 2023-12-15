@@ -267,7 +267,7 @@ const BarCode = () => {
                         onClick={handlePrint}
                         className={"btn btn-sm mt-3"}
                       >
-                        <i class="fa-solid fa-print fa-beat-fade fa-2xl"></i>
+                        <i className="fa-solid fa-print fa-beat-fade fa-2xl"></i>
                       </button>
                     </div>
                   </div>
