@@ -108,20 +108,39 @@ const AddProduct = () => {
     }));
   };
 
+  const updateTotalAttributeCost = () => {
+    const totalAttributeCost = Object.values(attribute_input).reduce(
+      (total, attribute) => {
+        const attributeCost = parseFloat(attribute.attribute_cost) || 0;
+        console.log("Current attribute cost: ", attributeCost);
+        return total + attributeCost;
+      },
+      0
+    );
+
+    setInput((prevState) => ({
+      ...prevState,
+      cost: totalAttributeCost.toFixed(2),
+    }));
+  };
+
   const handleAttributeInput = (e, id) => {
     const { name, value } = e.target;
 
     setAttribute_input((prevState) => {
-      if (name === "attribute_id" || name === "value_id") {
-        return {
-          ...prevState,
-          [id]: {
-            ...prevState[id],
-            [name]: value,
-          },
-        };
-      } else if (name === "math_sign" || name === "number") {
-        return {
+      let newState = { ...prevState };
+
+      if (
+        name === "attribute_id" ||
+        name === "value_id" ||
+        name === "math_sign" ||
+        name === "number" ||
+        name === "attribute_quantity" ||
+        name === "attribute_cost" ||
+        name === "attribute_weight" ||
+        name === "attribute_mesarment"
+      ) {
+        newState = {
           ...prevState,
           [id]: {
             ...prevState[id],
@@ -129,9 +148,20 @@ const AddProduct = () => {
           },
         };
       }
-      return prevState;
+
+      if (name === "attribute_cost") {
+        setTimeout(() => updateTotalAttributeCost(), 0); // Ensures recalculation happens after state update
+      }
+
+      return newState;
     });
   };
+
+  useEffect(() => {
+    updateTotalAttributeCost();
+
+    return () => {};
+  }, [attribute_input]);
 
   const getAddProductData = () => {
     const token = localStorage.getItem("token");
@@ -165,35 +195,37 @@ const AddProduct = () => {
 
   const handleInput = (e) => {
     if (e.target.name === "name") {
-      let slug = e.target.value;
-      slug = slug.toLowerCase();
-      slug = slug.replaceAll(" ", "-");
+      let slug = e.target.value.toLowerCase().replaceAll(" ", "-");
       setInput((prevState) => ({ ...prevState, slug: slug }));
     } else if (e.target.name === "category_id") {
       let category_id = parseInt(e.target.value);
       if (!Number.isNaN(category_id)) {
-        let sub_category = allSubcategories.filter((item, index) => {
-          return item.category_id == category_id;
-        });
+        let sub_category = allSubcategories.filter(
+          (item) => item.category_id == category_id
+        );
         setSubCategories(sub_category);
         setChildSubCategories([]);
       }
     } else if (e.target.name === "sub_category_id") {
       let sub_category_id = parseInt(e.target.value);
       if (!Number.isNaN(sub_category_id)) {
-        let child_sub_category_id = allChildSubcategories.filter(
-          (item, index) => {
-            return item.sub_category_id == sub_category_id;
-          }
+        let child_sub_category = allChildSubcategories.filter(
+          (item) => item.sub_category_id == sub_category_id
         );
-        setChildSubCategories(child_sub_category_id);
+        setChildSubCategories(child_sub_category);
       }
+    } else if (e.target.name === "cost") {
+      const cost = e.target.value;
+      setInput((prevState) => ({
+        ...prevState,
+        cost: cost,
+      }));
+    } else {
+      setInput((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
     }
-
-    setInput((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
   };
 
   const handlePhoto = (e) => {
@@ -593,7 +625,7 @@ const AddProduct = () => {
                           key={ind}
                           className="row my-2 align-items-baseline"
                         >
-                          <div className="col-md-3">
+                          <div className="col-md-2">
                             <label className={"w-100 mt-4"}>
                               <p>Select Attribute</p>
                               <select
@@ -621,7 +653,7 @@ const AddProduct = () => {
                               </p>
                             </label>
                           </div>
-                          <div className="col-md-3">
+                          <div className="col-md-2">
                             <label className={"w-100 mt-4"}>
                               <p>Select Attribute Value</p>
                               <select
@@ -687,6 +719,62 @@ const AddProduct = () => {
                                 className="form-control mt-2"
                                 name="number"
                                 value={attribute_input[id]?.number || ""}
+                                onChange={(e) => handleAttributeInput(e, id)}
+                              />
+                            </label>
+                          </div>
+                          <div className="col-md-2">
+                            <label className="w-100 mt-4">
+                              <p>Product Cost</p>
+                              <input
+                                type="number"
+                                className="form-control mt-2"
+                                name="attribute_cost"
+                                value={
+                                  attribute_input[id]?.attribute_cost || ""
+                                }
+                                onChange={(e) => handleAttributeInput(e, id)}
+                              />
+                            </label>
+                          </div>
+                          <div className="col-md-2">
+                            <label className="w-100 mt-4">
+                              <p>Product Quantity</p>
+                              <input
+                                type="number"
+                                className="form-control mt-2"
+                                name="attribute_quantity"
+                                value={
+                                  attribute_input[id]?.attribute_quantity || ""
+                                }
+                                onChange={(e) => handleAttributeInput(e, id)}
+                              />
+                            </label>
+                          </div>
+                          <div className="col-md-2">
+                            <label className="w-100 mt-4">
+                              <p>Product Weight</p>
+                              <input
+                                type="number"
+                                className="form-control mt-2"
+                                name="attribute_weight"
+                                value={
+                                  attribute_input[id]?.attribute_weight || ""
+                                }
+                                onChange={(e) => handleAttributeInput(e, id)}
+                              />
+                            </label>
+                          </div>
+                          <div className="col-md-2">
+                            <label className="w-100 mt-4">
+                              <p>Product Mesarment</p>
+                              <input
+                                type="number"
+                                className="form-control mt-2"
+                                name="attribute_mesarment"
+                                value={
+                                  attribute_input[id]?.attribute_mesarment || ""
+                                }
                                 onChange={(e) => handleAttributeInput(e, id)}
                               />
                             </label>
