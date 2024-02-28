@@ -767,7 +767,7 @@ const AddProduct = () => {
                           </div>
                           <div className="col-md-2">
                             <label className="w-100 mt-4">
-                              <p>Product Weight</p>
+                              <p>Product Weight (Gram)</p>
                               <input
                                 type="number"
                                 className="form-control mt-2"
@@ -783,7 +783,7 @@ const AddProduct = () => {
                             <label className="w-100 mt-4">
                               <p>Product Mesarment</p>
                               <input
-                                type="number"
+                                type="text"
                                 className="form-control mt-2"
                                 name="attribute_mesarment"
                                 value={
