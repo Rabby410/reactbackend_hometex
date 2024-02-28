@@ -458,7 +458,7 @@ const OrderCreate = () => {
 
     // console.log(productWithAttributes.attributes, 'productWithAttributes___')
 
-    // console.log(cartItems, 'my cart')
+    console.log(cartItems, 'my cart')
 
     return (
         <>
