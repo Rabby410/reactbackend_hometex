@@ -46,6 +46,7 @@ const OrderCreate = () => {
     const [startFrom, setStartFrom] = useState(1);
     const [activePage, setActivePage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+    const [selectAttributeError, setSelectAttributeError] = useState(false);
 
     const [showAddCardModal, setShowAddCardModal] = useState(false);
     const [productWithAttributes, setProductWithAttributes] = useState({});
@@ -183,6 +184,27 @@ const OrderCreate = () => {
         }
     }
 
+
+    const removeFromCart = (productId, attributeId) => {
+        const updatedCartItems = cartItems.filter(item => !(item.productId === productId && item.attributesId === attributeId));
+        setCartItems(updatedCartItems);
+    };
+
+    const handleIncreaseDecriseItem = (productId, attributesId, increaseOrDecrise) => {
+        const updatedProducts = cartItems.map(product => {
+            if (product.productId === productId && product.attributesId === attributesId) {
+                let quantity = product.quantity;
+                if (increaseOrDecrise == 'inc') quantity = quantity + 1;
+                else quantity = quantity - 1;
+                return { ...product, quantity: quantity };
+            }
+            return product;
+        });
+        setCartItems(updatedProducts);
+    };
+
+
+
     const handleCartAttributeWise = (product) => {
         setShowAddCardModal(true)
         setProductWithAttributes(product)
@@ -204,10 +226,18 @@ const OrderCreate = () => {
     }
 
     const onChangeProductAttribute = (attributeId, product) => {
-
         let attribute_values = product?.attributes.find(item => item.id == attributeId);
         let attribute_name = '';
-        if (attribute_values) attribute_name = attribute_values.name + ' ' + attribute_values.value;
+        let sell_price = product.sell_price.price;
+        if (attribute_values) {
+            attribute_name = attribute_values.name + ' ' + attribute_values.value;
+            if (attribute_values?.attribute_math_sign == '+')
+                sell_price = sell_price + parseFloat(attribute_values?.attribute_number)
+            else if (attribute_values?.attribute_math_sign == '-')
+                sell_price = sell_price - parseFloat(attribute_values?.attribute_number)
+            else if (attribute_values?.attribute_math_sign == '*')
+                sell_price = sell_price * parseFloat(attribute_values?.attribute_number)
+        }
 
         if (attributeId) setSelectedProductWithAttributes({
             'productId': +product.id,
@@ -215,7 +245,8 @@ const OrderCreate = () => {
             'name': product.name,
             'attribute_name': attribute_name,
             'original_price': product.price,
-            'price': product.sell_price.price,
+            // 'price': product.sell_price.price,
+            'price': sell_price,
             'discount_price': product.sell_price.discount,
             'sku': product.sku,
             'in_stock': product.stock,
@@ -227,9 +258,41 @@ const OrderCreate = () => {
         const { productId, attributesId } = selectedProductWithAttributes
         if (productId && attributesId) {
             cartFunctionality(productId, attributesId, selectedProductWithAttributes)
+            setSelectedProductWithAttributes({ 'productId': '', 'attributesId': '' })
+            setShowAddCardModal(false)
+            setSelectAttributeError(false)
+        } else {
+            setSelectAttributeError(true)
         }
-        setShowAddCardModal(false)
     }
+
+
+    const orderSummery = () => {
+        let items = 0;
+        let amount = 0;
+        let discount = 0;
+        let pay_able = 0;
+        let paid_amount = 0;
+
+        if (cartItems.length > 0) {
+            cartItems.map((val, index) => {
+                items += val.quantity;
+                amount += val.price * val.quantity;
+                discount += val.discount_price * val.quantity;
+                pay_able += val.price * val.quantity;
+            })
+        }
+        setOrderSummary((prevState) => ({
+            ...prevState,
+            items: items,
+            amount: amount,
+            discount: discount,
+            pay_able: pay_able,
+            paid_amount: pay_able,
+        }));
+    };
+
+
 
 
     const removeCart = (id) => {
@@ -266,6 +329,9 @@ const OrderCreate = () => {
             }));
         }
     };
+
+
+
 
     const getCustomer = () => {
         setIsLoading(true);
@@ -384,6 +450,11 @@ const OrderCreate = () => {
     }, [carts]);
 
 
+    useEffect(() => {
+        orderSummery();
+    }, [cartItems]);
+
+
 
     // console.log(productWithAttributes.attributes, 'productWithAttributes___')
 
@@ -443,27 +514,24 @@ const OrderCreate = () => {
                                                     </Modal.Title>
                                                 </Modal.Header>
                                                 <Modal.Body>
+                                                    <img className="order-product-photo img-thumbnail" src={productWithAttributes.primary_photo} alt={productWithAttributes?.name} />
                                                     <select onChange={(e) => {
-                                                        // console.log(e.target.value, 'ok___', productWithAttributes?.id)
                                                         onChangeProductAttribute(e.target.value, productWithAttributes)
                                                     }}>
-                                                        <option>Select One</option>
+                                                        <option>Select Arrtibute</option>
                                                         {typeof productWithAttributes.attributes != 'undefined' && productWithAttributes?.attributes.map((attr, ind) => {
                                                             return (<>
                                                                 <option data-name={attr?.name + ' ' + attr?.value} value={attr?.id}> {attr?.name + ' ' + attr?.value} </option>
                                                             </>)
                                                         })}
                                                     </select>
-
-
                                                     <button
                                                         className="btn-success btn-sm ms-1"
                                                         onClick={(e) => { addProductToCart() }}
                                                     >
                                                         <i className="fa-solid fa-plus" />
                                                     </button>
-
-
+                                                    {selectAttributeError && <><p>Please Select attribute</p></>}
                                                 </Modal.Body>
                                             </Modal>
 
@@ -495,17 +563,17 @@ const OrderCreate = () => {
                                                             </div>
                                                             <div className="flex-grow-1 ms-2">
                                                                 <p className="text-theme">
-                                                                    <strong>{product.name}</strong>{" "}
+                                                                    <strong>{product.name}</strong>
                                                                 </p>
                                                                 <p>
-                                                                    <small>Original Price: {product.price}</small>{" "}
+                                                                    <small>Original Price: {product.price}</small>
                                                                 </p>
                                                                 <p className={"text-theme"}>
                                                                     <small>
                                                                         <strong>
-                                                                            Price: {product.sell_price.price}{" "}
-                                                                            {product.sell_price.symbol} | Discount:{" "}
-                                                                            {product.sell_price.discount}{" "}
+                                                                            Price: {product.sell_price.price}
+                                                                            {product.sell_price.symbol} | Discount:
+                                                                            {product.sell_price.discount}
                                                                             {product.sell_price.symbol}
                                                                         </strong>
                                                                     </small>
@@ -513,7 +581,7 @@ const OrderCreate = () => {
                                                                 <p>
                                                                     <small>
                                                                         SKU: {product.sku} | Stock: {product.stock}
-                                                                    </small>{" "}
+                                                                    </small>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -534,7 +602,7 @@ const OrderCreate = () => {
                                                 <p className="pb-2 m">
                                                     <strong>Customer: </strong>
                                                     <span className="text-theme">
-                                                        {" "}
+                                                        
                                                         {orderSummary.customer}
                                                     </span>
                                                 </p>
@@ -565,75 +633,7 @@ const OrderCreate = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            {Object.keys(carts).map((key) => (
-                                                <div
-                                                    className="d-flex align-items-center my-2 p-1 order-product-container position-relative"
-                                                    key={key}
-                                                >
-                                                    <div className="details-area">
-                                                        <button
-                                                            className="btn-danger btn-sm ms-1"
-                                                            onClick={() => removeCart(key)}
-                                                        >
-                                                            <i className="fa-solid fa-times" />
-                                                        </button>
-                                                        <button className="btn-info btn-sm ms-1">
-                                                            <i className="fa-solid fa-eye " />
-                                                        </button>
-                                                    </div>
-                                                    <div className="flex-shrink-0">
-                                                        <img
-                                                            className="order-product-photo img-thumbnail"
-                                                            src={carts[key].primary_photo}
-                                                            alt="Hometex Products"
-                                                        />
-                                                    </div>
-                                                    <div className="flex-grow-1 ms-2">
-                                                        <p className="text-theme">
-                                                            <strong>{carts[key].name}</strong>{" "}
-                                                        </p>
-                                                        <p>
-                                                            <small>Original Price: {carts[key].price}</small>{" "}
-                                                        </p>
-                                                        <p className={"text-theme"}>
-                                                            <small>
-                                                                <strong>
-                                                                    Price: {carts[key].sell_price.price}{" "}
-                                                                    {carts[key].sell_price.symbol} | Discount:{" "}
-                                                                    {carts[key].sell_price.discount}{" "}
-                                                                    {carts[key].sell_price.symbol}
-                                                                </strong>
-                                                            </small>
-                                                        </p>
-                                                        <p>
-                                                            <small>
-                                                                SKU: {carts[key].sku} | Stock:{" "}
-                                                                {carts[key].stock}
-                                                            </small>{" "}
-                                                        </p>
-                                                        <p>
-                                                            Quantity:
-                                                            <button
-                                                                onClick={() => handleDecrease(carts[key].id)}
-                                                                disabled={carts[key].quantity <= 1}
-                                                                className="quantity-button"
-                                                            >
-                                                                -
-                                                            </button>
-                                                            <span>{carts[key].quantity}</span>
-                                                            <button
-                                                                onClick={() => handleIncrease(carts[key].id)}
-                                                                disabled={
-                                                                    carts[key].stock <= carts[key].quantity
-                                                                }
-                                                                className="quantity-button"
-                                                            >
-                                                                +
-                                                            </button>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                            
 
 
                                             {
@@ -641,7 +641,7 @@ const OrderCreate = () => {
                                                     return (<>
                                                         <div className="d-flex align-items-center my-2 p-1 order-product-container position-relative" key={index}>
                                                             <div className="details-area">
-                                                                <button className="btn-danger btn-sm ms-1" // onClick={() => removeCart(key)}
+                                                                <button className="btn-danger btn-sm ms-1" onClick={() => removeFromCart(item?.productId, item?.attributesId)}
                                                                 >
                                                                     <i className="fa-solid fa-times" />
                                                                 </button>
@@ -658,25 +658,32 @@ const OrderCreate = () => {
 
                                                             <div className="flex-grow-1 ms-2">
                                                                 <p className="text-theme">
-                                                                    <strong>{item.name}</strong>{" "}
+                                                                    <strong>{item.name}</strong>
                                                                 </p>
                                                                 <p>
-                                                                    <small>Original Price: {item.price}</small>{" "}
+                                                                    <small>Original Price: {item.original_price}</small>
                                                                 </p>
                                                                 <p className={"text-theme"}>
                                                                     <small>
                                                                         <strong>
-                                                                            Price: {item.price}{" "}
-                                                                            | Discount:{" "}
-                                                                            {item.discount_price}{" "}
+                                                                            Price: {item.price}
+                                                                            | Discount:
+                                                                            {item.discount_price}
+                                                                        </strong>
+                                                                    </small>
+                                                                </p>
+                                                                <p className={"text-theme"}>
+                                                                    <small>
+                                                                        <strong>
+                                                                            Total Price: {item.price * item.quantity}
                                                                         </strong>
                                                                     </small>
                                                                 </p>
                                                                 <p>
                                                                     <small>
                                                                         SKU: {item.sku} |
-                                                                        Stock:{" "} {item.in_stock}
-                                                                    </small>{" "}
+                                                                        Stock: {item.in_stock}
+                                                                    </small>
                                                                 </p>
 
                                                                 {item?.attributesId > 0 && <p><small>Attribute : {item?.attribute_name}</small></p>}
@@ -685,6 +692,7 @@ const OrderCreate = () => {
                                                                     Quantity:
                                                                     <button
                                                                         // onClick={() => handleDecrease(carts[key].id)}
+                                                                        onClick={() => handleIncreaseDecriseItem(item?.productId, item?.attributesId, 'dec')}
                                                                         disabled={item.quantity <= 1}
                                                                         className="quantity-button"
                                                                     >
@@ -693,6 +701,7 @@ const OrderCreate = () => {
                                                                     <span>{item.quantity}</span>
                                                                     <button
                                                                         // onClick={() => handleIncrease(carts[key].id)}
+                                                                        onClick={() => handleIncreaseDecriseItem(item?.productId, item?.attributesId, 'inc')}
                                                                         disabled={
                                                                             item.in_stock <= item.quantity
                                                                         }

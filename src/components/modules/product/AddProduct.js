@@ -211,40 +211,54 @@ const handleAttributeQuantityChange = (shopId, quantity) => {
     return totalStock;
   };
 
+  
   const handleInput = (e) => {
-    if (e.target.name === "name") {
-      let slug = e.target.value.toLowerCase().replaceAll(" ", "-");
-      setInput((prevState) => ({ ...prevState, slug: slug }));
-    } else if (e.target.name === "category_id") {
-      let category_id = parseInt(e.target.value);
-      if (!Number.isNaN(category_id)) {
-        let sub_category = allSubcategories.filter(
-          (item) => item.category_id == category_id
-        );
-        setSubCategories(sub_category);
-        setChildSubCategories([]);
-      }
-    } else if (e.target.name === "sub_category_id") {
-      let sub_category_id = parseInt(e.target.value);
-      if (!Number.isNaN(sub_category_id)) {
-        let child_sub_category = allChildSubcategories.filter(
-          (item) => item.sub_category_id == sub_category_id
-        );
-        setChildSubCategories(child_sub_category);
-      }
-    } else if (e.target.name === "cost") {
-      const cost = e.target.value;
+    const { name, value } = e.target;
+    if (name === "name") {
+      const slug = value.toLowerCase().replaceAll(" ", "-");
       setInput((prevState) => ({
         ...prevState,
-        cost: cost,
+        name: value,
+        slug,
       }));
-    } else {
-      setInput((prevState) => ({
-        ...prevState,
-        [e.target.name]: e.target.value,
-      }));
+      return;
     }
+    if (name === "category_id" || name === "sub_category_id") {
+      const parsedId = parseInt(value, 10);
+      if (!Number.isNaN(parsedId)) {
+        const targetStateSetter = name === "category_id" ? setSubCategories : setChildSubCategories;
+        const relatedData = name === "category_id" ? allSubcategories : allChildSubcategories;
+  
+        const filteredData = relatedData.filter(item => item[`${name}`] === parsedId);
+        targetStateSetter(filteredData);
+  
+        if (name === "category_id") {
+          setChildSubCategories([]);
+        }
+  
+        setInput((prevState) => ({ ...prevState, [name]: parsedId }));
+        return;
+      }
+    }
+    if (name === "cost") {
+      if (value.trim() === "") {
+        setInput((prevState) => ({ ...prevState, cost: "" }));
+        return; 
+      }
+  
+      const numericCost = parseFloat(value);
+      if (!Number.isNaN(numericCost)) {
+        setInput((prevState) => ({ ...prevState, cost: numericCost }));
+        return;
+      } else {
+        return;
+      }
+    }
+    setInput((prevState) => ({ ...prevState, [name]: value }));
   };
+  
+  
+
 
   const handlePhoto = (e) => {
     let file = e.target.files[0];
@@ -787,7 +801,7 @@ const handleAttributeQuantityChange = (shopId, quantity) => {
                           </div>
                           <div className="col-md-2">
                             <label className="w-100 mt-4">
-                              <p>Product Weight</p>
+                              <p>Product Weight (Gram)</p>
                               <input
                                 type="number"
                                 className="form-control mt-2"
@@ -803,7 +817,7 @@ const handleAttributeQuantityChange = (shopId, quantity) => {
                             <label className="w-100 mt-4">
                               <p>Product Mesarment</p>
                               <input
-                                type="number"
+                                type="text"
                                 className="form-control mt-2"
                                 name="attribute_mesarment"
                                 value={
