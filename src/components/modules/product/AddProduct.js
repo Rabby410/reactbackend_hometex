@@ -33,6 +33,24 @@ const AddProduct = () => {
   const [selectedShops, setSelectedShops] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [totalStock, setTotalStock] = useState(0);
+  const [selectedAttributeShops, setSelectedAttributeShops] = useState([]);
+  const [attributeShopQuantities, setAttributeShopQuantities] = useState({});
+
+  const handleAttributeShopChange = selectedOptions => {
+    setSelectedAttributeShops(selectedOptions);
+    const newQuantities = { ...attributeShopQuantities };
+    selectedOptions.forEach(option => {
+        if (!newQuantities[option.value]) {
+            newQuantities[option.value] = "";
+        }
+    });
+    setAttributeShopQuantities(newQuantities);
+};
+
+const handleAttributeQuantityChange = (shopId, quantity) => {
+    setAttributeShopQuantities(prev => ({ ...prev, [shopId]: quantity }));
+};
+
 
   const handleDescriptionChange = (value) => {
     setInput((prevState) => ({
@@ -738,18 +756,34 @@ const AddProduct = () => {
                             </label>
                           </div>
                           <div className="col-md-2">
-                            <label className="w-100 mt-4">
-                              <p>Product Quantity</p>
-                              <input
-                                type="number"
-                                className="form-control mt-2"
-                                name="attribute_quantity"
-                                value={
-                                  attribute_input[id]?.attribute_quantity || ""
-                                }
-                                onChange={(e) => handleAttributeInput(e, id)}
-                              />
-                            </label>
+                            {/* Multi-Select Dropdown for Shops */}
+                            <Select
+                              options={shops} // Ensure 'shops' is in the format [{ value: 1, label: "Main Branch" }, ...]
+                              isMulti
+                              onChange={handleAttributeShopChange}
+                              className="mb-3"
+                              placeholder="Select Shops"
+                            />
+
+                            {/* Display Quantity Inputs for Selected Shops */}
+                            {selectedAttributeShops.map((shop) => (
+                              <div key={shop.value} className="mb-2">
+                                <label>{shop.label} Quantity</label>
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  value={
+                                    attributeShopQuantities[shop.value] || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleAttributeQuantityChange(
+                                      shop.value,
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </div>
+                            ))}
                           </div>
                           <div className="col-md-2">
                             <label className="w-100 mt-4">
