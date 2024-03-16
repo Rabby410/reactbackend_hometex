@@ -34,6 +34,29 @@ const ProductDetails = () => {
     getProduct();
   }, []);
 
+  const renderAttributeQuantities = () => {
+    if (!product.attributes || product.attributes.length === 0) {
+      return <p className="text-gray-600 italic">No attributes found.</p>;
+    }
+  
+    return product.attributes.map((attribute, index) => (
+      <div key={index} className="mb-6 p-4 shadow-lg rounded-lg bg-white">
+        <h5 className="text-lg font-semibold text-indigo-600 mb-2">
+          {attribute.attribute_name}: <span className="font-normal text-indigo-500">{attribute.attribute_value}</span>
+        </h5>
+        <ul className="list-disc pl-5">
+          {attribute.shop_quantities.map((shopQty, shopIndex) => (
+            <li key={shopIndex} className="text-gray-700">
+              <span className="font-medium">Shop Name:</span> {shopQty.shop_name}, 
+              <span className="font-medium"> Quantity:</span> {shopQty.quantity}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ));
+  };
+  
+
   return (
     <>
       <Breadcrumb title={"Product Details"} />
@@ -237,6 +260,13 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+      <div className="row">
+        <div className="col">
+          <h3 className="text-center">Attribute-wise Shop Quantities</h3>
+          {renderAttributeQuantities()}
+        </div>
+      </div>
+
       <div class="row justify-content-center align-items-center g-2">
         <div className="col">
           <h3 className="text-center">Shops</h3>
