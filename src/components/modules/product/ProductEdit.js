@@ -59,6 +59,9 @@ const ProductEdit = () => {
         axios
             .request(config)
             .then((response) => {
+                console.log('data');
+                console.log(response?.data?.data);
+                console.log('---');
                 const costValue = response.data.data.cost.replace(/[৳,]/g, "");
                 const priceValue = response.data.data.price.replace(/[৳,]/g, "");
                 const shopData = response.data.data.shops;
@@ -781,6 +784,8 @@ const ProductEdit = () => {
 
                                             {
                                                 attributeFiled.map((value, index) => {
+                                                    console.log(value);
+                                                    console.log('----');
                                                     let attributes_options = attribute_obj[value.attribute_id]
                                                     // console.log(typeof attributes_options , 'attributes_options')  
                                                     return (
@@ -793,7 +798,7 @@ const ProductEdit = () => {
                                                                             <option>Select Attribute</option>
                                                                             {
                                                                                 attributesAll.map((attrValue, attrIndex) => {
-                                                                                    const isSelected = value.attribute_id === attrValue?.id;
+                                                                                    const isSelected = value?.attribute_id === attrValue?.id;
                                                                                     return (<>
                                                                                         <option value={attrValue?.id} selected={isSelected ? 'selected' : null}  >{attrValue?.name}</option>
                                                                                     </>)
@@ -817,7 +822,8 @@ const ProductEdit = () => {
                                                                             <option>Select Attribute Value</option>
                                                                             {
                                                                                 attributes_options && attributes_options.length > 0 && attributes_options.map((val, indz) => {
-                                                                                    const isSelected = value.attribute_value_id === val?.id;
+                                                                                    
+                                                                                    const isSelected = value?.attribute_id === val?.id;
                                                                                     return (<>
                                                                                         <option value={val?.id} selected={isSelected ? 'selected' : null}  >{val?.name}</option>
                                                                                     </>)
@@ -843,10 +849,10 @@ const ProductEdit = () => {
                                                                         // onChange={(e) => handleAttributeInput(e, id)}
                                                                         >
                                                                             <option value="">Select Sign</option>
-                                                                            <option value="+" selected={(value.attribute_math_sign == '+') ? true : null}>+</option>
-                                                                            <option value="-" selected={(value.attribute_math_sign == '-') ? true : null} >-</option>
-                                                                            <option value="*" selected={(value.attribute_math_sign == '*') ? true : null}>*</option>
-                                                                            <option value="/" selected={(value.attribute_math_sign == '/') ? true : null}>/</option>
+                                                                            <option value="+" selected={(value?.math_sign == '+') ? true : null}>+</option>
+                                                                            <option value="-" selected={(value?.math_sign == '-') ? true : null} >-</option>
+                                                                            <option value="*" selected={(value?.math_sign == '*') ? true : null}>*</option>
+                                                                            <option value="/" selected={(value?.math_sign == '/') ? true : null}>/</option>
                                                                         </select>
                                                                     </label>
                                                                 </div>
@@ -859,7 +865,7 @@ const ProductEdit = () => {
                                                                             type="number"
                                                                             className="form-control mt-2"
                                                                             name="number"
-                                                                            value={value.attribute_number}
+                                                                            value={value?.number}
                                                                             onChange={(e) => onChangeAmount(e, value.id)}
                                                                         />
                                                                     </label>
@@ -872,7 +878,7 @@ const ProductEdit = () => {
                                                                             type="number"
                                                                             className="form-control mt-2"
                                                                             name="attribute_cost"
-                                                                            value={value.attribute_cost}
+                                                                            value={value?.cost}
                                                                             onChange={(e) => onChangeAmount(e, value.id)}
                                                                         />
                                                                     </label>
@@ -884,7 +890,7 @@ const ProductEdit = () => {
                                                                             type="number"
                                                                             className="form-control mt-2"
                                                                             name="attribute_quantity"
-                                                                            value={value.attribute_quantity}
+                                                                            value={value?.quantity}
                                                                             onChange={(e) => onChangeAmount(e, value.id)}
                                                                         />
                                                                     </label>
@@ -896,7 +902,7 @@ const ProductEdit = () => {
                                                                             type="number"
                                                                             className="form-control mt-2"
                                                                             name="attribute_weight"
-                                                                            value={value.attribute_weight}
+                                                                            value={value?.weight}
                                                                             onChange={(e) => onChangeAmount(e, value.id)}
                                                                         />
                                                                     </label>
@@ -908,7 +914,7 @@ const ProductEdit = () => {
                                                                             type="text"
                                                                             className="form-control mt-2"
                                                                             name="attribute_mesarment"
-                                                                            value={value.attribute_mesarment}
+                                                                            value={value?.measurement}
                                                                             onChange={(e) => onChangeAmount(e, value.id)}
                                                                         />
                                                                     </label>
