@@ -59,9 +59,6 @@ const ProductEdit = () => {
         axios
             .request(config)
             .then((response) => {
-                console.log('data');
-                console.log(response?.data?.data);
-                console.log('---');
                 const costValue = response.data.data.cost.replace(/[৳,]/g, "");
                 const priceValue = response.data.data.price.replace(/[৳,]/g, "");
                 const shopData = response.data.data.shops;
@@ -136,7 +133,7 @@ const ProductEdit = () => {
                     field_limit: response.data.data.field_limit,
                     status: response.data.data.status == "Active" ? 1 : 0,
                 });
-                // setAttributes(productAttributes);
+                setAttributes(productAttributes);
 
 
                 // Set the quantities for each shop in the state
@@ -282,7 +279,7 @@ const ProductEdit = () => {
                 setBrands(res.data.brands);
                 setCountries(res.data.countries);
                 setSuppliers(res.data.providers);
-                // setAttributes(res.data.attributes);
+                setAttributes(res.data.attributes);
                 setAttributesAll(res.data.attributes);
                 setAllSubcategories(res.data.sub_categories);
                 setAllChildSubcategories(res.data.child_sub_categories);
@@ -390,6 +387,8 @@ const ProductEdit = () => {
             shop_ids: shopIds,
         };
 
+        console.log(payload);
+
         axios
             .put(`${Constants.BASE_URL}/product/${params.id}`, payload, {
                 headers: {
@@ -474,8 +473,6 @@ const ProductEdit = () => {
         });
         setAttributeField(newAttributes)
     }
-
-    // console.log(subCategories, 'subCategories')
 
 
     return (
@@ -784,10 +781,7 @@ const ProductEdit = () => {
 
                                             {
                                                 attributeFiled.map((value, index) => {
-                                                    console.log(value);
-                                                    console.log('----');
                                                     let attributes_options = attribute_obj[value.attribute_id]
-                                                    // console.log(typeof attributes_options , 'attributes_options')  
                                                     return (
                                                         <>
                                                             <div key={index} className="row my-2 align-items-baseline">
@@ -823,7 +817,7 @@ const ProductEdit = () => {
                                                                             {
                                                                                 attributes_options && attributes_options.length > 0 && attributes_options.map((val, indz) => {
                                                                                     
-                                                                                    const isSelected = value?.attribute_id === val?.id;
+                                                                                    const isSelected = value?.attribute_value_id === val?.id;
                                                                                     return (<>
                                                                                         <option value={val?.id} selected={isSelected ? 'selected' : null}  >{val?.name}</option>
                                                                                     </>)
@@ -844,10 +838,7 @@ const ProductEdit = () => {
                                                                 <div className="col-md-2">
                                                                     <label className="w-100 mt-4">
                                                                         <p>Select Mathematical Sign</p>
-                                                                        <select className="form-select mt-2" name="math_sign"
-                                                                        // value={attribute_input[id]?.math_sign || ""}
-                                                                        // onChange={(e) => handleAttributeInput(e, id)}
-                                                                        >
+                                                                        <select className="form-select mt-2" name="math_sign">
                                                                             <option value="">Select Sign</option>
                                                                             <option value="+" selected={(value?.math_sign == '+') ? true : null}>+</option>
                                                                             <option value="-" selected={(value?.math_sign == '-') ? true : null} >-</option>
